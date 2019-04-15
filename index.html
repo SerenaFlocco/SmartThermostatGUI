@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="stylesheet" href="frontend/css/bootstrap.css" media="screen">
+    <link rel="stylesheet" href="frontend/solar/custom.min.css">
+	<link rel="stylesheet" href="frontend/font/font.css">
+	<link rel="stylesheet" href="frontend/css/custom.css">
+	
+  </head>
+  
+  <body>
+  
+	<div class="navbar navbar-expand fixed-top navbar-dark bg-dark">
+      <div class="container">
+		<div class="navbar-brand">SmartNSG</div>
+		<div class="collapse navbar-collapse" id="navbarColor02">
+		  <ul class="navbar-nav mr-auto">
+			<li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Options <span class="caret"></span></a>
+			</li>
+		  </ul>
+		  <fieldset class="nav-item" style="float:center;">
+              <input class="navbar-brand digital clock" id="readOnlyInput" type="text" placeholder="Mon 01 - April" style="text-align:center;" readonly></input>
+		  </fieldset>
+		  <ul class="navbar-nav ml-auto">
+			<li class="nav-item">
+               <input class="navbar-brand digital clock" id="readOnlyInput" type="text" placeholder="12:00" style="text-align:center;" readonly></input>
+			</li>
+		  </ul>
+		</div>
+	  </div>
+	</div>
+	
+	 <!-- Begin Page Content -->
+    <div class="container">
+
+        <div class="row">
+		
+		 <div class="col-sm-1"></div>
+		
+         <div class="col-sm-3">
+			<div class="card border-secondary mb-3"> <!--style="width: 16rem;">-->
+				<div class="card-header">Power consumption</div>
+				<div class="card-body">
+					<div class="row">
+						<div class="col" style="float:center;">
+							<img class="card-img-top" src="frontend/cons4.png">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col" style="float:center;">
+							<p class="text-center digital" style="font-size:40px;">0,1 KWh</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		  </div>
+		  
+		  <div class="col-sm-1"></div>
+		  
+		  <div class="col-sm-6">
+			<div class="card border-secondary mb-3"> <!--style="width: 24rem;">-->
+				<div class="card-header">Temperature</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col" style="text-align:right;">
+								<p class="card-text digital display-2">20°C</p>
+							</div>
+							<div class="col text-center">
+								<div class="btn-group-vertical" style="width: 3rem;">
+									 <button type="button" class="btn btn-secondary" style="margin-top:15px;">+</button>
+									 <button type="button" class="btn btn-secondary">-</button>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-8 text-center">
+								<!--<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">-->
+									<div class="btn-group btn-group-lg" role="group" aria-label="First group" style="margin-top:15px;">
+										<button type="button" class="btn btn-secondary" style="text-align:center;"><i class="material-icons">local_parking</i></button>
+										<button type="button" class="btn btn-secondary" style="text-align:center;"><i class="material-icons">pan_tool</i></button>
+										<button type="button" class="btn btn-secondary" style="text-align:center;"><i class="material-icons">ac_unit</i></button>
+										<button type="button" class="btn btn-secondary" style="text-align:center;"><i class="material-icons">power_settings_new</i></button>
+									<!--</div>-->
+								</div>
+							</div>
+						</div>
+				    </div>
+		    </div>
+		  </div>
+		  
+		  <div class="col-sm-1"></div>
+			
+		</div>		
+	</div>
+  
+    <script src="frontend/js/jquery.min.js"></script>
+    <script src="frontend/js/popper.min.js"></script>
+    <script src="frontend/js/bootstrap.min.js"></script>
+    <script src="frontend/js/custom.js"></script>
+  </body>
+</html>

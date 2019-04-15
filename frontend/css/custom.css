@@ -1,0 +1,91 @@
+.clock {
+	background-color:transparent;
+	border:none;
+	color:white;
+}
+
+@font-face {
+   font-family: 'Material Icons';
+   font-style: normal;
+   font-weight: 400;
+   src: url(iconfont/MaterialIcons-Regular.eot); /* For IE6-8 */
+   src: local('Material Icons'),
+        local('MaterialIcons-Regular'),
+        url(../iconfont/MaterialIcons-Regular.woff2) format('woff2'),
+        url(../iconfont/MaterialIcons-Regular.woff) format('woff'),
+        url(../iconfont/MaterialIcons-Regular.ttf) format('truetype');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+.resize_font1 {
+  font-size: 80px;
+}
+
+.resize_font2 {
+  font-size: 50px;
+}
+
+/* Extra small devices (phones, up to 480px) */
+@media screen and (max-width: 767px) {
+	.resize_font1 {
+		font-size: 45px;
+	}
+	
+	.resize_font2 {
+		font-size: 25px;
+	}
+}
+/* Small devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991px) {
+	.resize_font1 {
+		font-size: 60px;
+	}
+	
+	.resize_font2 {
+		font-size: 35px;
+	}
+}
+/* tablets/desktops and up ----------- */
+@media (min-width: 992px) and (max-width: 1199px) {
+	.resize_font1 {
+		font-size: 70px;
+	}
+	
+	.resize_font2 {
+		font-size: 40px;
+	}
+}
+/* large desktops and up ----------- */
+@media screen and (min-width: 1200px) {
+	.resize_font1 {
+		font-size: 80px;
+	}
+	
+	.resize_font2 {
+		font-size: 50px;
+	}
+}
