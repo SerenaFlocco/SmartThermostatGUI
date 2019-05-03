@@ -24,12 +24,12 @@ app.get('/', (req, res) => {
 
 app.listen(3000, () => console.log('App listening on port 3000...'));
 
-var received_temperature;
+var received_temperature = "";
 var flag = 0;
 
 server.on('connection', (ws) => {
     var topic_id = setInterval(function(){
-		ws.send(received_temperature)
+		ws.send(received_temperature);
 		console.log(`Message ${received_temperature} sent via websocekt`);
 	},5000);
     //ws.send(msg);
@@ -43,7 +43,7 @@ mqtt_client.on('connect', () => {
 
 mqtt_client.on('message', (topic, msg) => {
     console.log(`Message ${msg} received via MQTT`);
-    received_temperature = msg;
+    received_temperature = msg.toString();
 });
 
 /*mqtt_client.on('connect', () => {

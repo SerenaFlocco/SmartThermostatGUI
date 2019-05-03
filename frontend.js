@@ -10,5 +10,6 @@ wsc.onopen = () => {
 };
 
 wsc.onmessage = (msg) => {
-    $('#temperature').text(msg.data);
+    console.log(`received ${msg.data} from websocket`);
+    $('#temperature').text(msg.data + "°C");
 };
