@@ -25,6 +25,8 @@ app.get('/', (req, res) => {
 app.listen(3000, () => console.log('App listening on port 3000...'));
 
 let msg = '18 °C';
+var flag = 0;
+
 server.on('connection', (ws) => {
     ws.send(msg);
     console.log(`Message ${msg} sent.`);
@@ -35,9 +37,16 @@ server.on('connection', (ws) => {
     console.log('Web App backend waiting for an mqtt message from the sensor...');
   });
 
+server.on('connection', (ws) => {
+    while(1) {
+        if(flag==1) {
+            ws.send(msg);
+            console.log(`Message ${msg} sent.`);
+            flag = 0;
+        }
+    }
+});
+
 mqtt_client.on('message', (topic, msg) => {
-        server.on('connection', (ws) => {
-        ws.send(msg);
-        console.log(`Message ${msg} sent.`);
-    });
+    flag = 1;
 });*/
