@@ -1,6 +1,14 @@
+/** 
+ *  WebSocket server: listen on mqtt topic-->when a msg is received, send it to the client
+*/
+
 const express = require('express');
+var mqtt = require('mqtt');
 const app = express();
 var application_root = __dirname;
+var mqtt_client  = mqtt.connect('mqtt://localhost');
+const wss = require('ws').Server;
+var server = new wss({port: 8080});
 
 app.use('frontend/css/', express.static(__dirname + '/frontend/css/'));
 app.use('frontend/font/', express.static(__dirname + '/frontend/font/'));
@@ -16,6 +24,20 @@ app.get('/', (req, res) => {
 
 app.listen(3000, () => console.log('App listening on port 3000...'));
 
-/** 
- * Web socket backend: listen on mqtt topic-->when a msg is received, send it to the frontend
-*/
+let msg = '18 °C';
+server.on('connection', (ws) => {
+    ws.send(msg);
+    console.log(`Message ${msg} sent.`);
+});
+
+/*mqtt_client.on('connect', () => {
+    mqtt_client.subscribe('actuator');
+    console.log('Web App backend waiting for an mqtt message from the sensor...');
+  });
+
+mqtt_client.on('message', (topic, msg) => {
+        server.on('connection', (ws) => {
+        ws.send(msg);
+        console.log(`Message ${msg} sent.`);
+    });
+});*/
