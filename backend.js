@@ -1,7 +1,7 @@
+#!/usr/bin/env node
 /** 
  *  WebSocket server: listen on mqtt topic-->when a msg is received, send it to the client
 */
-
 const express = require('express');
 var mqtt = require('mqtt');
 const app = express();
@@ -28,6 +28,7 @@ var received_temperature = '';
 
 server.on('connection', (ws) => {
     var topic_id = setInterval(() => {
+
 		ws.send(received_temperature);
 		console.log(`Message ${received_temperature} sent via websocekt`);
 	},5000);

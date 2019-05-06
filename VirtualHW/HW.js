@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 require('log-timestamp'); // add timestamps in front of log messages
 var mqtt = require('mqtt');
 var client  = mqtt.connect('mqtt://localhost');
