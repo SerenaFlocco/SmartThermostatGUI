@@ -24,16 +24,13 @@ app.get('/', (req, res) => {
 
 app.listen(3000, () => console.log('App listening on port 3000...'));
 
-var received_temperature;
-var flag = 0;
+var received_temperature = '';
 
 server.on('connection', (ws) => {
-    var topic_id = setInterval(function(){
-		ws.send(received_temperature)
+    var topic_id = setInterval(() => {
+		ws.send(received_temperature);
 		console.log(`Message ${received_temperature} sent via websocekt`);
 	},5000);
-    //ws.send(msg);
-    
 });
 
 mqtt_client.on('connect', () => {
@@ -43,25 +40,5 @@ mqtt_client.on('connect', () => {
 
 mqtt_client.on('message', (topic, msg) => {
     console.log(`Message ${msg} received via MQTT`);
-    received_temperature = msg;
+    received_temperature = msg.toString();
 });
-
-/*mqtt_client.on('connect', () => {
-    mqtt_client.subscribe('temperature');
-    console.log('Web App backend waiting for an mqtt message from the sensor...');
-  });
-
-server.on('connection', (ws) => {
-    while(1) {
-        if(flag==1) {
-            ws.send(received_temperature);
-            console.log(`Message ${received_temperature} sent.`);
-            flag = 0;
-        }
-    }
-});
-
-mqtt_client.on('message', (topic, msg) => {
-    flag = 1;
-    received_temperature = msg;
-});*/
