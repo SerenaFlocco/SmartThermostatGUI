@@ -67,23 +67,28 @@
 					<div class="card-body">
 						<div class="row">
 							<div class="col" style="text-align:right;">
-								<p class="card-text digital display-2" id="temperature">20°C</p>
+								<p class="card-text digital display-2" id="temperature">20°C </p>
 							</div>
 							<div class="col text-center">
 								<div class="btn-group-vertical" style="width: 3rem;">
-									 <button type="button" class="btn btn-secondary" style="margin-top:15px;">+</button>
-									 <button type="button" class="btn btn-secondary">-</button>
+									 <button type="button" class="btn btn-secondary" style="margin-top:15px;" id="increase">+</button>
+									 <button type="button" class="btn btn-secondary" id="decrease">-</button>
 								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-8 text-center">
+								<i class="material-icons" id="on"></i>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-8 text-center">
 								<!--<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">-->
 									<div class="btn-group btn-group-lg" role="group" aria-label="First group" style="margin-top:15px;">
-										<button type="button" class="btn btn-secondary" style="text-align:center;"><i class="material-icons">local_parking</i></button>
-										<button type="button" class="btn btn-secondary" style="text-align:center;"><i class="material-icons">pan_tool</i></button>
-										<button type="button" class="btn btn-secondary" style="text-align:center;"><i class="material-icons">ac_unit</i></button>
-										<button type="button" class="btn btn-secondary" style="text-align:center;"><i class="material-icons">power_settings_new</i></button>
+										<button type="button" class="btn btn-secondary" style="text-align:center;" id="prog"><i class="material-icons">local_parking</i></button>
+										<button type="button" class="btn btn-secondary" style="text-align:center;" id="man"><i class="material-icons">pan_tool</i></button>
+										<button type="button" class="btn btn-secondary" style="text-align:center;" id="antifreeze"><i class="material-icons">ac_unit</i></button>
+										<button type="button" class="btn btn-secondary" style="text-align:center;" id="off"><i class="material-icons">power_settings_new</i></button>
 									<!--</div>-->
 								</div>
 							</div>
