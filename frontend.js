@@ -10,5 +10,5 @@ wsc.onopen = () => {
 };
 
 wsc.onmessage = (msg) => {
-    $('#temperature').text(msg.data);
+    $('#temperature').text(msg.data + "°C");
 };
