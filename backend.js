@@ -31,7 +31,7 @@ server.on('connection', (ws) => {
 
 		ws.send(received_temperature);
 		console.log(`Message ${received_temperature} sent via websocekt`);
-	},5000);
+	},60000);
 });
 
 mqtt_client.on('connect', () => {
