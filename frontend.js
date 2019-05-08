@@ -8,11 +8,14 @@ const wsc = new WebSocket('ws://localhost:8080');
 //thermostat: can be 'man' or 'prog'
 var active = '';
 //variable in wich the last temperature set manually is stored: it is set to 18 by default
-var last_man_temperature = '18';
+var last_man_temperature = 18.0;
 //variable containing the current temperature value received by the sensor
-var current_temperature = '';
+var current_temperature = 0.0;
 //variable which registers if the heating system is on or off: it is 0 if it's off, 1 otherwise
 var heating = 0;
+//timer used to show for 10 seconds the yellow temperature set manually: when it expires,
+//the current temperature will be shown again
+var timer = 0;
 
 //function that check if the set temperature is greater than the current one: 
 //if yes switch on the heating system
@@ -58,6 +61,8 @@ wsc.onopen = () => {
 wsc.onmessage = (msg) => {
     console.log(`received ${msg.data} from websocket`);
     $('#temperature').text(msg.data + "°C");
+    current_temperature = msg.data; //pay attention: this can not be a number
+    console.log(typeof(current_temperature));
 };
 
 //When mode is 'man', check the temperature periodically to switch on/off the heating system
@@ -67,4 +72,32 @@ $('#man').on('click', () => {
         switchOn();
         switchOff();
     }
+});
+
+//increase of 0.1 the value of the current temperature when + is clicked
+$('#increase').on('click', () => {
+    $('#temperature').addClass('text-primary');
+    clearTimeout(timer);
+    last_man_temperature = current_temperature + 0.1;
+    $('#temperature').text(last_man_temperature.toString() + "°C");
+    timer = setTimeout(function() {
+        // reset CSS
+        $('#temperature').removeClass('text-primary');
+        //reset temperature
+        $('#temperature').text(current_temperature.toString() + "°C");
+      }, 10000);
+});
+
+//decrease of 0.1 the value of the current temperature when - is clicked
+$('#increase').on('click', () => {
+    $('#temperature').addClass('text-primary');
+    clearTimeout(timer);
+    last_man_temperature = current_temperature - 0.1;
+    $('#temperature').text(last_man_temperature.toString() + "°C");
+    timer = setTimeout(function() {
+        // reset CSS
+        $('#temperature').removeClass('text-primary');
+        //reset temperature
+        $('#temperature').text(current_temperature.toString() + "°C");
+      }, 10000);
 });
