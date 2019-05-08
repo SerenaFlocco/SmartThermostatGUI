@@ -77,8 +77,8 @@ wsc.onopen = () => {
 //When a new temperature is received, update the html page
 wsc.onmessage = (msg) => {
     console.log(`received ${msg.data} from websocket`);
-    $('#temperature').text(msg.data + "°C");
     current_temperature = Number.parseFloat(msg.data);
+    $('#temperature').text(current_temperature.toFixed(1) + "°C");
     //console.log(typeof(current_temperature));
 };
 
