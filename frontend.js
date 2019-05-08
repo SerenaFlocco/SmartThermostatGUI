@@ -20,6 +20,7 @@ function switchOn() {
     setInterval(() => {
         if(last_man_temperature > current_temperature && heating == 0)
             $('#on').text('whatshot'); //switch on
+            heating = 1;
     }, 5000);
 }
 
@@ -29,6 +30,7 @@ function switchOff() {
     setInterval(() => {
         if(last_man_temperature <= current_temperature && heating==1)
             $('#on').empty(); //switch off
+            heating = 0;
     }, 5000);
 }
 
