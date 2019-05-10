@@ -30,6 +30,7 @@ app.get('/antifreeze_page.html', (req, res) => {
 
 app.get('/poweroff', (req,res) => {
   res.send(200);
+  console.log("poweroff");
   exec(`shutdown now`,(error,stdout,stderr) =>{ callback(stdout)});
 })
 
