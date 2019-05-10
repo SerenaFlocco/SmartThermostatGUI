@@ -5,6 +5,7 @@
 */
 const express = require('express');
 var mqtt = require('mqtt');
+var exec = require('child_process').exec;
 const app = express();
 var application_root = __dirname;
 var mqtt_client  = mqtt.connect('mqtt://localhost');
@@ -26,6 +27,11 @@ app.get('/', (req, res) => {
 app.get('/antifreeze_page.html', (req, res) => {
   res.sendFile('/antifreeze_page.html', {application_root});
 });
+
+app.get('/poweroff', (req,res) => {
+  res.send(200);
+  exec(`shutdown now`,(error,stdout,stderr) =>{ callback(stdout)});
+})
 
 app.listen(3000, () => console.log('App listening on port 3000...'));
 
