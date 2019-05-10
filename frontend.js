@@ -26,7 +26,8 @@ setInterval(() => {
         // reset CSS
         $('#temperature').removeClass('text-primary');
         //reset temperature
-        $('#temperature').text(current_temperature.toString() + "°C");
+        if(current_temperature != 0.0)
+            $('#temperature').text(current_temperature.toFixed(1) + "°C");
         //reset flag
         flag = 0;
         temp_to_reach = last_man_temperature;
@@ -37,7 +38,7 @@ setInterval(() => {
             heating = 1;
         }
     }
-}, 10000);
+}, 20000);
 
 //check periodically if the set temperature is less or equal than the current one: 
 //if yes switch off the heating system
@@ -47,7 +48,7 @@ setInterval(() => {
         // reset CSS
         $('#temperature').removeClass('text-primary');
         //reset temperature
-        $('#temperature').text(current_temperature.toString() + "°C");
+        $('#temperature').text(current_temperature.toFixed(1) + "°C");
         //reset flag
         flag = 0;
         temp_to_reach = last_man_temperature;
@@ -56,7 +57,7 @@ setInterval(() => {
         $('#on').empty(); //switch off
         heating = 0;
     }
-}, 10000);
+}, 20000);
 
 //clock and calendar functions
 let date = new Date();
@@ -115,6 +116,7 @@ $('#decrease').on('click', () => {
     }
 });
 
+//Ask to the teacher
 $('#off').on('click', () => {
     active = 'off';
     $('#temperature').text('OFF');
