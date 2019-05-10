@@ -28,10 +28,9 @@ var received_temperature = '';
 
 server.on('connection', (ws) => {
     var topic_id = setInterval(() => {
-
 		ws.send(received_temperature);
 		console.log(`Message ${received_temperature} sent via websocekt`);
-	},60000);
+	},5000);
 });
 
 mqtt_client.on('connect', () => {

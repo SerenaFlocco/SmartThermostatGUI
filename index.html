@@ -39,68 +39,107 @@
 
         <div class="row">
 		
-		 <div class="col-sm-1"></div>
+		 			<div class="col-sm-1"></div>
 		
-         <div class="col-sm-3">
-			<div class="card border-secondary mb-3"> <!--style="width: 16rem;">-->
-				<div class="card-header">Power consumption</div>
-				<div class="card-body">
-					<div class="row">
-						<div class="col" style="float:center;">
-							<img class="card-img-top" src="frontend/cons4.png">
-						</div>
+         	<div class="col-sm-3">
+						<div class="card border-secondary mb-3"> <!--style="width: 16rem;">-->
+							<div class="card-header">Power consumption</div>
+							<div class="card-body">
+								<div class="row">
+									<div class="col" style="float:center;">
+										<img class="card-img-top" src="frontend/cons4.png">
+									</div>
+								</div>
+								<div class="row">
+									<div class="col" style="float:center;">
+										<p class="text-center digital" style="font-size:40px;">0,1 KWh</p>
+									</div>
+								</div>
+							</div>
 					</div>
-					<div class="row">
-						<div class="col" style="float:center;">
-							<p class="text-center digital" style="font-size:40px;">0,1 KWh</p>
+		  	</div>
+		  
+		  	<div class="col-sm-1"></div>
+		  
+		  	<div class="col-sm-6">
+					<div class="card border-secondary mb-3"> <!--style="width: 24rem;">-->
+						<div class="card-header">Temperature</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col" style="text-align:right;">
+									<p class="card-text digital display-2" id="temperature"></p>
+								</div>
+								<div class="col text-center">
+									<div class="btn-group-vertical" style="width: 3rem;">
+										<button type="button" class="btn btn-secondary" style="margin-top:15px;" id="increase">+</button>
+										<button type="button" class="btn btn-secondary" id="decrease">-</button>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-8 text-center">
+									<i class="material-icons" id="on"></i>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-8 text-center">
+									<!--<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">-->
+										<div class="btn-group btn-group-lg" role="group" aria-label="First group" style="margin-top:15px;">
+											<button type="button" class="btn btn-secondary" style="text-align:center;" id="prog"><i class="material-icons">local_parking</i></button>
+											<button type="button" class="btn btn-secondary" style="text-align:center;" id="man"><i class="material-icons">pan_tool</i></button>
+											<button type="button" class="btn btn-secondary" style="text-align:center;" id="antifreeze"><i class="material-icons">ac_unit</i></button>
+											<button type="button" class="btn btn-secondary" style="text-align:center;" id="off"><i class="material-icons">power_settings_new</i></button>
+										<!--</div>-->
+									</div>
+								</div>
+							</div>
+				    </div>
+		    	</div>
+		  	</div>
+		  
+		  	<div class="col-sm-1"></div>
+			
+			</div>
+			
+			<!--<div class="row" id="secondary">
+				<div class="col-sm-3"></div>
+				<div class="col-6">
+					<div class="card border-secondary mb-3">
+						<div class="card-header">Program settings</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col" style="text-align:right;">
+									<p class="card-text digital display-2" id="temperature_prog">18.0°C</p>
+								</div>
+								<div class="col text-center">
+									<div class="btn-group-vertical" style="width: 3rem;">
+										 <button type="button" class="btn btn-secondary" style="margin-top:15px;" id="increase_prog">+</button>
+										 <button type="button" class="btn btn-secondary" id="decrease_prog">-</button>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
+									<div class="form-group" style="margin-top: 40px;">
+										<select class="custom-select">
+										<option selected>Select the time slot</option>
+										<option value="1">12 a.m. - 6 a.m.</option>
+										<option value="2">6 a.m. - 9 a.m.</option>
+										<option value="3">9 a.m. - 12 a.m.</option>
+										<option value="3">12 a.m. - 5 p.m.</option>
+										<option value="3">5 p.m. - 8 p.m.</option>
+										<option value="3">8 p.m. - 12 p.m.</option>
+										</select>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		  </div>
-		  
-		  <div class="col-sm-1"></div>
-		  
-		  <div class="col-sm-6">
-			<div class="card border-secondary mb-3"> <!--style="width: 24rem;">-->
-				<div class="card-header">Temperature</div>
-					<div class="card-body">
-						<div class="row">
-							<div class="col" style="text-align:right;">
-								<p class="card-text digital display-2" id="temperature"></p>
-							</div>
-							<div class="col text-center">
-								<div class="btn-group-vertical" style="width: 3rem;">
-									 <button type="button" class="btn btn-secondary" style="margin-top:15px;" id="increase">+</button>
-									 <button type="button" class="btn btn-secondary" id="decrease">-</button>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-8 text-center">
-								<i class="material-icons" id="on"></i>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-8 text-center">
-								<!--<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">-->
-									<div class="btn-group btn-group-lg" role="group" aria-label="First group" style="margin-top:15px;">
-										<button type="button" class="btn btn-secondary" style="text-align:center;" id="prog"><i class="material-icons">local_parking</i></button>
-										<button type="button" class="btn btn-secondary" style="text-align:center;" id="man"><i class="material-icons">pan_tool</i></button>
-										<button type="button" class="btn btn-secondary" style="text-align:center;" id="antifreeze"><i class="material-icons">ac_unit</i></button>
-										<button type="button" class="btn btn-secondary" style="text-align:center;" id="off"><i class="material-icons">power_settings_new</i></button>
-									<!--</div>-->
-								</div>
-							</div>
-						</div>
-				    </div>
-		    </div>
-		  </div>
-		  
-		  <div class="col-sm-1"></div>
-			
-		</div>		
-	</div>
+				<div class="col-sm-3"></div>
+			</div>-->
+
+		</div>
   
     <script src="frontend/js/jquery.min.js"></script>
     <script src="frontend/js/popper.min.js"></script>
