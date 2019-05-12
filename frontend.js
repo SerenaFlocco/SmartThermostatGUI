@@ -28,12 +28,12 @@ setInterval(() => {
     if(active != 'off' && flag == 0) {
         switch(season) {
             case 'winter':
-                if((temp_to_reach > current_temperature) && heating == 0) {
+                if((temp_to_reach > current_temperature) && season == 'winter' && heating == 0) {
                     $('#on').text('whatshot'); //switch on
                     heating = 1;
                 };
             case 'summer':
-                if((temp_to_reach < current_temperature) && cooling == 0) {
+                if((temp_to_reach < current_temperature) && season == 'summer' && cooling == 0) {
                     $('#on').text('toys'); //switch on
                     cooling = 1;
                 };
