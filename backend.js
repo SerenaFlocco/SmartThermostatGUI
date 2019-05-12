@@ -30,7 +30,7 @@ server.on('connection', (ws) => {
     var topic_id = setInterval(() => {
 		ws.send(received_temperature);
 		console.log(`Message ${received_temperature} sent via websocekt`);
-	},5000);
+	},30000);
 });
 
 mqtt_client.on('connect', () => {
@@ -41,4 +41,12 @@ mqtt_client.on('connect', () => {
 mqtt_client.on('message', (topic, msg) => {
     console.log(`Message ${msg} received via MQTT`);
     received_temperature = msg.toString();
+});
+
+process.on('uncaughtException', () => {
+  server.close();
+});
+
+process.on('SIGTERM', () => {
+  server.close();
 });
