@@ -154,10 +154,18 @@ $('#off').on('click', () => {
 
 $('#winter').on('click', () => {
     season = 'winter';
+    if(cooling == 1) {
+        $('#on').empty(); //switch on
+        cooling = 0;
+    }
 });
 
 $('#summer').on('click', () => {
     season = 'summer';
+    if(heating == 1) {
+        $('#on').empty(); //switch on
+        heating = 0;
+    }
 });
 
 $('#prog').on('click', () => {
