@@ -4,7 +4,7 @@ require('log-timestamp'); // add timestamps in front of log messages
 var mqtt = require('mqtt');
 var client  = mqtt.connect('mqtt://localhost');
 var status = false; //off
-var message = '18';
+var message = '10';
 var topic_actuator = "actuator";
 var topic_sensor= "temperature";
 var intervall = 5000;
