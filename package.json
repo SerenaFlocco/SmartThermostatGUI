@@ -13,6 +13,7 @@
     "jquery": "^3.4.1",
     "jsdom": "^15.0.0",
     "mqtt": "^2.18.8",
+    "node-dht-sensor": "^0.3.0",
     "path": "^0.12.7",
     "requirejs": "^2.3.6"
   }

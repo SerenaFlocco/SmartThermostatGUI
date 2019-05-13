@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var mqtt = require('mqtt');
 var client  = mqtt.connect('mqtt://localhost');
 var message = '18';
