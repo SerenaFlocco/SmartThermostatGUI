@@ -25,6 +25,10 @@ app.get('/antifreeze_page.html', (req, res) => {
   res.sendFile('/antifreeze_page.html', {application_root});
 });
 
+app.get('/weekend_page.html', (req, res) => {
+  res.sendFile('/weekend_page.html', {application_root});
+});
+
 app.listen(3000, () => console.log('App listening on port 3000...'));
 
 var received_temperature = '';

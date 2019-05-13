@@ -56,7 +56,7 @@
 				<div class="card border-secondary mb-3">
 					<div class="card-header">Weekend energy saving settings</div>
 					<div class="card-body">
-						<form>
+						<form action="index.html">
 							<fieldset>
 								<div class="row">
 									<div class="col-1">
@@ -64,7 +64,7 @@
 									</div>
 									<div class="col-4">
 										<div class="form-group">
-										  <select class="custom-select">
+										  <select class="custom-select" id="weekend_day1">
 											<option selected>Select the day</option>
 											<option value="1">Friday</option>
 											<option value="2">Saturday</option>
@@ -77,7 +77,7 @@
 									</div>
 									<div class="col-4">
 										<div class="form-group">
-										  <select class="custom-select">
+										  <select class="custom-select" id="weekend_time1">
 											<option selected>Select the time</option>
 											<option value="1">12:00</option>
 											<option value="2">12:30</option>
@@ -107,16 +107,16 @@
 										</div>
 									</div>
 									<div class="col-2">
-										<fieldset class="form-group" id="due">
+										<fieldset class="form-group">
 											<div class="form-check">
 											  <label class="form-check-label">
-												<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3" checked>
+												<input type="radio" class="form-check-input" name="optionsRadios4" id="optionsRadios7" value="option7" checked>
 												a.m.
 											  </label>
 											</div>
 											<div class="form-check">
 											<label class="form-check-label">
-												<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios4" value="option4">
+												<input type="radio" class="form-check-input" name="optionsRadios4" id="optionsRadios8" value="option8">
 												p.m.
 											  </label>
 											</div>
@@ -129,7 +129,7 @@
 									</div>
 									<div class="col-4">
 										<div class="form-group">
-										  <select class="custom-select">
+										  <select class="custom-select" id="weekend_day2">
 											<option selected>Select the day</option>
 											<option value="1">Friday</option>
 											<option value="2">Saturday</option>
@@ -142,7 +142,7 @@
 									</div>
 									<div class="col-4">
 										<div class="form-group">
-										  <select class="custom-select">
+										  <select class="custom-select" id="weekend_time2">
 											<option selected>Select the time</option>
 											<option value="1">12:00</option>
 											<option value="2">12:30</option>
@@ -172,16 +172,16 @@
 										</div>
 									</div>
 									<div class="col-2">
-										<fieldset class="form-group" id="due">
+										<fieldset class="form-group">
 											<div class="form-check">
 											  <label class="form-check-label">
-												<input type="radio" class="form-check-input" name="optionsRadios2" id="optionsRadios3" value="option3" checked>
+												<input type="radio" class="form-check-input" name="optionsRadios5" id="optionsRadios9" value="option9" checked>
 												a.m.
 											  </label>
 											</div>
 											<div class="form-check">
 											<label class="form-check-label">
-												<input type="radio" class="form-check-input" name="optionsRadios2" id="optionsRadios4" value="option4">
+												<input type="radio" class="form-check-input" name="optionsRadios5" id="optionsRadios10" value="option10">
 												p.m.
 											  </label>
 											</div>
@@ -189,13 +189,27 @@
 									</div>
 								</div>
 								<div class="row">
-									<div class="col-3"></div>
-									<div class="col-6">
-										<button type="submit" class="btn btn-primary" style="margin-left: 5rem;">Confirm</button>
-										<button type="cancel" class="btn btn-primary" style="margin-left: 1rem;">Cancel</button>
-									</div>
-									<div class="col-3"></div>
-								</div>
+                                        <div class="col text-center">
+                                            <fieldset class="form-group">
+                                                <div class="form-check">
+                                                  <label class="form-check-label">
+                                                    <input type="radio" class="form-check-input" name="optionsRadios6" id="optionsRadios11" value="option11">
+                                                    Enabled
+                                                  </label>
+                                                </div>
+                                                <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input type="radio" class="form-check-input" name="optionsRadios6" id="optionsRadios12" value="option12" checked>
+                                                    Disabled
+                                                  </label>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col" style="float:right; margin-top:5px;">
+                                            <button type="submit" class="btn btn-primary" style="margin-right: 1rem;" id="conf_weekend">Confirm</button>
+                                            <button type="cancel" class="btn btn-primary" style="margin-right: 1rem;">Cancel</button>
+                                        </div>
+                                    </div>
 							</fieldset>
 						</form>
 					</div>
