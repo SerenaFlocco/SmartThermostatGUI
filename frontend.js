@@ -2,6 +2,7 @@
  * Web socket client: when a web socket msg is received from the backend-->update the temperature value
  * on index.html
  */
+
 const wsc = new WebSocket('ws://localhost:8080');
 //active contains the last pressed button, i.e. the current active mode in the 
 //thermostat: can be 'man', 'prog', 'off', 'antifreeze' or 'weekend'
