@@ -281,3 +281,9 @@ $('#conf_weekend').on('click', () => {
         }, 60000);
     }
 });
+
+$('input[type="range"]').on('input', (event) => {
+    let elem = event.target;
+    let id = elem.getAttribute('data-id');
+    $('#' + id).text($('#' + elem.id).val().toString() + ' °C');
+  });
