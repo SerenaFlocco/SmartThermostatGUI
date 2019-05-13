@@ -48,7 +48,7 @@
 	 <!-- Begin Page Content -->
     <div class="container">
 
-        <div class="row">
+        <div class="row" id="main">
 		
 		 			<div class="col-sm-1"></div>
 		
@@ -79,6 +79,7 @@
 							<div class="row">
 								<div class="col" style="text-align:right;">
 									<p class="card-text digital display-2 resize_font1" id="temperature"></p>
+									<div class="loader" style="margin-left: 8.5rem;"></div>
 								</div>
 								<div class="col text-center">
 									<div class="btn-group-vertical" style="width: 3rem;">
@@ -98,7 +99,8 @@
 										<div class="btn-group btn-group-lg" role="group" aria-label="First group" style="margin-top:15px;">
 											<button type="button" class="btn btn-secondary" style="text-align:center;" id="prog"><i class="material-icons">local_parking</i></button>
 											<button type="button" class="btn btn-secondary" style="text-align:center;" id="man"><i class="material-icons">pan_tool</i></button>
-											<button type="button" class="btn btn-secondary" style="text-align:center;" id="antifreeze"><i class="material-icons">ac_unit</i></button>
+											<button type="button" class="btn btn-secondary" style="text-align:center;" id="winter"><i class="material-icons">ac_unit</i></button>
+											<button type="button" class="btn btn-secondary" style="text-align:center;" id="summer"><i class="material-icons">wb_sunny</i></button>
 											<button type="button" class="btn btn-secondary" style="text-align:center;" id="off"><i class="material-icons">power_settings_new</i></button>
 										<!--</div>-->
 									</div>
@@ -113,42 +115,355 @@
 			</div>
 			
 			<!--<div class="row" id="secondary">
-				<div class="col-sm-3"></div>
-				<div class="col-6">
-					<div class="card border-secondary mb-3">
-						<div class="card-header">Program settings</div>
-						<div class="card-body">
-							<div class="row">
-								<div class="col" style="text-align:right;">
-									<p class="card-text digital display-2" id="temperature_prog">18.0°C</p>
-								</div>
-								<div class="col text-center">
-									<div class="btn-group-vertical" style="width: 3rem;">
-										 <button type="button" class="btn btn-secondary" style="margin-top:15px;" id="increase_prog">+</button>
-										 <button type="button" class="btn btn-secondary" id="decrease_prog">-</button>
+			<div class="col-sm-2"></div>
+			<div class="col-8">
+				<div class="card border-secondary mb-3">
+					<div class="card-header">Weekly program settings</div>
+					<div class="card-body">
+						<form>
+							<fieldset>
+								<div class="row">
+									<div class="col" style="text-align:right;">
+										<p class="card-text digital display-2" id="temperature_prog">18.0°C</p>
+									</div>
+									<div class="col text-center">
+										<div class="btn-group-vertical" style="width: 3rem;">
+											 <button type="button" class="btn btn-secondary" style="margin-top:15px;" id="increase_prog">+</button>
+											 <button type="button" class="btn btn-secondary" id="decrease_prog">-</button>
+										</div>
 									</div>
 								</div>
-							</div>
-							<div class="row">
-								<div class="col">
-									<div class="form-group" style="margin-top: 40px;">
-										<select class="custom-select">
-										<option selected>Select the time slot</option>
-										<option value="1">12 a.m. - 6 a.m.</option>
-										<option value="2">6 a.m. - 9 a.m.</option>
-										<option value="3">9 a.m. - 12 a.m.</option>
-										<option value="3">12 a.m. - 5 p.m.</option>
-										<option value="3">5 p.m. - 8 p.m.</option>
-										<option value="3">8 p.m. - 12 p.m.</option>
-										</select>
+								<div class="row">
+									<div class="col-1"></div>
+									<div class="col-10">
+										<div class="form-group" style="margin-top: 20px;">
+										  <select class="custom-select">
+											<option selected>Select the day</option>
+											<option value="1">Monday</option>
+											<option value="2">Tuesday</option>
+											<option value="3">Wednesday</option>
+											<option value="4">Thursday</option>
+											<option value="5">Friday</option>
+											<option value="6">Saturday</option>
+											<option value="7">Sunday</option>
+										  </select>
+										</div>
+									</div>
+									<div class="col-1"></div>
+								</div>
+								<div class="row" style="margin-top:15px;">
+									<div class="col-6">
+										<div class="row">
+											<div class="col-3">
+												<p class="card-text" style="float:right;">From: </p>
+											</div>
+											<div class="col-6">
+												<div class="form-group">
+												  <select class="custom-select">
+													<option selected>Select the time</option>
+													<option value="1">12:00</option>
+													<option value="2">12:30</option>
+													<option value="3">1:00</option>
+													<option value="4">1:30</option>
+													<option value="5">2:00</option>
+													<option value="6">2:30</option>
+													<option value="7">3:00</option>
+													<option value="8">3:30</option>
+													<option value="9">4:00</option>
+													<option value="10">4:30</option>
+													<option value="11">5:00</option>
+													<option value="12">5:30</option>
+													<option value="13">6:00</option>
+													<option value="14">6:30</option>
+													<option value="15">7:00</option>
+													<option value="16">7:30</option>
+													<option value="17">8:00</option>
+													<option value="18">8:30</option>
+													<option value="19">9:00</option>
+													<option value="20">9:30</option>
+													<option value="21">10:00</option>
+													<option value="22">10:30</option>
+													<option value="23">11:00</option>
+													<option value="24">11:30</option>
+												  </select>
+												</div>
+											</div>
+											<div class="col-3">
+												<fieldset class="form-group" id="uno">
+													<div class="form-check">
+													  <label class="form-check-label">
+														<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+														a.m.
+													  </label>
+													</div>
+													<div class="form-check">
+													<label class="form-check-label">
+														<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="option2">
+														p.m.
+													  </label>
+													</div>
+												</fieldset>
+											</div>
+										</div>
+									</div>
+									<div class="col-6">
+										<div class="row">
+											<div class="col-3 text-center">
+												<p class="card-text" style="float:right;">To: </p>
+											</div>
+											<div class="col-6">
+												<div class="form-group">
+												  <select class="custom-select">
+													<option selected>Select the time</option>
+													<option value="1">12:00</option>
+													<option value="2">12:30</option>
+													<option value="3">1:00</option>
+													<option value="4">1:30</option>
+													<option value="5">2:00</option>
+													<option value="6">2:30</option>
+													<option value="7">3:00</option>
+													<option value="8">3:30</option>
+													<option value="9">4:00</option>
+													<option value="10">4:30</option>
+													<option value="11">5:00</option>
+													<option value="12">5:30</option>
+													<option value="13">6:00</option>
+													<option value="14">6:30</option>
+													<option value="15">7:00</option>
+													<option value="16">7:30</option>
+													<option value="17">8:00</option>
+													<option value="18">8:30</option>
+													<option value="19">9:00</option>
+													<option value="20">9:30</option>
+													<option value="21">10:00</option>
+													<option value="22">10:30</option>
+													<option value="23">11:00</option>
+													<option value="24">11:30</option>
+												  </select>
+												</div>
+											</div>
+											<div class="col-3">
+												<fieldset class="form-group" id="due">
+													<div class="form-check">
+													  <label class="form-check-label">
+														<input type="radio" class="form-check-input" name="optionsRadios2" id="optionsRadios3" value="option3" checked>
+														a.m.
+													  </label>
+													</div>
+													<div class="form-check">
+													<label class="form-check-label">
+														<input type="radio" class="form-check-input" name="optionsRadios2" id="optionsRadios4" value="option4">
+														p.m.
+													  </label>
+													</div>
+												</fieldset>
+											</div>
+										</div>
 									</div>
 								</div>
-							</div>
-						</div>
+								<div class="row">
+									<div class="col-3"></div>
+									<div class="col-6">
+										<button type="submit" class="btn btn-primary" style="margin-left: 5rem;">Confirm</button>
+										<button type="cancel" class="btn btn-primary" style="margin-left: 1rem;">Cancel</button>
+									</div>
+									<div class="col-3"></div>
+								</div>
+							</fieldset>
+						</form>
 					</div>
 				</div>
-				<div class="col-sm-3"></div>
-			</div>-->
+			</div>
+			<div class="col-sm-2"></div>
+		</div>
+	
+	<div class="row" id="weekend_settings">
+			<div class="col-sm-2"></div>
+			<div class="col-8">
+				<div class="card border-secondary mb-3">
+					<div class="card-header">Weekend energy saving settings</div>
+					<div class="card-body">
+						<form>
+							<fieldset>
+								<div class="row">
+									<div class="col-1">
+										<p class="card-text" style="float:right; margin-top:5px;">From: </p>
+									</div>
+									<div class="col-4">
+										<div class="form-group">
+										  <select class="custom-select">
+											<option selected>Select the day</option>
+											<option value="1">Friday</option>
+											<option value="2">Saturday</option>
+											<option value="3">Sunday</option>
+										  </select>
+										</div>
+									</div>
+									<div class="col-1">
+										<p class="card-text" style="float:right; margin-top:5px;">at: </p>
+									</div>
+									<div class="col-4">
+										<div class="form-group">
+										  <select class="custom-select">
+											<option selected>Select the time</option>
+											<option value="1">12:00</option>
+											<option value="2">12:30</option>
+											<option value="3">1:00</option>
+											<option value="4">1:30</option>
+											<option value="5">2:00</option>
+											<option value="6">2:30</option>
+											<option value="7">3:00</option>
+											<option value="8">3:30</option>
+											<option value="9">4:00</option>
+											<option value="10">4:30</option>
+											<option value="11">5:00</option>
+											<option value="12">5:30</option>
+											<option value="13">6:00</option>
+											<option value="14">6:30</option>
+											<option value="15">7:00</option>
+											<option value="16">7:30</option>
+											<option value="17">8:00</option>
+											<option value="18">8:30</option>
+											<option value="19">9:00</option>
+											<option value="20">9:30</option>
+											<option value="21">10:00</option>
+											<option value="22">10:30</option>
+											<option value="23">11:00</option>
+											<option value="24">11:30</option>
+										  </select>
+										</div>
+									</div>
+									<div class="col-2">
+										<fieldset class="form-group" id="due">
+											<div class="form-check">
+											  <label class="form-check-label">
+												<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="option3" checked>
+												a.m.
+											  </label>
+											</div>
+											<div class="form-check">
+											<label class="form-check-label">
+												<input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios4" value="option4">
+												p.m.
+											  </label>
+											</div>
+										</fieldset>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-1">
+										<p class="card-text" style="float:right; margin-top:5px;">To: </p>
+									</div>
+									<div class="col-4">
+										<div class="form-group">
+										  <select class="custom-select">
+											<option selected>Select the day</option>
+											<option value="1">Friday</option>
+											<option value="2">Saturday</option>
+											<option value="3">Sunday</option>
+										  </select>
+										</div>
+									</div>
+									<div class="col-1">
+										<p class="card-text" style="float:right; margin-top:5px;">at: </p>
+									</div>
+									<div class="col-4">
+										<div class="form-group">
+										  <select class="custom-select">
+											<option selected>Select the time</option>
+											<option value="1">12:00</option>
+											<option value="2">12:30</option>
+											<option value="3">1:00</option>
+											<option value="4">1:30</option>
+											<option value="5">2:00</option>
+											<option value="6">2:30</option>
+											<option value="7">3:00</option>
+											<option value="8">3:30</option>
+											<option value="9">4:00</option>
+											<option value="10">4:30</option>
+											<option value="11">5:00</option>
+											<option value="12">5:30</option>
+											<option value="13">6:00</option>
+											<option value="14">6:30</option>
+											<option value="15">7:00</option>
+											<option value="16">7:30</option>
+											<option value="17">8:00</option>
+											<option value="18">8:30</option>
+											<option value="19">9:00</option>
+											<option value="20">9:30</option>
+											<option value="21">10:00</option>
+											<option value="22">10:30</option>
+											<option value="23">11:00</option>
+											<option value="24">11:30</option>
+										  </select>
+										</div>
+									</div>
+									<div class="col-2">
+										<fieldset class="form-group" id="due">
+											<div class="form-check">
+											  <label class="form-check-label">
+												<input type="radio" class="form-check-input" name="optionsRadios2" id="optionsRadios3" value="option3" checked>
+												a.m.
+											  </label>
+											</div>
+											<div class="form-check">
+											<label class="form-check-label">
+												<input type="radio" class="form-check-input" name="optionsRadios2" id="optionsRadios4" value="option4">
+												p.m.
+											  </label>
+											</div>
+										</fieldset>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-3"></div>
+									<div class="col-6">
+										<button type="submit" class="btn btn-primary" style="margin-left: 5rem;">Confirm</button>
+										<button type="cancel" class="btn btn-primary" style="margin-left: 1rem;">Cancel</button>
+									</div>
+									<div class="col-3"></div>
+								</div>
+							</fieldset>
+						</form>
+					</div>
+				</div>
+			<div class="col-sm-2"></div>
+		</div>
+	
+	<div class="row" id="antifreeze_settings">
+			<div class="col-sm-3"></div>
+			<div class="col-6">
+				<div class="card border-secondary mb-3">
+					<div class="card-header">Antifreeze temperature settings</div>
+					<div class="card-body">
+						<form>
+							<fieldset>
+								<div class="row">
+									<div class="col" style="text-align:right;">
+										<p class="card-text digital display-2" id="temperature_prog">10.0°C</p>
+									</div>
+									<div class="col text-center">
+										<div class="btn-group-vertical" style="width: 3rem;">
+											 <button type="button" class="btn btn-secondary" style="margin-top:15px;" id="increase_prog">+</button>
+											 <button type="button" class="btn btn-secondary" id="decrease_prog">-</button>
+										</div>
+									</div>
+								</div>
+								<div class="row" style="margin-top:20px;">
+									<div class="col-2"></div>
+									<div class="col-8">
+										<button type="submit" class="btn btn-primary" style="margin-left: 4rem;">Confirm</button>
+										<button type="cancel" class="btn btn-primary" style="margin-left: 1rem;">Cancel</button>
+									</div>
+									<div class="col-2"></div>
+								</div>
+							</fieldset>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-3"></div>
+		</div>-->
 
 		</div>
   

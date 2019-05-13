@@ -4,6 +4,22 @@
 	color:white;
 }
 
+.loader {
+  float:center;
+  margin-top: 15px;
+  border: 6px solid #f3f3f3; /* Light grey */
+  border-top: 6px solid gray;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 @font-face {
    font-family: 'Material Icons';
    font-style: normal;
@@ -52,7 +68,7 @@
 /* Extra small devices (phones, up to 480px) */
 @media screen and (max-width: 767px) {
 	.resize_font1 {
-		font-size: 40px;
+		font-size: 65px;
 	}
 	
 	.resize_font2 {
@@ -62,7 +78,7 @@
 /* Small devices (tablets, 768px and up) */
 @media (min-width: 768px) and (max-width: 991px) {
 	.resize_font1 {
-		font-size: 60px;
+		font-size: 70px;
 	}
 	
 	.resize_font2 {
@@ -72,7 +88,7 @@
 /* tablets/desktops and up ----------- */
 @media (min-width: 992px) and (max-width: 1199px) {
 	.resize_font1 {
-		font-size: 70px;
+		font-size: 75px;
 	}
 	
 	.resize_font2 {
