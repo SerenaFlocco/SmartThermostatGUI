@@ -1,8 +1,11 @@
+#!/usr/bin/env node
+
 /** 
  *  WebSocket server: listen on mqtt topic-->when a msg is received, send it to the client
 */
 const express = require('express');
 var mqtt = require('mqtt');
+var exec = require('child_process').exec;
 const app = express();
 var application_root = __dirname;
 var mqtt_client  = mqtt.connect('mqtt://localhost');
@@ -28,6 +31,12 @@ app.get('/antifreeze_page.html', (req, res) => {
 app.get('/weekend_page.html', (req, res) => {
   res.sendFile('/weekend_page.html', {application_root});
 });
+
+app.get('/poweroff', (req,res) => {
+  res.send(200);
+  console.log("poweroff");
+  exec(`shutdown now`,(error,stdout,stderr) =>{ callback(stdout)});
+})
 
 app.listen(3000, () => console.log('App listening on port 3000...'));
 
