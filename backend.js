@@ -32,6 +32,10 @@ app.get('/weekend_page.html', (req, res) => {
   res.sendFile('/weekend_page.html', {application_root});
 });
 
+app.get('/prog_page.html', (req, res) => {
+  res.sendFile('/prog_page.html', {application_root});
+});
+
 app.get('/poweroff', (req,res) => {
   res.send(200);
   console.log("poweroff");
