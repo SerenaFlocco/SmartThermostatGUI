@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /** 
  *  WebSocket server: listen on mqtt topic-->when a msg is received, send it to the client
 */
@@ -20,6 +19,10 @@ app.use(express.static(application_root));
 
 app.get('/', (req, res) => {
     res.sendFile('/index.html', {application_root});
+});
+
+app.get('/antifreeze_page.html', (req, res) => {
+  res.sendFile('/antifreeze_page.html', {application_root});
 });
 
 app.listen(3000, () => console.log('App listening on port 3000...'));
