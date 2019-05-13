@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /** 
  *  WebSocket server: listen on mqtt topic-->when a msg is received, send it to the client
 */
