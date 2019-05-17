@@ -102,15 +102,15 @@ wsc.onopen = () => {
 
 //When a new temperature is received, update the html page
 wsc.onmessage = (msg) => {
-    if(counter == 0) {
-        if(msg.data != 'No json available')
-            settings = msg.data;
+    if(counter == 0 && msg.data != 'No json available') {
+        settings = JSON.parse(msg);
+        console.log(msg);
     }
     else {
         counter++;
         console.log(`received ${msg.data} from websocket`);
         settings.current_temperature = Number.parseFloat(msg.data);
-        wsc.send(settings);
+        wsc.send(JSON.stringify(settings));
     }
 };
 
@@ -148,5 +148,5 @@ $('#conf_weekend').on('click', () => {
     if($('#optionsRadios11').prop('checked')) 
         settings.weekend.enabled = 1;
     else settings.weekend.enabled = 0;
-    wsc.send(settings);
+    wsc.send(JSON.stringify(settings));
 });

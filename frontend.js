@@ -101,14 +101,14 @@ setInterval(() => {
                     $('#on').text('whatshot'); //switch on
                     settings.heating = 1;
                     console.log('Sending settings to backend...');
-                    wsc.send(settings); //check if it works
+                    wsc.send(JSON.stringify(settings)); //check if it works
                 };
             case 'summer':
                 if((settings.temp_to_reach < settings.current_temperature) && settings.season == 'summer' && settings.cooling == 0) {
                     $('#on').text('toys'); //switch on
                     settings.cooling = 1;
                     console.log('Sending settings to backend...');
-                    wsc.send(settings);
+                    wsc.send(JSON.stringify(settings));
                 };
         }
     }
@@ -124,14 +124,14 @@ setInterval(() => {
                     $('#on').empty(); //switch off
                     settings.heating = 0;
                     console.log('Sending settings to backend...');
-                    wsc.send(settings);
+                    wsc.send(JSON.stringify(settings));
                 };
             case 'summer':
                 if((settings.temp_to_reach >= settings.current_temperature) && settings.cooling == 1) {
                     $('#on').empty(); //switch off
                     settings.cooling = 0;
                     console.log('Sending settings to backend...');
-                    wsc.send(settings);
+                    wsc.send(JSON.stringify(settings));
                 };
         }
     }
@@ -160,7 +160,7 @@ if(settings.weekend.enabled == 1) {
             else {
                 settings.mode = 'prog';
             }
-            wsc.send(settings);
+            wsc.send(JSON.stringify(settings));
     }, 3600000);
 }
 
@@ -170,7 +170,7 @@ if(settings.mode == 'prog') {
         let progarray = getDay(date.getDay);
         let index = date.getHours();
         settings.temp_to_reach = progarray[index];
-        wsc.send(settings);
+        wsc.send(JSON.stringify(settings));
     }, 900000);     
 }
 
@@ -181,15 +181,15 @@ wsc.onopen = () => {
 
 //When a new temperature is received, update the html page
 wsc.onmessage = (msg) => {
-    if(counter == 0) {
-        if(msg.data != 'No json available')
-            settings = msg.data;
+    if(counter == 0 && msg.data != 'No json available') {
+        settings = JSON.parse(msg);
+        console.log(msg);
     }
     else {
         counter++;
         console.log(`received ${msg.data} from websocket`);
         settings.current_temperature = Number.parseFloat(msg.data);
-        wsc.send(settings);
+        wsc.send(JSON.stringify(settings));
         if($('#loader').length)
             $('#loader').remove();
         if(flag == 0)
@@ -201,7 +201,7 @@ wsc.onmessage = (msg) => {
 $('#man').on('click', () => {
     settings.mode = 'man';
     console.log('Sending settings to backend...');
-    wsc.send(settings);
+    wsc.send(JSON.stringify(settings));
 });
 
 //increase of 0.1 the value of the current temperature when + is clicked
@@ -222,7 +222,7 @@ $('#increase').on('click', () => {
             flag = 0;
             settings.temp_to_reach = settings.last_man_temperature;
             console.log('Sending settings to backend...');
-            wsc.send(settings);
+            wsc.send(JSON.stringify(settings));
         }, 10000);
         settings.last_man_temperature += 0.1;
         $('#temperature').text(settings.last_man_temperature.toFixed(1) + "°C"); //round to first decimal digit
@@ -247,7 +247,7 @@ $('#decrease').on('click', () => {
             flag = 0;
             settings.temp_to_reach = settings.last_man_temperature;
             console.log('Sending settings to backend...');
-            wsc.send(settings);
+            wsc.send(JSON.stringify(settings));
         }, 10000);
         settings.last_man_temperature -= 0.1;
         $('#temperature').text(settings.last_man_temperature.toFixed(1) + "°C"); //round to first decimal digit
@@ -260,7 +260,7 @@ $('#off').on('click', () => {
     settings.heating = 0;
     settings.cooling = 0;
     console.log('Sending settings to backend...');
-    wsc.send(settings);
+    wsc.send(JSON.stringify(settings));
 });
 
 $('#winter').on('click', () => {
@@ -270,7 +270,7 @@ $('#winter').on('click', () => {
         settings.cooling = 0;
     }
     console.log('Sending settings to backend...');
-    wsc.send(settings);
+    wsc.send(JSON.stringify(settings));
 });
 
 $('#summer').on('click', () => {
@@ -280,11 +280,11 @@ $('#summer').on('click', () => {
         settings.heating = 0;
     }
     console.log('Sending settings to backend...');
-    wsc.send(settings);
+    wsc.send(JSON.stringify(settings));
 });
 
 $('#prog').on('click', () => {
     settings.mode = 'prog';
     console.log('Sending settings to backend...');
-    wsc.send(settings);
+    wsc.send(JSON.stringify(settings));
 });

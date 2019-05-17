@@ -1,8 +1,8 @@
 let day_array = new Array(24);
 
-day_array.forEach((element) => {
-    element = 18.0;
-});
+day_array.fill(18.0);
+
+console.log(day_array);
 
 var settings = {
     mode: '',
@@ -89,15 +89,15 @@ wsc.onopen = () => {
 
 //When a new temperature is received, update the html page
 wsc.onmessage = (msg) => {
-    if(counter == 0) {
-        if(msg.data != 'No json available')
-            settings = msg.data;
+    if(counter == 0 && msg.data != 'No json available') {
+            settings = JSON.parse(msg);
+	        console.log(msg);
     }
     else {
         counter++;
         console.log(`received ${msg.data} from websocket`);
         settings.current_temperature = Number.parseFloat(msg.data);
-        wsc.send(settings);
+        wsc.send(JSON.stringify(settings));
     }
 };
 
@@ -148,5 +148,5 @@ $('#conf_antifreeze').on('click', () => {
         settings.temp_to_reach = settings.antifreeze_temp;
     }
     else settings.mode = 'prog';
-    wsc.send(settings);
+    wsc.send(JSON.stringify(settings));
 });

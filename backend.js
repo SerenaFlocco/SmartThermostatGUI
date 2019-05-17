@@ -3,6 +3,7 @@
 /** 
  *  WebSocket server: listen on mqtt topic-->when a msg is received, send it to the client
 */
+'use strict';
 const express = require('express');
 const fs = require('fs');
 const filename = 'settings.json';
@@ -54,7 +55,7 @@ server.on('connection', (ws) => {
       let rawdata = fs.readFileSync(filename);  
       let settings = JSON.parse(rawdata); 
       console.log('Sending settings to frontend...');
-      ws.send(settings); //check if it can be send as an object
+      ws.send(JSON.stringify(settings)); //check if it can be send as an object
     }
     else {
       console.log('Sending negative response to frontend...');
@@ -63,15 +64,18 @@ server.on('connection', (ws) => {
   } catch(err) {
     console.error(err);
   }
+
+	ws.on('message', (msg) => {
+		console.log('Received settings from frontend...');
+		let data = JSON.parse(msg);
+		console.log(data);
+		fs.writeFileSync(filename, JSON.stringify(data));
+	});
+
     var topic_id = setInterval(() => {
 		ws.send(received_temperature);
-		console.log(`Message ${received_temperature} sent via websocekt`);
+		console.log(`Message ${received_temperature} sent via websocket`);
 	},30000);
-});
-
-server.on('message', (msg) => {
-  console.log('Received settings from frontend...');
-  fs.writeFileSync(filename, JSON.stringify(msg));
 });
 
 mqtt_client.on('connect', () => {
