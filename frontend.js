@@ -98,10 +98,6 @@ setInterval(() => {
                 };
         }
     }
-    if((temp_to_reach <= current_temperature) && heating==1) {
-        $('#on').empty(); //switch off
-        heating = 0;
-    }
 }, 20000);
 
 //clock and calendar functions
@@ -212,7 +208,7 @@ $('#prog').on('click', () => {
     active = 'prog';
 });
 
-$('#increase_af').on('click', () => {
+/*$('#increase_af').on('click', () => {
     clearTimeout(timer);
     flag = 1;
     if(!$('#temperature_af').hasClass('text-primary'))
@@ -286,4 +282,4 @@ $('input[type="range"]').on('input', (event) => {
     let elem = event.target;
     let id = elem.getAttribute('data-id');
     $('#' + id).text($('#' + elem.id).val().toString() + ' °C');
-  });
+  });*/
