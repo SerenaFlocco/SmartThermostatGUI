@@ -1,8 +1,6 @@
 let day_array = new Array(24);
 
-day_array.forEach((element) => {
-    element = 18.0;
-});
+day_array.fill(18.0);
 
 var settings = {
     mode: '',
