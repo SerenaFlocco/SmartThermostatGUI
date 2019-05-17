@@ -188,7 +188,7 @@ wsc.onmessage = (msg) => {
         console.log(`received ${msg.data} from websocket`);
         settings.current_temperature = Number.parseFloat(msg.data);
         wsc.send(JSON.stringify(settings));
-        if($('#loader').length)
+        if($('#loader').length && msg.data != 'No json available')
             $('#loader').remove();
         if(flag == 0)
             $('#temperature').text(settings.current_temperature.toFixed(1) + "°C");
