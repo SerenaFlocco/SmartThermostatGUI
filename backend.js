@@ -61,7 +61,7 @@ server.on('connection', (ws) => {
       ws.send('No json available');
     }
   } catch(err) {
-    console.error(err)
+    console.error(err);
   }
     var topic_id = setInterval(() => {
 		ws.send(received_temperature);

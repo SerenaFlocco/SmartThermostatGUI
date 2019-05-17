@@ -1,32 +1,37 @@
-/**
- * Web socket client: when a web socket msg is received from the backend-->update the temperature value
- * on index.html
- */
+let day_array = new Array(24);
+
+day_array.forEach((element) => {
+    element = 18.0;
+});
+
+var settings = {
+    mode: '',
+    temp_to_reach: 0.0,
+    last_man_temperature: 18.0,
+    current_temperature: 18.0,
+    antifreeze_temp: 10.0,
+    season: 'winter',
+    heating: 0,
+    cooling: 0,
+    weekend: {from: parseDate('Friday', '7:00', 'p.m.'), to: parseDate('Sunday', '7:00', 'p.m.'), enabled: 0},
+    program: {
+        monday: day_array,
+        tuesday: day_array,
+        wednesday: day_array,
+        thursday: day_array,
+        friday: day_array,
+        saturday: day_array,
+        sunday: day_array,
+    }
+}
 
 const wsc = new WebSocket('ws://localhost:8080');
-//active contains the last pressed button, i.e. the current active mode in the 
-//thermostat: can be 'man', 'prog', 'off', 'antifreeze' or 'weekend'
-var active = '';
-//variable in wich the last temperature set manually is stored: it is set to 18 by default
-var last_man_temperature = 18.0;
-//variable which contains the value of the temperature to be reached
-var temp_to_reach = 0.0;
-//variable containing the current temperature value received by the sensor
-var current_temperature = 0.0;
-//antifreeze temperature, set to 10.0°C by default
-var antifreeze_temp = 10.0;
-//variable which registers if the heating system is on or off: it is 0 if it's off, 1 otherwise
-var heating = 0;
-//variable which registers if the cooling system is on or off: it is 0 if it's off, 1 otherwise
-var cooling = 0;
 //flag to change temperature shown during manual setting
 var flag = 0;
-//it can be 'summer' or 'winter' ('winter' is set by default)
-var season = 'winter';
 //timer used when the temperature is increased or decreased
 var timer;
-//parameters for the weekend mode; this are the default value
-var weekend =  {from: parseDate('Friday', '7:00', 'p.m.'), to: parseDate('Sunday', '7:00', 'p.m.')};
+//var to keep the count of messages received from the backend
+var counter = 0;
 
 function parseDay(day) {
     switch(day) {
@@ -62,20 +67,48 @@ function parseDate(day, time, spec) {
     return mydate;
 }
 
+function getDailyProg(day) {
+    switch(day) {
+        case 'Monday': return settings.program.monday;
+        case 'Tuesday': return settings.program.tuesday;
+        case 'Wednesday': return settings.program.wednesday;
+        case 'Thursday': return settings.program.thursday;
+        case 'Friday': return settings.program.friday;
+        case 'Saturday': return settings.program.saturday;
+        case 'Friday': return settings.program.sunday;
+    }
+}
+
+function getDay(number) {
+    switch(number) {
+        case 1: return settings.program.monday;
+        case 2: return settings.program.tuesday;
+        case 3: return settings.program.wednesday;
+        case 4: return settings.program.thursday;
+        case 5: return settings.program.friday;
+        case 6: return settings.program.saturday;
+        case 7: return settings.program.sunday;
+    }
+}
+
 //check periodically if the set temperature is greater than the current one: 
 //if yes switch on the heating system
 setInterval(() => {
-    if(active != 'off' && flag == 0) {
-        switch(season) {
+    if(settings.mode != 'off' && flag == 0) {
+        switch(settings.season) {
             case 'winter':
-                if((temp_to_reach > current_temperature) && season == 'winter' && heating == 0) {
+                if((settings.temp_to_reach > settings.current_temperature) && settings.season == 'winter' && settings.heating == 0) {
                     $('#on').text('whatshot'); //switch on
-                    heating = 1;
+                    settings.heating = 1;
+                    console.log('Sending settings to backend...');
+                    wsc.send(settings); //check if it works
                 };
             case 'summer':
-                if((temp_to_reach < current_temperature) && season == 'summer' && cooling == 0) {
+                if((settings.temp_to_reach < settings.current_temperature) && settings.season == 'summer' && settings.cooling == 0) {
                     $('#on').text('toys'); //switch on
-                    cooling = 1;
+                    settings.cooling = 1;
+                    console.log('Sending settings to backend...');
+                    wsc.send(settings);
                 };
         }
     }
@@ -84,17 +117,21 @@ setInterval(() => {
 //check periodically if the set temperature is less or equal than the current one: 
 //if yes switch off the heating system
 setInterval(() => {
-    if(active != 'off' && flag == 0) {
-        switch(season) {
+    if(settings.mode != 'off' && flag == 0) {
+        switch(settings.season) {
             case 'winter':
-                if((temp_to_reach <= current_temperature) && heating==1) {
+                if((settings.temp_to_reach <= settings.current_temperature) && settings.heating==1) {
                     $('#on').empty(); //switch off
-                    heating = 0;
+                    settings.heating = 0;
+                    console.log('Sending settings to backend...');
+                    wsc.send(settings);
                 };
             case 'summer':
-                if((temp_to_reach >= current_temperature) && cooling == 1) {
+                if((settings.temp_to_reach >= settings.current_temperature) && settings.cooling == 1) {
                     $('#on').empty(); //switch off
-                    cooling = 0;
+                    settings.cooling = 0;
+                    console.log('Sending settings to backend...');
+                    wsc.send(settings);
                 };
         }
     }
@@ -115,6 +152,28 @@ setInterval(() => {
     $('#readOnlyInput2').val(date.toLocaleTimeString());
 }, 1000);
 
+//Check if weekend mode is enabled
+if(settings.weekend.enabled == 1) {
+    setInterval(() => {
+        if(date >= settings.weekend.from && date <= settings.weekend.to)
+                settings.mode = 'off';
+            else {
+                settings.mode = 'prog';
+            }
+            wsc.send(settings);
+    }, 3600000);
+}
+
+//If mode is 'prog', change temp_to_reach based on the program settings
+if(settings.mode == 'prog') {
+    setInterval(() => {
+        let progarray = getDay(date.getDay);
+        let index = date.getHours();
+        settings.temp_to_reach = progarray[index];
+        wsc.send(settings);
+    }, 900000);     
+}
+
 //WebSocket communication with the backend
 wsc.onopen = () => {
     console.log('Web Socket client waiting for data from server on port 8080...');
@@ -122,22 +181,32 @@ wsc.onopen = () => {
 
 //When a new temperature is received, update the html page
 wsc.onmessage = (msg) => {
-    console.log(`received ${msg.data} from websocket`);
-    current_temperature = Number.parseFloat(msg.data);
-    if($('#loader').length)
-        $('#loader').remove();
-    if(flag == 0)
-        $('#temperature').text(current_temperature.toFixed(1) + "°C");
+    if(counter == 0) {
+        if(msg.data != 'No json available')
+            settings = msg.data;
+    }
+    else {
+        counter++;
+        console.log(`received ${msg.data} from websocket`);
+        settings.current_temperature = Number.parseFloat(msg.data);
+        wsc.send(settings);
+        if($('#loader').length)
+            $('#loader').remove();
+        if(flag == 0)
+            $('#temperature').text(settings.current_temperature.toFixed(1) + "°C");
+    }
 };
 
 //When mode is 'man', check the temperature periodically to switch on/off the heating system
 $('#man').on('click', () => {
-    active = 'man';
+    settings.mode = 'man';
+    console.log('Sending settings to backend...');
+    wsc.send(settings);
 });
 
 //increase of 0.1 the value of the current temperature when + is clicked
 $('#increase').on('click', () => {
-    if(active == 'man') {
+    if(settings.mode == 'man') {
         clearTimeout(timer);
         flag = 1;
         if(!$('#temperature').hasClass('text-primary'))
@@ -147,20 +216,22 @@ $('#increase').on('click', () => {
             // reset CSS
             $('#temperature').removeClass('text-primary');
             //reset temperature
-            if(current_temperature != 0.0)
-                $('#temperature').text(current_temperature.toFixed(1) + "°C");
+            if(settings.current_temperature != 0.0)
+                $('#temperature').text(settings.current_temperature.toFixed(1) + "°C");
             //reset flag
             flag = 0;
-            temp_to_reach = last_man_temperature;
+            settings.temp_to_reach = settings.last_man_temperature;
+            console.log('Sending settings to backend...');
+            wsc.send(settings);
         }, 10000);
-        last_man_temperature += 0.1;
-        $('#temperature').text(last_man_temperature.toFixed(1) + "°C"); //round to first decimal digit
+        settings.last_man_temperature += 0.1;
+        $('#temperature').text(settings.last_man_temperature.toFixed(1) + "°C"); //round to first decimal digit
     }
 });
 
 //decrease of 0.1 the value of the current temperature when - is clicked
 $('#decrease').on('click', () => {
-    if(active == 'man') {
+    if(settings.mode == 'man') {
         clearTimeout(timer);
         flag = 1;
         if(!$('#temperature').hasClass('text-primary'))
@@ -170,116 +241,50 @@ $('#decrease').on('click', () => {
             // reset CSS
             $('#temperature').removeClass('text-primary');
             //reset temperature
-            if(current_temperature != 0.0)
-                $('#temperature').text(current_temperature.toFixed(1) + "°C");
+            if(settings.current_temperature != 0.0)
+                $('#temperature').text(settings.current_temperature.toFixed(1) + "°C");
             //reset flag
             flag = 0;
-            temp_to_reach = last_man_temperature;
+            settings.temp_to_reach = settings.last_man_temperature;
+            console.log('Sending settings to backend...');
+            wsc.send(settings);
         }, 10000);
-        last_man_temperature -= 0.1;
-        $('#temperature').text(last_man_temperature.toFixed(1) + "°C"); //round to first decimal digit
+        settings.last_man_temperature -= 0.1;
+        $('#temperature').text(settings.last_man_temperature.toFixed(1) + "°C"); //round to first decimal digit
     }
 });
 
 $('#off').on('click', () => {
-    active = 'off';
+    settings.mode = 'off';
     $('#on').empty();
-    heating = 0;
-    cooling = 0;
+    settings.heating = 0;
+    settings.cooling = 0;
+    console.log('Sending settings to backend...');
+    wsc.send(settings);
 });
 
 $('#winter').on('click', () => {
-    season = 'winter';
-    if(cooling == 1) {
+    settings.season = 'winter';
+    if(settings.cooling == 1) {
         $('#on').empty();
-        cooling = 0;
+        settings.cooling = 0;
     }
+    console.log('Sending settings to backend...');
+    wsc.send(settings);
 });
 
 $('#summer').on('click', () => {
-    season = 'summer';
-    if(heating == 1) {
+    settings.season = 'summer';
+    if(settings.heating == 1) {
         $('#on').empty();
-        heating = 0;
+        settings.heating = 0;
     }
+    console.log('Sending settings to backend...');
+    wsc.send(settings);
 });
 
 $('#prog').on('click', () => {
-    active = 'prog';
+    settings.mode = 'prog';
+    console.log('Sending settings to backend...');
+    wsc.send(settings);
 });
-
-/*$('#increase_af').on('click', () => {
-    clearTimeout(timer);
-    flag = 1;
-    if(!$('#temperature_af').hasClass('text-primary'))
-        $('#temperature_af').addClass('text-primary');
-    timer = setTimeout(() => {
-        console.log('Reset css and temperature.');
-        // reset CSS
-        $('#temperature_af').removeClass('text-primary');
-        //reset flag
-        flag = 0;
-    }, 10000);
-    let tmp = Number.parseFloat($('#temperature_af').text());
-    tmp += 0.1;
-    $('#temperature_af').text(tmp.toFixed(1) + "°C"); //round to first decimal digit
-});
-
-$('#decrease_af').on('click', () => {
-    clearTimeout(timer);
-    flag = 1;
-    if(!$('#temperature_af').hasClass('text-primary'))
-        $('#temperature_af').addClass('text-primary');
-    timer = setTimeout(() => {
-        console.log('Reset css and temperature.');
-        // reset CSS
-        $('#temperature_af').removeClass('text-primary');
-        //reset flag
-        flag = 0;
-    }, 10000);
-    let tmp = Number.parseFloat($('#temperature_af').text());
-    tmp -= 0.1;
-    $('#temperature_af').text(tmp.toFixed(1) + "°C"); //round to first decimal digit
-});
-
-$('#conf_antifreeze').on('click', () => {
-    antifreeze_temp = Number.parseFloat($('#temperature_af').text());
-    if($('#optionsRadios5').prop('checked')) {
-        active = 'antifreeze';
-        temp_to_reach = antifreeze_temp;
-    }
-    else active = 'prog';
-});
-
-$('#conf_weekend').on('click', () => {
-    let day1 = $('#weekend_day1').children("option:selected").text();
-    let time1 = $('#weekend_time1').children("option:selected").text();
-    let spec1;
-    if($('#optionsRadios7').prop('checked'))
-        spec1 = 'a.m.';
-    else spec1 = 'p.m.';
-    weekend.from = parseDate(day1, time1, spec1);
-    let day2 = $('#weekend_day2').children("option:selected").text();
-    let time2 = $('#weekend_time2').children("option:selected").text();
-    let spec2;
-    if($('#optionsRadios9').prop('checked'))
-        spec2 = 'a.m.';
-    else spec2 = 'p.m.';
-    weekend.to = parseDate(day2, time2, spec2);
-    if($('#optionsRadios11').prop('checked')) {
-        let myinterval = setInterval(() => {
-           if(date >= weekend.from && date <= weekend.to)
-                active = 'off';
-            else {
-                active = 'prog';
-                clearInterval(myinterval);
-            }
-        }, 60000);
-    }
-});
-
-$('input[type="range"]').on('input', (event) => {
-    let elem = event.target;
-    let id = elem.getAttribute('data-id');
-    $('#' + id).text($('#' + elem.id).val().toString() + ' °C');
-  });*/

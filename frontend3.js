@@ -67,6 +67,19 @@ function parseDate(day, time, spec) {
     return mydate;
 }
 
+function getHour(mydate) {
+    let myhour = mydate.getHours();
+    if(myhour >= 13)
+        myhour -= 12;
+    return myhour;
+}
+
+function getSpec(mydate) {
+    if(mydate.getHours() >= 13)
+        return 'p.m.';
+    else return 'a.m.';
+}
+
 //clock and calendar functions
 let date = new Date();
 $('#readOnlyInput1').val(date.toDateString());
@@ -101,52 +114,39 @@ wsc.onmessage = (msg) => {
     }
 };
 
-$('#temperature_af').text(settings.antifreeze_temp.toFixed(1));
+$('#weekend_day1').val(settings.weekend.from.getDay());
+$('#weekend_time1').val(getHour(settings.weekend.from));
+if(getSpec(settings.weekend.from) == 'a.m')
+    $('[name="optionsRadios4"]:checked').val('option7');
+else $('[name="optionsRadios4"]:checked').val('option8');
 
-if(settings.mode != 'antifreeze')
-    $('[name="optionsRadios3"]:checked').val('option6');
-else $('[name="optionsRadios3"]:checked').val('option5');
+$('#weekend_day2').val(settings.weekend.to.getDay());
+$('#weekend_time2').val(getHour(settings.weekend.to));
+if(getSpec(settings.weekend.to) == 'a.m')
+    $('[name="optionsRadios5"]:checked').val('option9');
+else $('[name="optionsRadios5"]:checked').val('option10');
 
-$('#increase_af').on('click', () => {
-    clearTimeout(timer);
-    flag = 1;
-    if(!$('#temperature_af').hasClass('text-primary'))
-        $('#temperature_af').addClass('text-primary');
-    timer = setTimeout(() => {
-        console.log('Reset css and temperature.');
-        // reset CSS
-        $('#temperature_af').removeClass('text-primary');
-        //reset flag
-        flag = 0;
-    }, 10000);
-    let tmp = Number.parseFloat($('#temperature_af').text());
-    tmp += 0.1;
-    $('#temperature_af').text(tmp.toFixed(1) + "°C"); //round to first decimal digit
-});
+if(settings.weekend.enabled == 0)
+    $('[name="optionsRadios6"]:checked').val('option12');
+else $('[name="optionsRadios6"]:checked').val('option11');
 
-$('#decrease_af').on('click', () => {
-    clearTimeout(timer);
-    flag = 1;
-    if(!$('#temperature_af').hasClass('text-primary'))
-        $('#temperature_af').addClass('text-primary');
-    timer = setTimeout(() => {
-        console.log('Reset css and temperature.');
-        // reset CSS
-        $('#temperature_af').removeClass('text-primary');
-        //reset flag
-        flag = 0;
-    }, 10000);
-    let tmp = Number.parseFloat($('#temperature_af').text());
-    tmp -= 0.1;
-    $('#temperature_af').text(tmp.toFixed(1) + "°C"); //round to first decimal digit
-});
-
-$('#conf_antifreeze').on('click', () => {
-    settings.antifreeze_temp = Number.parseFloat($('#temperature_af').text());
-    if($('#optionsRadios5').prop('checked')) {
-        settings.mode = 'antifreeze';
-        settings.temp_to_reach = settings.antifreeze_temp;
-    }
-    else settings.mode = 'prog';
+$('#conf_weekend').on('click', () => {
+    let day1 = $('#weekend_day1').children("option:selected").text();
+    let time1 = $('#weekend_time1').children("option:selected").text();
+    let spec1;
+    if($('#optionsRadios7').prop('checked'))
+        spec1 = 'a.m.';
+    else spec1 = 'p.m.';
+    settings.weekend.from = parseDate(day1, time1, spec1);
+    let day2 = $('#weekend_day2').children("option:selected").text();
+    let time2 = $('#weekend_time2').children("option:selected").text();
+    let spec2;
+    if($('#optionsRadios9').prop('checked'))
+        spec2 = 'a.m.';
+    else spec2 = 'p.m.';
+    settings.weekend.to = parseDate(day2, time2, spec2);
+    if($('#optionsRadios11').prop('checked')) 
+        settings.weekend.enabled = 1;
+    else settings.weekend.enabled = 0;
     wsc.send(settings);
 });

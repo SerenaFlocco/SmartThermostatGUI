@@ -67,6 +67,27 @@ function parseDate(day, time, spec) {
     return mydate;
 }
 
+function getDailyProg(day) {
+    switch(day) {
+        case 'Monday': return settings.program.monday;
+        case 'Tuesday': return settings.program.tuesday;
+        case 'Wednesday': return settings.program.wednesday;
+        case 'Thursday': return settings.program.thursday;
+        case 'Friday': return settings.program.friday;
+        case 'Saturday': return settings.program.saturday;
+        case 'Friday': return settings.program.sunday;
+    }
+}
+
+//Take the array and fill the sliders
+function fillSliders(myarray) {
+    let index = 0;
+    $('input[type="range"]').forEach((elem) => {
+        elem.val(myarray[index]);
+        index++;
+    });
+}
+
 //clock and calendar functions
 let date = new Date();
 $('#readOnlyInput1').val(date.toDateString());
@@ -101,52 +122,38 @@ wsc.onmessage = (msg) => {
     }
 };
 
-$('#temperature_af').text(settings.antifreeze_temp.toFixed(1));
+$('input[type="range"]').on('input', (event) => {
+    let elem = event.target;
+    let id = elem.getAttribute('data-id');
+    $('#' + id).text($('#' + elem.id).val().toString() + ' °C');
+  });
 
-if(settings.mode != 'antifreeze')
-    $('[name="optionsRadios3"]:checked').val('option6');
-else $('[name="optionsRadios3"]:checked').val('option5');
+let day = $('#day').text();
+let myarray = getDailyProg(day);
+fillSliders(myarray);
 
-$('#increase_af').on('click', () => {
-    clearTimeout(timer);
-    flag = 1;
-    if(!$('#temperature_af').hasClass('text-primary'))
-        $('#temperature_af').addClass('text-primary');
-    timer = setTimeout(() => {
-        console.log('Reset css and temperature.');
-        // reset CSS
-        $('#temperature_af').removeClass('text-primary');
-        //reset flag
-        flag = 0;
-    }, 10000);
-    let tmp = Number.parseFloat($('#temperature_af').text());
-    tmp += 0.1;
-    $('#temperature_af').text(tmp.toFixed(1) + "°C"); //round to first decimal digit
+$('#day').on('change', () => {
+    let myday = $('#day').text();
+    let myarray = getDailyProg(myday);
+    fillSliders(myarray);
 });
 
-$('#decrease_af').on('click', () => {
-    clearTimeout(timer);
-    flag = 1;
-    if(!$('#temperature_af').hasClass('text-primary'))
-        $('#temperature_af').addClass('text-primary');
-    timer = setTimeout(() => {
-        console.log('Reset css and temperature.');
-        // reset CSS
-        $('#temperature_af').removeClass('text-primary');
-        //reset flag
-        flag = 0;
-    }, 10000);
-    let tmp = Number.parseFloat($('#temperature_af').text());
-    tmp -= 0.1;
-    $('#temperature_af').text(tmp.toFixed(1) + "°C"); //round to first decimal digit
-});
-
-$('#conf_antifreeze').on('click', () => {
-    settings.antifreeze_temp = Number.parseFloat($('#temperature_af').text());
-    if($('#optionsRadios5').prop('checked')) {
-        settings.mode = 'antifreeze';
-        settings.temp_to_reach = settings.antifreeze_temp;
+$('#save').on('click', () => {
+    let day = $('#day').text();
+    let mydayarray = new Array(24);
+    let index = 0;
+    $('input[type="range"]').forEach((elem) => {
+        mydayarray[index] = elem.val();
+        index++;
+    });
+    switch(day) {
+        case 'Monday': settings.program.monday = mydayarray;
+        case 'Tuesday': settings.program.tuesday = mydayarray;
+        case 'Wednesday': settings.program.wednesday = mydayarray;
+        case 'Thursday': settings.program.thursday = mydayarray;
+        case 'Friday': settings.program.friday = mydayarray;
+        case 'Saturday': settings.program.saturday = mydayarray;
+        case 'Friday': settings.program.sunday = mydayarray;
     }
-    else settings.mode = 'prog';
     wsc.send(settings);
 });
