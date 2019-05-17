@@ -77,15 +77,6 @@ function getDailyProg(day) {
     }
 }
 
-//Take the array and fill the sliders
-function fillSliders(myarray) {
-    let index = 0;
-    $('input[type="range"]').forEach((elem) => {
-        elem.val(myarray[index]);
-        index++;
-    });
-}
-
 //clock and calendar functions
 let date = new Date();
 $('#readOnlyInput1').val(date.toDateString());
@@ -109,15 +100,15 @@ wsc.onopen = () => {
 //When a new temperature is received, update the html page
 wsc.onmessage = (msg) => {
     if(counter == 0 && msg.data != 'No json available') {
-        settings = JSON.parse(msg);
-        console.log(msg);
+        settings = JSON.parse(msg.data);
+        console.log(settings);
     }
     else {
-        counter++;
         console.log(`received ${msg.data} from websocket`);
         settings.current_temperature = Number.parseFloat(msg.data);
         wsc.send(JSON.stringify(settings));
     }
+    counter++;
 };
 
 $('input[type="range"]').on('input', (event) => {
@@ -128,19 +119,30 @@ $('input[type="range"]').on('input', (event) => {
 
 let day = $('#day').text();
 let myarray = getDailyProg(day);
-fillSliders(myarray);
+let index = 0;
+let sliders = $('input[type="range"]');
+$.each(sliders, (elem) => {
+	elem.val(myarray[index]);
+	index++;
+});
 
 $('#day').on('change', () => {
     let myday = $('#day').text();
     let myarray = getDailyProg(myday);
-    fillSliders(myarray);
+    let index = 0;
+    let sliders = $('input[type="range"]');
+    $.each(sliders, (elem) => {
+	elem.val(myarray[index]);
+	index++;
+    });
 });
 
 $('#save').on('click', () => {
     let day = $('#day').text();
     let mydayarray = new Array(24);
     let index = 0;
-    $('input[type="range"]').forEach((elem) => {
+    let sliders = $('input[type="range"]');
+    $.each(sliders, (elem) => {
         mydayarray[index] = elem.val();
         index++;
     });

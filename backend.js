@@ -67,7 +67,7 @@ server.on('connection', (ws) => {
 
 	ws.on('message', (msg) => {
 		console.log('Received settings from frontend...');
-		let data = JSON.parse(msg);
+		let data = JSON.parse(msg.data);
 		console.log(data);
 		fs.writeFileSync(filename, JSON.stringify(data));
 	});

@@ -181,20 +181,21 @@ wsc.onopen = () => {
 wsc.onmessage = (msg) => {
     if(counter == 0) {
         if(msg.data != 'No json available') {
-            settings = JSON.parse(msg);
-            console.log(msg);
+            settings = JSON.parse(msg.data);
+            console.log(typeof(settings));
         }
     }
     else {
-        counter++;
         console.log(`received ${msg.data} from websocket`);
         settings.current_temperature = Number.parseFloat(msg.data);
+	console.log(settings.current_temperature);
         wsc.send(JSON.stringify(settings));
         if($('#loader').length)
             $('#loader').remove();
         if(flag == 0)
             $('#temperature').text(settings.current_temperature.toFixed(1) + "°C");
     }
+    counter++;
 };
 
 //When mode is 'man', check the temperature periodically to switch on/off the heating system
