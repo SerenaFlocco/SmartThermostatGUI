@@ -1,8 +1,8 @@
 let day_array = new Array(24);
 
-day_array.forEach((element) => {
-    element = 18.0;
-});
+day_array.fill(18.0);
+
+console.log(day_array);
 
 var settings = {
     mode: '',
@@ -107,7 +107,7 @@ setInterval(() => {
                     $('#on').empty(); //switch off
                     settings.cooling = 0;
                     console.log('Sending settings to backend...');
-                    wsc.send(JSON.stringify(settings));
+                    wsc.send(BSON.stringify(settings));
                 };
         }
     }
@@ -136,8 +136,8 @@ wsc.onopen = () => {
 //When a new temperature is received, update the html page
 wsc.onmessage = (msg) => {
     if(counter == 0 && msg.data != 'No json available') {
-            settings = msg.data;
-	    console.log(msg.data);
+            settings = JSON.parse(msg);
+	    console.log(msg);
     }
     else {
         counter++;

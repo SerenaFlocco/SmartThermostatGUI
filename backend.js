@@ -55,7 +55,7 @@ server.on('connection', (ws) => {
       let rawdata = fs.readFileSync(filename);  
       let settings = JSON.parse(rawdata); 
       console.log('Sending settings to frontend...');
-      ws.send(settings); //check if it can be send as an object
+      ws.send(JSON.stringify(settings)); //check if it can be send as an object
     }
     else {
       console.log('Sending negative response to frontend...');
@@ -67,8 +67,9 @@ server.on('connection', (ws) => {
 
 	ws.on('message', (msg) => {
 		console.log('Received settings from frontend...');
-		console.log(msg);
-		fs.writeFileSync(filename, JSON.stringify(msg));
+		let data = JSON.parse(msg);
+		console.log(data);
+		fs.writeFileSync(filename, JSON.stringify(data));
 	});
 
     var topic_id = setInterval(() => {
