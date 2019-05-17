@@ -179,16 +179,18 @@ wsc.onopen = () => {
 
 //When a new temperature is received, update the html page
 wsc.onmessage = (msg) => {
-    if(counter == 0 && msg.data != 'No json available') {
-        settings = JSON.parse(msg);
-        console.log(msg);
+    if(counter == 0) {
+        if(msg.data != 'No json available') {
+            settings = JSON.parse(msg);
+            console.log(msg);
+        }
     }
     else {
         counter++;
         console.log(`received ${msg.data} from websocket`);
         settings.current_temperature = Number.parseFloat(msg.data);
         wsc.send(JSON.stringify(settings));
-        if($('#loader').length && msg.data != 'No json available')
+        if($('#loader').length)
             $('#loader').remove();
         if(flag == 0)
             $('#temperature').text(settings.current_temperature.toFixed(1) + "°C");
