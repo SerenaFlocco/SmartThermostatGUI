@@ -4,7 +4,8 @@
   "description": "demo for raspberry pi web interface",
   "main": "backend.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node backend.js",
+    "dev": "nodemon backend.js"
   },
   "author": "",
   "license": "ISC",

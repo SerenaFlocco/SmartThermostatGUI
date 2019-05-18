@@ -4,15 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link rel="stylesheet" href="frontend/css/bootstrap.css" media="screen">
-    <link rel="stylesheet" href="frontend/solar/custom.min.css">
-	<link rel="stylesheet" href="frontend/font/font.css">
-	<link rel="stylesheet" href="frontend/css/custom.css">
-	
+    <link rel="stylesheet" href="css/bootstrap.css" media="screen">
+    <link rel="stylesheet" href="solar/custom.min.css">
+	<link rel="stylesheet" href="font/font.css">
+	<link rel="stylesheet" href="css/custom.css">
+
   </head>
-  
+
   <body>
-  
+
 	<div class="navbar navbar-expand fixed-top navbar-dark bg-dark">
       <div class="container">
 		<div class="navbar-brand">SmartNSG</div>
@@ -21,17 +21,20 @@
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Options <span class="caret"></span></a>
 			  <div class="dropdown-menu" aria-labelledby="download">
-          <a class="dropdown-item" href="prog_page.html" id="program_settings">Program settings</a>
+          <a class="dropdown-item" href="prog" id="program_settings">Program settings</a>
 					<div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="weekend_page.html" id="weekend">Weekend energy saving</a>
+          <a class="dropdown-item" href="weekend" id="weekend">Weekend energy saving</a>
 					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" href="antifreeze_page.html" id="antifreeze_page">Antifreeze</a>
+					<a class="dropdown-item" href="antifreeze" id="antifreeze_page">Antifreeze</a>
 					<div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#">Start remote control</a>
 					<div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#">ESP32 peering</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="wifi">Wifi settings</a>
 					<div class="dropdown-divider"></div>
           <a class="dropdown-item" href="poweroff">Switch off</a>
+
 			  </div>
 			</li>
 		  </ul>
@@ -46,21 +49,21 @@
 		</div>
 	  </div>
 	</div>
-	
+
 	 <!-- Begin Page Content -->
     <div class="container">
 
         <div class="row" id="main">
-		
+
 		 			<div class="col-sm-1"></div>
-		
+
          	<div class="col-sm-3">
 						<div class="card border-secondary mb-3"> <!--style="width: 16rem;">-->
 							<div class="card-header">Power consumption</div>
 							<div class="card-body">
 								<div class="row">
 									<div class="col" style="float:center;">
-										<img class="card-img-top" src="frontend/cons4.png">
+										<img class="card-img-top" src="cons4.png">
 									</div>
 								</div>
 								<div class="row">
@@ -71,9 +74,9 @@
 							</div>
 					</div>
 		  	</div>
-		  
+
 		  	<div class="col-sm-1"></div>
-		  
+
 		  	<div class="col-sm-6">
 					<div class="card border-secondary mb-3"> <!--style="width: 24rem;">-->
 						<div class="card-header">Temperature</div>
@@ -113,11 +116,11 @@
 				    </div>
 		    	</div>
 		  	</div>
-		  
+
 		  	<div class="col-sm-1"></div>
-			
+
 			</div>
-			
+
 			<!--<div class="row" id="secondary">
 			<div class="col-sm-2"></div>
 			<div class="col-8">
@@ -280,7 +283,7 @@
 			</div>
 			<div class="col-sm-2"></div>
 		</div>
-	
+
 	<div class="row" id="weekend_settings">
 			<div class="col-sm-2"></div>
 			<div class="col-8">
@@ -433,7 +436,7 @@
 				</div>
 			<div class="col-sm-2"></div>
 		</div>
-	
+
 	<div class="row" id="antifreeze_settings">
 			<div class="col-sm-3"></div>
 			<div class="col-6">
@@ -470,11 +473,11 @@
 		</div>-->
 
 		</div>
-  
-    <script src="frontend/js/jquery.min.js"></script>
-    <script src="frontend/js/popper.min.js"></script>
-    <script src="frontend/js/bootstrap.min.js"></script>
-		<script src="frontend/js/custom.js"></script>
-		<script src="frontend.js"></script>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+		<script src="js/custom.js"></script>
+		<script src="js"></script>
   </body>
 </html>

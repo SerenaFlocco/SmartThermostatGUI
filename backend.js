@@ -1,59 +1,75 @@
 #!/usr/bin/env node
 
-/** 
+/**
  *  WebSocket server: listen on mqtt topic-->when a msg is received, send it to the client
 */
 'use strict';
-const express = require('express');
-const fs = require('fs');
-const filename = 'settings.json';
-var mqtt = require('mqtt');
-var exec = require('child_process').exec;
-const app = express();
-var application_root = __dirname;
-var mqtt_client  = mqtt.connect('mqtt://localhost');
-const wss = require('ws').Server;
-var server = new wss({port: 8080});
+const express   = require('express');
+const app       = express();
+const path      = require('path');
+const fs        = require('fs');
+const mqtt      = require('mqtt');
+const exec      = require('child_process').exec;
+const wss       = require('ws').Server;
 
-app.use('frontend/css/', express.static(__dirname + '/frontend/css/'));
-app.use('frontend/font/', express.static(__dirname + '/frontend/font/'));
-app.use('frontend/iconfont/', express.static(__dirname + '/frontend/iconfont/'));
-app.use('frontend/js/', express.static(__dirname + '/frontend/js/'));
-app.use('frontend/scss/', express.static(__dirname + '/frontend/scss/'));
-app.use('frontend/solar/', express.static(__dirname + '/frontend/solar/'));
-app.use(express.static(application_root));
+const filename    = 'settings.json';
+var mqtt_client   = mqtt.connect('mqtt://localhost');
+var server        = new wss({port: 8080});
+var received_temperature = '';
 
+
+/**
+ *  Set a static folder
+ *  from the official documentation
+ * `Static files are files that clients download as they are from the server`
+ */
+app.use(express.static(path.join(__dirname, 'frontend')))
+
+
+// pages routing
+
+/* Home page*/
 app.get('/', (req, res) => {
-    res.sendFile('/index.html', {application_root});
+  res.sendFile(path.join(__dirname,'frontend','index.html'))
 });
 
-app.get('/antifreeze_page.html', (req, res) => {
-  res.sendFile('/antifreeze_page.html', {application_root});
+/* antifreeze page settings*/
+app.get('/antifreeze', (req, res) => {
+  res.sendFile(path.join(__dirname,'frontend','antifreeze_page.html'))
 });
 
-app.get('/weekend_page.html', (req, res) => {
-  res.sendFile('/weekend_page.html', {application_root});
+/* weekend program settings*/
+app.get('/weekend', (req, res) => {
+  res.sendFile(path.join(__dirname,'frontend','weekend_page.html'))
 });
 
-app.get('/prog_page.html', (req, res) => {
-  res.sendFile('/prog_page.html', {application_root});
+/* manal program settings*/
+app.get('/prog', (req, res) => {
+  res.sendFile(path.join(__dirname,'frontend','prog_page.html'))
 });
 
+/* wifi settings*/
+app.get('/wifi', (req, res) => {
+  res.sendFile(path.join(__dirname,'frontend','wifi_page.html'))
+});
+
+/* shutdown the device*/
 app.get('/poweroff', (req,res) => {
   res.send(200);
   console.log("poweroff");
   exec(`shutdown now`,(error,stdout,stderr) =>{ callback(stdout)});
 })
 
+// start the server
 app.listen(3000, () => console.log('App listening on port 3000...'));
 
-var received_temperature = '';
+
 
 server.on('connection', (ws) => {
   try {
     if (fs.existsSync(filename)) {
-      let rawdata = fs.readFileSync(filename);  
-      let settings = JSON.parse(rawdata); 
+      let rawdata = fs.readFileSync(filename);
+      let settings = JSON.parse(rawdata);
       console.log('Sending settings to frontend...');
       ws.send(JSON.stringify(settings)); //check if it can be send as an object
     }
