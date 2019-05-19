@@ -1,0 +1,68 @@
+<div class="container">
+  <div class="row" id="main">
+    <!-- empty col -->
+    <div class="col-sm-1"/>
+    <div class="col-sm-3">
+      <div class="card border-secondary mb-3"> <!--style="width: 16rem;">-->
+        <div class="card-header">Power consumption</div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col" style="float:center;">
+                <img class="card-img-top" src="cons4.png">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col" style="float:center;">
+                <p class="text-center digital resize_font2">0,1 KWh</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- empty col -->
+      <div class="col-sm-1"/>
+      <div class="col-sm-6">
+        <div class="card border-secondary mb-3"> <!--style="width: 24rem;">-->
+          <div class="card-header">Temperature</div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col" style="text-align:right;">
+                <p class="card-text digital display-2 resize_font1" id="temperature"></p>
+              </div>
+              <div class="col" style="text-align: left;" id="loader">
+                <div class="loader"></div>
+              </div>
+              <div class="col text-center">
+                <div class="btn-group-vertical" style="width: 3rem;">
+                  <button type="button" class="btn btn-secondary" style="margin-top:15px;" id="increase">+</button>
+                  <button type="button" class="btn btn-secondary" id="decrease">-</button>
+                </div>
+              </div>
+            </div>
+          <div class="row">
+            <div class="col-sm-8 text-center">
+              <i class="material-icons" id="on"></i>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-8 text-center">
+              <!--<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">-->
+                <div class="btn-group btn-group-lg" role="group" aria-label="First group" style="margin-top:15px;">
+                  <button type="button" class="btn btn-secondary" style="text-align:center;" id="prog"><i class="material-icons">local_parking</i></button>
+                  <button type="button" class="btn btn-secondary" style="text-align:center;" id="man"><i class="material-icons">pan_tool</i></button>
+                  <button type="button" class="btn btn-secondary" style="text-align:center;" id="winter"><i class="material-icons">ac_unit</i></button>
+                  <button type="button" class="btn btn-secondary" style="text-align:center;" id="summer"><i class="material-icons">wb_sunny</i></button>
+                  <button type="button" class="btn btn-secondary" style="text-align:center;" id="off"><i class="material-icons">power_settings_new</i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- empty col -->
+      <div class="col-sm-1"></div>
+  </div>
+</div>
+
+<!-- load the script -->
+<script src="js/home.js"/>

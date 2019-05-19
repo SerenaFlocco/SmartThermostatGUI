@@ -12,11 +12,18 @@ const mqtt      = require('mqtt');
 const exec      = require('child_process').exec;
 const wss       = require('ws').Server;
 const piWifi    = require('pi-wifi');
+const exphbs    = require('express-handlebars');
 
 const filename    = 'settings.json';
 var mqtt_client   = mqtt.connect('mqtt://localhost');
 var server        = new wss({port: 8080});
 var received_temperature = '';
+
+
+// handlebars middleware
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
+
 
 
 /**
@@ -31,8 +38,8 @@ app.use(express.static(path.join(__dirname, 'frontend')))
 
 /* Home page*/
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname,'frontend','index.html'))
-});
+  res.render('index')
+})
 
 /* antifreeze page settings*/
 app.get('/antifreeze', (req, res) => {
@@ -52,12 +59,12 @@ app.get('/prog', (req, res) => {
 /* wifi settings*/
 app.get('/wifi', (req, res) => {
 
-
-  piWifi.check('myTestNetwork', function(err, result) {
+  // list all the available networks
+  piWifi.listNetworks(function(err, networksArray) {
     if (err) {
       return console.error(err.message);
     }
-    console.log(result);
+    console.log(networksArray);
   });
 
   //res.sendFile(path.join(__dirname,'frontend','wifi_page.html'))
