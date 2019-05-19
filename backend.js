@@ -66,7 +66,7 @@ app.get('/wifi', (req, res) => {
       return console.error(err.message);
     }
     console.log(networks);
-    avail_networks = networks;
+    avNetworks = networks;
   });
 
   res.render('wifi', {
