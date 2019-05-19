@@ -31,40 +31,47 @@ app.set('view engine', 'handlebars');
  *  from the official documentation
  * `Static files are files that clients download as they are from the server`
  */
-app.use(express.static(path.join(__dirname, 'frontend')))
+app.use(express.static(path.join(__dirname, 'public')))
 
 
 // pages routing
 
+/* demo page*/
+app.get('/demo', (req, res) => {res.render('demo')})
+
 /* Home page*/
-app.get('/', (req, res) => {
-  res.render('index')
-})
+app.get('/', (req, res) => {res.render('index')})
 
 /* antifreeze page settings*/
-app.get('/antifreeze', (req, res) => {
-  res.sendFile(path.join(__dirname,'frontend','antifreeze_page.html'))
-});
+app.get('/antifreeze', (req, res) => { res.render('antifreeze')});
 
-/* weekend program settings*/
-app.get('/weekend', (req, res) => {
-  res.sendFile(path.join(__dirname,'frontend','weekend_page.html'))
-});
+/* program settings*/
+app.get('/prog', (req, res) => { res.render('prog')});
+
+/* weekend program settings */
+app.get('/weekend', (req, res) => { res.render('weekend')});
 
 /* manal program settings*/
-app.get('/prog', (req, res) => {
+/*app.get('/prog', (req, res) => {
   res.sendFile(path.join(__dirname,'frontend','prog_page.html'))
-});
+});*/
 
 /* wifi settings*/
 app.get('/wifi', (req, res) => {
 
+  let avNetworks;
   // list all the available networks
-  piWifi.listNetworks(function(err, networksArray) {
+  piWifi.scan(function(err, networks) {
     if (err) {
       return console.error(err.message);
     }
-    console.log(networksArray);
+    console.log(networks);
+    avail_networks = networks;
+  });
+
+  res.render('wifi', {
+    avNetworks: avNetworks,
+    status: "undefined"
   });
 
   //res.sendFile(path.join(__dirname,'frontend','wifi_page.html'))

@@ -1,0 +1,21 @@
+<div class="row" id="weekend_settings">
+<div class="col-12">
+  <div class="card border-secondary mb-3">
+    <div class="card-header">Wifi settings</div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col">Status: <b>{{status}}</b> </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <ul class="list-group">
+            {{#each avNetworks }}
+              <li class="list-group-item"> {{this.ssid}} </li>
+            {{/each}}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
