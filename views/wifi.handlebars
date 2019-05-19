@@ -1,16 +1,14 @@
 <div class="row" id="weekend_settings">
 <div class="col-12">
-  <div class="card border-secondary mb-3">
-    <div class="card-header">Wifi</div>
-    <div class="card-body">
-      <p> Select an access point ... </p>  
-        <div class="list-group">
-          {{#each avNetworks }}
-            <a href="/connect/{{this.ssid}}" class="list-group-item list-group-item-action active">
-              {{this.ssid}}
-            </a>
-          {{/each}}
-        </div>
-    </div>
+  <h3>Wifi</h3>
+  <p> Select an access point ... </p>
+  <div class="list-group">
+    {{#each avNetworks }}
+      <a href="/connect/{{this.ssid}}" class="list-group-item list-group-item-action">
+        {{this.ssid}}
+        <span class="badge badge-primary badge-pill">{{this.signalLevel}}</span>
+      </a>
+    {{/each}}
   </div>
+</div>
 </div>
