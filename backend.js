@@ -66,15 +66,11 @@ app.get('/wifi', (req, res) => {
       return console.error(err.message);
     }
     console.log(networks);
-    avNetworks = networks;
+    res.render('wifi', {
+	avNetworks: networks,
+	status: "undefined"
+	});
   });
-
-  res.render('wifi', {
-    avNetworks: avNetworks,
-    status: "undefined"
-  });
-
-  //res.sendFile(path.join(__dirname,'frontend','wifi_page.html'))
 });
 
 /* shutdown the device*/
