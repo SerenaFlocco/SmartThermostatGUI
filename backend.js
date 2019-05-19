@@ -73,6 +73,11 @@ app.get('/wifi', (req, res) => {
   });
 });
 
+app.get('/connect/:ssid', (req, res) => {
+  let ssid = req.params.ssid;
+  res.send(ssid);
+})
+
 /* shutdown the device*/
 app.get('/poweroff', (req,res) => {
   res.send(200);
