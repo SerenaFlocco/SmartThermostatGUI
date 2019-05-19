@@ -89,7 +89,7 @@ function getDay(number) {
     }
 }
 
-//check periodically if the set temperature is greater than the current one: 
+//check periodically if the set temperature is greater than the current one:
 //if yes switch on the heating system
 setInterval(() => {
     if(settings.mode != 'off' && flag == 0) {
@@ -112,7 +112,7 @@ setInterval(() => {
     }
 }, 20000);
 
-//check periodically if the set temperature is less or equal than the current one: 
+//check periodically if the set temperature is less or equal than the current one:
 //if yes switch off the heating system
 setInterval(() => {
     if(settings.mode != 'off' && flag == 0) {
@@ -135,20 +135,6 @@ setInterval(() => {
     }
 }, 20000);
 
-//clock and calendar functions
-let date = new Date();
-$('#readOnlyInput1').val(date.toDateString());
-$('#readOnlyInput2').val(date.toLocaleTimeString());
-
-setInterval(() => {
-    date = new Date();
-    $('#readOnlyInput1').val(date.toDateString());
-}, 36000000);
-
-setInterval(() => {
-    date = new Date();
-    $('#readOnlyInput2').val(date.toLocaleTimeString());
-}, 1000);
 
 //Check if weekend mode is enabled
 if(settings.weekend.enabled == 1) {
@@ -169,7 +155,7 @@ if(settings.mode == 'prog') {
         let index = date.getHours();
         settings.temp_to_reach = progarray[index];
         wsc.send(JSON.stringify(settings));
-    }, 900000);     
+    }, 900000);
 }
 
 //WebSocket communication with the backend

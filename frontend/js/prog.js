@@ -77,21 +77,6 @@ function getDailyProg(day) {
     }
 }
 
-//clock and calendar functions
-let date = new Date();
-$('#readOnlyInput1').val(date.toDateString());
-$('#readOnlyInput2').val(date.toLocaleTimeString());
-
-setInterval(() => {
-    date = new Date();
-    $('#readOnlyInput1').val(date.toDateString());
-}, 36000000);
-
-setInterval(() => {
-    date = new Date();
-    $('#readOnlyInput2').val(date.toLocaleTimeString());
-}, 1000);
-
 //WebSocket communication with the backend
 wsc.onopen = () => {
     console.log('Web Socket client waiting for data from server on port 8080...');
@@ -126,6 +111,7 @@ $.each(sliders, (elem) => {
 	index++;
 });
 
+//TODO bug on loading settings
 $('#day').on('change', () => {
     let myday = $('#day').text();
     let myarray = getDailyProg(myday);
