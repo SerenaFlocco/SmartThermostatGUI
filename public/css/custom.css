@@ -70,7 +70,7 @@
 	.resize_font1 {
 		font-size: 65px;
 	}
-	
+
 	.resize_font2 {
 		font-size: 20px;
 	}
@@ -80,7 +80,7 @@
 	.resize_font1 {
 		font-size: 70px;
 	}
-	
+
 	.resize_font2 {
 		font-size: 30px;
 	}
@@ -90,7 +90,7 @@
 	.resize_font1 {
 		font-size: 75px;
 	}
-	
+
 	.resize_font2 {
 		font-size: 40px;
 	}
@@ -100,7 +100,7 @@
 	.resize_font1 {
 		font-size: 80px;
 	}
-	
+
 	.resize_font2 {
 		font-size: 50px;
 	}
@@ -110,3 +110,7 @@
 ::-webkit-scrollbar {
 display: none;
 }
+
+$('#password').on('focus', function() {
+    document.body.scrollTop = $(this).offset().top;
+});
