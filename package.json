@@ -17,6 +17,7 @@
     "log-timestamp": "^0.3.0",
     "mqtt": "^2.18.8",
     "node-dht-sensor": "^0.3.0",
+    "nodemon": "^1.19.0",
     "path": "^0.12.7",
     "pi-wifi": "^1.2.0",
     "requirejs": "^2.3.6"

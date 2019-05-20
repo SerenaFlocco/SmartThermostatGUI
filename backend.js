@@ -7,14 +7,12 @@
 const express   = require('express');
 const app       = express();
 const path      = require('path');
-const fs        = require('fs');
 const mqtt      = require('mqtt');
 const exec      = require('child_process').exec;
 const wss       = require('ws').Server;
 const piWifi    = require('pi-wifi');
 const exphbs    = require('express-handlebars');
-
-const filename    = 'settings.json';
+var settings    = require('./settings.json');
 var mqtt_client   = mqtt.connect('mqtt://localhost');
 var server        = new wss({port: 8080});
 var received_temperature = '';
@@ -24,7 +22,9 @@ var received_temperature = '';
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
-
+// Body Parser Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 /**
  *  Set a static folder
@@ -85,12 +85,15 @@ app.get('/poweroff', (req,res) => {
   exec(`shutdown now`,(error,stdout,stderr) =>{ callback(stdout)});
 })
 
+// Members API Routes
+app.use('/api/settings', require('./routes/api/settings'));
+
 // start the server
 app.listen(3000, () => console.log('App listening on port 3000...'));
 
 
 server.on('connection', (ws) => {
-  try {
+  /*try {
     if (fs.existsSync(filename)) {
       let rawdata = fs.readFileSync(filename);
       let settings = JSON.parse(rawdata);
@@ -110,7 +113,7 @@ server.on('connection', (ws) => {
 		let data = JSON.parse(msg.data);
 		console.log(data);
 		fs.writeFileSync(filename, JSON.stringify(data));
-	});
+	});*/
 
     var topic_id = setInterval(() => {
 		ws.send(received_temperature);
