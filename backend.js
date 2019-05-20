@@ -82,17 +82,16 @@ app.get('/wifi/:ssid', (req, res) => {
 })
 
 app.post('/connect', (req, res) => {
-
-  console.log(`SSID: ${req.body.ssid}`);
-  console.log(`SSID: ${req.body.password}`);
-
   piWifi.connect(req.body.ssid, req.body.password, function(err) {
   if (err) {
+    res.render('wifi_ssid', {
+      message: "failed to connect on " + req.body.ssid
+    })
     return console.error(err.message);
   }
   console.log('Successful connection!');
   });
-
+  res.render('index');
 })
 
 /* shutdown the device*/
