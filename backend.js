@@ -58,7 +58,6 @@ app.get('/weekend', (req, res) => { res.render('weekend')});
 
 /* wifi settings*/
 app.get('/wifi', (req, res) => {
-
   let avNetworks;
   // list all the available networks
   piWifi.scan(function(err, networks) {
