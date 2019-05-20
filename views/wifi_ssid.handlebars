@@ -1,10 +1,11 @@
 <div class="container" style="overflow-y: auto;">
   <h3>Connecting to {{ssid}}</h3>
   <div class="row">
-    <form class="form-inline">
+    <form class="form-inline"  method="POST" action="/connect">
       <div class="form-group mx-sm-3 mb-2">
         <label for="inputPassword2" class="sr-only">Password</label>
-        <input type="password" class=" use-keyboard-input form-control" id="inputPassword2" placeholder="Password">
+        <input type="hidden" id="ssid" name="ssid" value="{{ssid}}">
+        <input type="password" class=" use-keyboard-input form-control" name="password" placeholder="Password">
       </div>
       <button type="submit" class="btn btn-primary mb-2">Confirm</button>
     </form>

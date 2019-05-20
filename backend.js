@@ -23,7 +23,7 @@ var received_temperature = '';
 // handlebars middleware
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
-
+app.use(express.urlencoded());
 
 
 /**
@@ -74,11 +74,25 @@ app.get('/wifi', (req, res) => {
   });
 });
 
-app.get('/connect/:ssid', (req, res) => {
+app.get('/wifi/:ssid', (req, res) => {
   let ssid = req.params.ssid;
-  res.render('connect', {
+  res.render('wifi_ssid', {
     ssid: ssid
   })
+})
+
+app.post('/connect', (req, res) => {
+
+  console.log(`SSID: ${req.body.ssid}`);
+  console.log(`SSID: ${req.body.password}`);
+
+  piWifi.connect(req.body.ssid, req.body.password, function(err) {
+  if (err) {
+    return console.error(err.message);
+  }
+  console.log('Successful connection!');
+  });
+
 })
 
 /* shutdown the device*/
