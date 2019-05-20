@@ -65,16 +65,20 @@ app.get('/wifi', (req, res) => {
       return console.error(err.message);
     }
     console.log(networks);
+
+    // load the html page
     res.render('wifi', {
-	avNetworks: networks,
-	status: "undefined"
-	});
+	     avNetworks: networks
+    });
+
   });
 });
 
 app.get('/connect/:ssid', (req, res) => {
   let ssid = req.params.ssid;
-  res.send(ssid);
+  res.render('wifi', {
+    ssid: ssid
+  })
 })
 
 /* shutdown the device*/
