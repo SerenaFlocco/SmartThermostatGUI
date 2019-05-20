@@ -105,3 +105,8 @@
 		font-size: 50px;
 	}
 }
+
+
+::-webkit-scrollbar {
+display: none;
+}
