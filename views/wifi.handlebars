@@ -1,3 +1,4 @@
+<div class="container">
 <div class="row">
 <div class="col-12">
   <h3>Wifi</h3>
@@ -11,9 +12,16 @@
   		>
     			{{#each avNetworks }}
       				<a href="/connect/{{this.ssid}}" class="list-group-item list-group-item-action">
-        				{{this.ssid}} 
+        				{{this.ssid}}
       				</a>
     			{{/each}}
   		</div>
 </div>
 </div>
+</div>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/custom.js"></script>
+<script src="js/clockAndCalendar.js"></script>
