@@ -90,8 +90,8 @@ app.post('/connect', (req, res) => {
     return console.error(err.message);
   }
   console.log('Successful connection!');
-  });
   res.render('index');
+  });
 })
 
 /* shutdown the device*/
