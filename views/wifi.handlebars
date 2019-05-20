@@ -2,12 +2,18 @@
 <div class="col-12">
   <h3>Wifi</h3>
   <p> Select an access point ... </p>
-  <div class="list-group">
-    {{#each avNetworks }}
-      <a href="/connect/{{this.ssid}}" class="list-group-item list-group-item-action">
-        {{this.ssid}} 
-      </a>
-    {{/each}}
-  </div>
+
+  		<div class="list-group" style="
+			max-height: 260px;
+    			margin-bottom: 20px;
+    			overflow:scroll;
+    			-webkit-overflow-scrolling: touch;"
+  		>
+    			{{#each avNetworks }}
+      				<a href="/connect/{{this.ssid}}" class="list-group-item list-group-item-action">
+        				{{this.ssid}} 
+      				</a>
+    			{{/each}}
+  		</div>
 </div>
 </div>
