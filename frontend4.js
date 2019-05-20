@@ -118,7 +118,7 @@ $('input[type="range"]').on('input', (event) => {
   });
 
 let day = $('#day').text();
-let myarray = getDailyProg(day);
+var myarray = getDailyProg(day);
 let index = 0;
 let sliders = $('input[type="range"]');
 $.each(sliders, (elem) => {
@@ -128,11 +128,11 @@ $.each(sliders, (elem) => {
 
 $('#day').on('change', () => {
     let myday = $('#day').text();
-    let myarray = getDailyProg(myday);
+    var my_array = getDailyProg(myday);
     let index = 0;
     let sliders = $('input[type="range"]');
     $.each(sliders, (elem) => {
-	elem.val(myarray[index]);
+	elem.val(my_array[index]);
 	index++;
     });
 });
