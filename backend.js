@@ -76,7 +76,7 @@ app.get('/wifi', (req, res) => {
 
 app.get('/connect/:ssid', (req, res) => {
   let ssid = req.params.ssid;
-  res.render('wifi', {
+  res.render('connect', {
     ssid: ssid
   })
 })
