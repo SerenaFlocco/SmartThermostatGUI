@@ -10,52 +10,6 @@ var temp = 18.0;
 //var which stores the mode
 var mode = '';
 
-/*function parseDay(day) {
-    switch(day) {
-        case 'Monday': return 1;
-        case 'Tuesday': return 2;
-        case 'Wednesday': return 3;
-        case 'Thursday': return 4;
-        case 'Friday': return 5;
-        case 'Saturday': return 6;
-        case 'Sunday': return 7;
-    }
-}
-
-function parseTime(time, spec) {
-    if(spec == 'p.m.')
-        time += 12;
-    return time;
-}
-
-function parseDate(day, time, spec) {
-    let date = new Date();
-    let mydate = new Date();
-    let currentday = date.getDay();
-    let myday = parseDay(day);
-    let splittedtime = time.split(':');
-    if(currentday > myday)
-        mydate.setDate(date.getDate() + (currentday - myday));
-    if(currentday < myday)
-        mydate.setDate(date.getDate() - (myday - currentday));
-    mydate.setHours(parseTime(splittedtime[0], spec));
-    if(splittedtime[1] != '00')
-        mydate.setMinutes(splittedtime[1]);
-    return mydate;
-}
-
-function getDailyProg(day) {
-    switch(day) {
-        case 'Monday': return settings.program.monday;
-        case 'Tuesday': return settings.program.tuesday;
-        case 'Wednesday': return settings.program.wednesday;
-        case 'Thursday': return settings.program.thursday;
-        case 'Friday': return settings.program.friday;
-        case 'Saturday': return settings.program.saturday;
-        case 'Friday': return settings.program.sunday;
-    }
-}*/
-
 //WebSocket communication with the backend
 wsc.onopen = () => {
     console.log('Web Socket client waiting for data from server on port 8080...');
@@ -149,7 +103,7 @@ $('#increase').on('click', () => {
             flag = 0;
             //put on manual temp
             const url = 'http://localhost:3000/api/settings/manualtemp';
-            const data = '{"last_man_temperature":"' + temp.toFixed(1) + '"}';
+            const data = '{"last_man_temperature":' + temp.toFixed(1) + '}';
             $.ajax({
                 url: url,
                 data: data, 
@@ -215,7 +169,7 @@ $('#decrease').on('click', () => {
             flag = 0;
             //put on manual temp
             const url = 'http://localhost:3000/api/settings/manualtemp';
-            const data = '{"last_man_temperature":"' + temp.toFixed(1) + '"}';
+            const data = '{"last_man_temperature":' + temp.toFixed(1) + '}';
             $.ajax({
                 url: url,
                 data: data, 

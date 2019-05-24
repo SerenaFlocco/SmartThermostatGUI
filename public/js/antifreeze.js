@@ -25,13 +25,14 @@ var settings = {
     }
 }
 
-const wsc = new WebSocket('ws://localhost:8080');
 //flag to change temperature shown during manual setting
 var flag = 0;
 //timer used when the temperature is increased or decreased
 var timer;
-//var to keep the count of messages received from the backend
-var counter = 0;
+//var which stores the current mode
+var mode = '';
+//antifreeze temperature
+var antifreeze;
 
 function parseDay(day) {
     switch(day) {
@@ -67,29 +68,26 @@ function parseDate(day, time, spec) {
     return mydate;
 }
 
+//get for the antifreeze settings
+$.get({url: 'http://localhost:3000/api/settings/antifreeze', async: false}, () => {
+    console.log('success');
+})
+.done((data) => {
+  console.log('done');
+  antifreeze = data;
+  console.log(antifreeze);
+})
+.fail(() => {
+  console.log('error');
+})
+.always(() => {
+  console.log('finished');
+});
+antifreeze.temp = Number.parseFloat(antifreeze.temp);
+$('#temperature_af').text(antifreeze.temp.toFixed(1));
+antifreeze.enabled = Number.parseInt(antifreeze.enabled);
 
-//WebSocket communication with the backend
-wsc.onopen = () => {
-    console.log('Web Socket client waiting for data from server on port 8080...');
-};
-
-//When a new temperature is received, update the html page
-wsc.onmessage = (msg) => {
-    if(counter == 0 && msg.data != 'No json available') {
-            settings = JSON.parse(msg);
-	        console.log(msg);
-    }
-    else {
-        counter++;
-        console.log(`received ${msg.data} from websocket`);
-        settings.current_temperature = Number.parseFloat(msg.data);
-        wsc.send(JSON.stringify(settings));
-    }
-};
-
-$('#temperature_af').text(settings.antifreeze_temp.toFixed(1));
-
-if(settings.mode != 'antifreeze')
+if(antifreeze.enabled == 0)
     $('[name="optionsRadios3"]:checked').val('option6');
 else $('[name="optionsRadios3"]:checked').val('option5');
 
@@ -128,11 +126,17 @@ $('#decrease_af').on('click', () => {
 });
 
 $('#conf_antifreeze').on('click', () => {
-    settings.antifreeze_temp = Number.parseFloat($('#temperature_af').text());
-    if($('#optionsRadios5').prop('checked')) {
-        settings.mode = 'antifreeze';
-        settings.temp_to_reach = settings.antifreeze_temp;
-    }
-    else settings.mode = 'prog';
-    wsc.send(JSON.stringify(settings));
+    antifreeze.temp = Number.parseFloat($('#temperature_af').text());
+    if($('#optionsRadios5').prop('checked'))
+        antifreeze.enabled = 1;
+    //put for the antifreezeconst 
+    url = 'http://localhost:3000/api/settings/antifreeze';
+    const data = '{"temp":' + antifreeze.temp.toFixed(1) + ', "enabled":' + antifreeze.enabled.toString() + '}';
+    $.ajax({
+        url: url,
+        data: data, 
+        type: 'PUT', 
+        contentType: "application/json; charset=utf-8", // this
+        dataType: "json"});
+    console.log('Sending settings ' + data +' to backend...');
 });

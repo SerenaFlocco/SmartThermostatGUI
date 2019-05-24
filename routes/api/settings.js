@@ -78,12 +78,13 @@ router.put('/cooling', (req, res) => {
 });
 
 //Get the antifreeze settings
-router.get('/antifreeze', (req, res) => res.json(settings.cooling));
+router.get('/antifreeze', (req, res) => res.json(settings.antifreeze));
 
 //Modify the antifreeze settings
 router.put('/antifreeze', (req, res) => {
     const updated = req.body;
-    settings.antifreeze = updated.antifreeze;
+    console.log(updated);
+    settings.antifreeze = updated;
     fs.writeFileSync(filename, JSON.stringify(settings));
     res.status(201).json(settings.antifreeze);
 });
