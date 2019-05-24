@@ -8,14 +8,37 @@ var settings = require('../../settings.json');
 router.get('/', (req, res) => res.json(settings));
 
 //Get the current mode
-router.get('/mode', (req, res) => res.json(settings.mode));
+router.get('/mode', (req, res) => {
+    res.json(settings.mode);
+    console.log('Resp body: ' + settings.mode);
+});
 
 //Modify the current mode
 router.put('/mode', (req, res) => {
     const updated = req.body;
+    console.log(updated);
+    console.log('received mode settings');
     settings.mode = updated.mode;
+    if(settings.mode == 'off') {
+        settings.heating = 0;
+        settings.cooling = 0;
+    }
     fs.writeFileSync(filename, JSON.stringify(settings));
     res.status(201).json(settings.mode);
+});
+
+//Get the manual temperature
+router.get('/manualtemp', (req, res) => {
+    console.log('received get request');
+    res.json(settings.last_man_temperature);
+});
+
+//Modify the manual temperature
+router.put('/manualtemp', (req, res) => {
+    const updated = req.body;
+    settings.temp_to_reach = settings.last_man_temperature = updated.last_man_temperature;
+    fs.writeFileSync(filename, JSON.stringify(settings));
+    res.status(201).json(settings.last_man_temperature);
 });
 
 //Get the current season
@@ -25,19 +48,11 @@ router.get('/season', (req, res) => res.json(settings.season));
 router.put('/season', (req, res) => {
     const updated = req.body;
     settings.season = updated.season;
+    if(settings.season == 'winter')
+        settings.cooling = 0;
+    else settings.heating = 0;
     fs.writeFileSync(filename, JSON.stringify(settings));
     res.status(201).json(settings.season);
-});
-
-//Get the current manual temperature
-router.get('/manual', (req, res) => res.json(settings.last_man_temperature));
-
-//Modify the current manual temperature
-router.put('/manual', (req, res) => {
-    const updated = req.body;
-    settings.last_man_temperature = updated.last_man_temperature;
-    fs.writeFileSync(filename, JSON.stringify(settings));
-    res.status(201).json(settings.last_man_temperature);
 });
 
 //Get the heating status

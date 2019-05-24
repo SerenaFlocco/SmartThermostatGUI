@@ -12,11 +12,24 @@ const exec      = require('child_process').exec;
 const wss       = require('ws').Server;
 const piWifi    = require('pi-wifi');
 const exphbs    = require('express-handlebars');
-var settings    = require('./settings.json');
+//var settings    = require('./settings.json');
 var mqtt_client   = mqtt.connect('mqtt://localhost');
 var server        = new wss({port: 8080});
 var received_temperature = '';
+//flag to change temperature shown during manual setting
+var flag = 0;
 
+function getDay(number, settings) {
+  switch(number) {
+      case 1: return settings.program.monday;
+      case 2: return settings.program.tuesday;
+      case 3: return settings.program.wednesday;
+      case 4: return settings.program.thursday;
+      case 5: return settings.program.friday;
+      case 6: return settings.program.saturday;
+      case 7: return settings.program.sunday;
+  }
+}
 
 // handlebars middleware
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
@@ -93,33 +106,72 @@ app.listen(3000, () => console.log('App listening on port 3000...'));
 
 
 server.on('connection', (ws) => {
-  /*try {
-    if (fs.existsSync(filename)) {
-      let rawdata = fs.readFileSync(filename);
+    //check periodically if the set temperature is greater than the current one:
+    //if yes switch on the heating/cooling system, otherwise switch it off
+    setInterval(() => {
+      let rawdata = fs.readFileSync('settings.json');  
       let settings = JSON.parse(rawdata);
-      console.log('Sending settings to frontend...');
-      ws.send(JSON.stringify(settings)); //check if it can be send as an object
-    }
-    else {
-      console.log('Sending negative response to frontend...');
-      ws.send('No json available');
-    }
-  } catch(err) {
-    console.error(err);
-  }
-
-	ws.on('message', (msg) => {
-		console.log('Received settings from frontend...');
-		let data = JSON.parse(msg.data);
-		console.log(data);
-		fs.writeFileSync(filename, JSON.stringify(data));
-	});*/
-
+      if(settings.mode != 'off' && flag == 0) {
+          switch(settings.season) {
+              case 'winter':
+                  if((settings.temp_to_reach > settings.current_temperature) && settings.heating == 0) {
+                      settings.heating = 1;
+                      console.log('Sending settings to backend...');
+                      //trigger the frontend to show the heating logo
+                      ws.send('heating:on');
+                  } else {
+                      if((settings.temp_to_reach <= settings.current_temperature) && settings.heating==1) {
+                          settings.heating = 0;
+                          console.log('Sending settings to backend...');
+                          //trigger the frontend to hide the heating logo
+                          ws.send('heating:off');
+                      }
+                  };
+                  break;
+              case 'summer':
+                  if((settings.temp_to_reach < settings.current_temperature) && settings.cooling == 0) {
+                      settings.cooling = 1;
+                      console.log('Sending settings to backend...');
+                      //trigger the frontend to show the cooling logo
+                      ws.send('cooling:on');
+                  } else {
+                      if((settings.temp_to_reach >= settings.current_temperature) && settings.cooling == 1) {
+                          settings.cooling = 0;
+                          console.log('Sending settings to backend...');
+                          //trigger the frontend to hide the cooling logo
+                          ws.send('cooling:off');
+                      }
+                  };
+                  break;
+          }
+      }
+    }, 20000);
     var topic_id = setInterval(() => {
-		ws.send(received_temperature);
+		ws.send('temp:' + received_temperature);
 		console.log(`Message ${received_temperature} sent via websocket`);
 	},30000);
 });
+
+//Check if weekend mode or the prog mode is enabled
+setInterval(() => {
+  let rawdata = fs.readFileSync('settings.json');  
+  let settings = JSON.parse(rawdata);
+  let date = new Date();
+  if(settings.weekend.enabled == 1) {
+      if(date >= settings.weekend.from && date <= settings.weekend.to)
+              settings.mode = 'off';
+          else {
+              settings.mode = 'prog';
+          }
+          fs.writeFileSync('settings.json', JSON.stringify(settings));
+  }
+  if(settings.mode == 'prog') {
+      let progarray = getDay(date.getDay, settings);
+      let index = date.getHours();
+      settings.temp_to_reach = progarray[index];
+      fs.writeFileSync('settings.json', JSON.stringify(settings));
+  }
+}, 3600000);
 
 mqtt_client.on('connect', () => {
     mqtt_client.subscribe('temperature');
@@ -129,6 +181,7 @@ mqtt_client.on('connect', () => {
 mqtt_client.on('message', (topic, msg) => {
     console.log(`Message ${msg} received via MQTT`);
     received_temperature = msg.toString();
+    //modify the json file
 });
 
 process.on('uncaughtException', () => {
