@@ -66,7 +66,7 @@ app.get('/wifi', (req, res) => {
     }
     console.log(networks);
 
-    if(networks === "FAIL-BUSY")
+    if(networks == 'FAIL-BUSY')
       console.log("fail!");
 
     // load the html page
