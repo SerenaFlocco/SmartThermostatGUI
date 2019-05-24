@@ -66,8 +66,8 @@ app.get('/wifi', (req, res) => {
     }
     console.log(networks);
 
-    if(networks == 'FAIL-BUSY')
-      console.log("fail!");
+    let variable = JSON.parse(networks);
+    console.log(variable.datavalue);
 
     // load the html page
     res.render('wifi', {
