@@ -111,32 +111,8 @@ app.get('/wifi/:ssid', (req, res) => {
 })
 
 app.post('/connect', (req, res) => {
-  /*piWifi.connect(req.body.ssid, req.body.password, function(err) {
-  if (err) {
-    res.render('error', {
-      message: "failed to connect on " + req.body.ssid
-    })
-    return console.error(err.message);
-  }
-  console.log('Successful connection!');
-  res.redirect('/');
-  });*/
-
-  var networkDetails = {
-    ssid: req.body.ssid,
-    password: req.body.password
-  };
-  
-  /*piWifi.connectTo(networkDetails, function(err) {
-  if(!err) {
-    console.log('Network created successfully!');
-  } else {
-    console.log("Errormessage: " + err.message); //Failed to connect
-  }
-  });*/
-
-  piWifi.connectTo(networkDetails, function(err) {
-    if (!err) { //Network created correctly
+  piWifi.connect(req.body.ssid, req.body.password, function(err) {
+    if (!err) {
       setTimeout(function () {
         piwifi.check(ssid, function (err, status) {
           if (!err && status.connected) {
@@ -152,12 +128,13 @@ app.post('/connect', (req, res) => {
           }
         });
       }, 2000);
-    } else {
-      console.log('Unable to create the network ' + ssid + '.');
+    }else{
       res.render('error', {
-        message: 'Unable to create the network ' + ssid
-      });
+        message: "failed to connect on " + req.body.ssid
+      })
+      return console.error(err.message);
     }
+    
   });
 })
 
