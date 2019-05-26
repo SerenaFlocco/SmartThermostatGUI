@@ -40,7 +40,15 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.get('/demo', (req, res) => {res.render('demo')})
 
 /* Home page*/
-app.get('/', (req, res) => {res.render('index')})
+app.get('/', (req, res) => {
+
+	piWifi.status('wlan0', function(err, status) {
+  		if (err) {return console.error(err.message);}
+  		console.log(status);
+	});
+
+res.render('index')
+})
 
 /* antifreeze page settings*/
 app.get('/antifreeze', (req, res) => { res.render('antifreeze')});
