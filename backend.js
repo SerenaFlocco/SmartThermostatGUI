@@ -127,15 +127,14 @@ app.post('/connect', (req, res) => {
     password: req.body.password
   };
   
-  piWifi.connectTo(networkDetails, function(err) {
+  /*piWifi.connectTo(networkDetails, function(err) {
   if(!err) {
     console.log('Network created successfully!');
   } else {
     console.log("Errormessage: " + err.message); //Failed to connect
   }
-});
+  });*/
 
- /* console.log(networkDetails);
   piWifi.connectTo(networkDetails, function(err) {
     if (!err) { //Network created correctly
       setTimeout(function () {
@@ -155,8 +154,11 @@ app.post('/connect', (req, res) => {
       }, 2000);
     } else {
       console.log('Unable to create the network ' + ssid + '.');
+      res.render('error', {
+        message: 'Unable to create the network ' + ssid
+      });
     }
-  });*/
+  });
 })
 
 /* shutdown the device*/
