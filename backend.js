@@ -58,22 +58,22 @@ app.get('/weekend', (req, res) => { res.render('weekend')});
 
 /* wifi settings*/
 app.get('/wifi', (req, res) => {
-  let avNetworks;
   // list all the available networks
   piWifi.scan(function(err, networks) {
     if (err) {
       return console.error(err.message);
     }
-    console.log(networks);
-
-    let variable = JSON.parse(networks);
-    console.log(variable.datavalue);
-
-    // load the html page
-    res.render('wifi', {
+    //console.log(networks);
+    //var obj = JSON.parse(networks);
+    if(networks.result == "FAIL-BUSY")
+	res.render('error', {
+      		message: "failed to load wifi access points: SERVICE BUSY"
+    	});
+    else
+    //load the html page
+        res.render('wifi', {
 	     avNetworks: networks
-    });
-
+        });
   });
 });
 
@@ -99,9 +99,9 @@ app.post('/connect', (req, res) => {
 
 /* shutdown the device*/
 app.get('/poweroff', (req,res) => {
-  res.send(200);
+  //res.send(200);
   console.log("poweroff");
-  exec(`shutdown now`,(error,stdout,stderr) =>{ callback(stdout)});
+  exec('shutdown now',(error,stdout,stderr) =>{ callback(stdout)});
 })
 
 // start the server
