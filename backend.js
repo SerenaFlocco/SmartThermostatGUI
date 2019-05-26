@@ -56,14 +56,16 @@ app.get('/', (req, res) => {
         internet = "connected";
       }
 
-      if(status.ip =! "")
-        ip = _status.ip;
+      if(status.ip =! ""){
+
+      }
+        ip = status.ip;
 
       res.render('index', {
         internet: internet,
         ipAddress: ip
       });
-      
+
   });
   
   
