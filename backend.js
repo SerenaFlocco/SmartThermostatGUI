@@ -131,7 +131,7 @@ app.post('/connect', (req, res) => {
       }, 2000);
     }else{
       res.render('error', {
-        message: "failed to connect on " + req.body.ssid
+        message: "failed to connect on " + req.body.ssid + ": " + err
       })
       return console.error(err.message);
     }
