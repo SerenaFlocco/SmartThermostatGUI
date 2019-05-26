@@ -113,7 +113,8 @@ app.get('/wifi/:ssid', (req, res) => {
 app.post('/connect', (req, res) => {
   piWifi.connect(req.body.ssid, req.body.password, function(err) {
     if (!err) {
-      setTimeout(function () {
+      setTimeout(() => {
+        console.log("timeout");
         piwifi.check(ssid, function (err, status) {
           if (!err && status.connected) {
             console.log('Connected to the network ' + ssid + '!');
