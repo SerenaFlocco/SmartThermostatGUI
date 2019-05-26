@@ -53,13 +53,10 @@ app.get('/', (req, res) => {
       if(status.wpa_state == 'INACTIVE')
         internet = "not connected";
       else if(status.wpa_state == 'COMPLETED'){
-        internet = "connected";
-      }
-
-      if(status.ip =! ""){
-
-      }
+        internet = status.ssid;
         ip = status.ip;
+      }
+        
 
       res.render('index', {
         internet: internet,
