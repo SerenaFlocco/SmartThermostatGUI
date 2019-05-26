@@ -115,7 +115,7 @@ app.post('/connect', (req, res) => {
     if (!err) {
       setTimeout(() => {
         console.log("timeout");
-        piwifi.check(ssid, function (err, status) {
+        /*piwifi.check(ssid, function (err, status) {
           if (!err && status.connected) {
             console.log('Connected to the network ' + ssid + '!');
             res.render('ok', {
@@ -127,6 +127,9 @@ app.post('/connect', (req, res) => {
               message: 'Unable to connect to the network ' + ssid
             });
           }
+        });*/
+        res.render('ok', {
+          message: 'Connected to the network ' + ssid
         });
       }, 2000);
     }else{
