@@ -42,12 +42,27 @@ app.get('/demo', (req, res) => {res.render('demo')})
 /* Home page*/
 app.get('/', (req, res) => {
 
+  var _status;
+  var internet;
+  var ip = '-';
+
 	piWifi.status('wlan0', function(err, status) {
   		if (err) {return console.error(err.message);}
-  		console.log(status);
-	});
+      //console.log(status);
+      _status = status;
+  });
+  
+  if(_status.wpa_state == 'INACTIVE')
+    internet = "not connected";
+  else if(_status.wpa_state == 'COMPLETED'){
+    internet = "connected";
+    ip = _status.ip;
+  }
 
-res.render('index')
+  res.render('index', {
+    internet: internet,
+    ipAddress: ip
+  });
 })
 
 /* antifreeze page settings*/
@@ -79,9 +94,9 @@ app.get('/wifi', (req, res) => {
     	});
     else
     //load the html page
-        res.render('wifi', {
-	     avNetworks: networks
-        });
+    res.render('wifi', {
+    avNetworks: networks
+    });
   });
 });
 
