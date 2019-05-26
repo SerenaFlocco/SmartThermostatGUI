@@ -47,22 +47,26 @@ app.get('/', (req, res) => {
   var ip = '-';
 
 	piWifi.status('wlan0', function(err, status) {
-  		if (err) {return console.error(err.message);}
-      //console.log(status);
-      _status = status;
+
+      if (err) {return console.error(err.message);}
+      
+      if(status.wpa_state == 'INACTIVE')
+        internet = "not connected";
+      else if(status.wpa_state == 'COMPLETED'){
+        internet = "connected";
+      }
+
+      if(status.ip =! "")
+        ip = _status.ip;
+
+      res.render('index', {
+        internet: internet,
+        ipAddress: ip
+      });
+      
   });
   
-  if(_status.wpa_state == 'INACTIVE')
-    internet = "not connected";
-  else if(_status.wpa_state == 'COMPLETED'){
-    internet = "connected";
-    ip = _status.ip;
-  }
-
-  res.render('index', {
-    internet: internet,
-    ipAddress: ip
-  });
+  
 })
 
 /* antifreeze page settings*/
