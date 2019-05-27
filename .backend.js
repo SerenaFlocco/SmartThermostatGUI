@@ -11,9 +11,7 @@ const fs        = require('fs');
 const mqtt      = require('mqtt');
 const exec      = require('child_process').exec;
 const wss       = require('ws').Server;
-const piWifi    = require('pi-wifi');
 const exphbs    = require('express-handlebars');
-
 const filename    = 'settings.json';
 var mqtt_client   = mqtt.connect('mqtt://localhost');
 var server        = new wss({port: 8080});
@@ -37,50 +35,22 @@ app.use(express.static(path.join(__dirname, 'public')))
 // pages routing
 
 /* demo page*/
-app.get('/demo', (req, res) => {res.render('demo')})
+//app.get('/demo', (req, res) => {res.render('demo')})
 
 /* Home page*/
-app.get('/', (req, res) => {
-
-  var _status;
-  var internet;
-  var ip = '-';
-
-	piWifi.status('wlan0', function(err, status) {
-
-      if (err) {return console.error(err.message);}
-      
-      if(status.wpa_state == 'INACTIVE')
-        internet = "not connected";
-      else if(status.wpa_state == 'COMPLETED'){
-        internet = status.ssid;
-        ip = status.ip;
-      }
-        
-
-      res.render('index', {
-        internet: internet,
-        ipAddress: ip
-      });
-
-  });
-  
-  
-})
+/*app.get('/', (req, res) => {
+  // look ad index
+})*/
 
 /* antifreeze page settings*/
-app.get('/antifreeze', (req, res) => { res.render('antifreeze')});
+//app.get('/antifreeze', (req, res) => { res.render('antifreeze')});
 
 /* program settings*/
-app.get('/prog', (req, res) => { res.render('prog')});
+//app.get('/prog', (req, res) => { res.render('prog')});
 
 /* weekend program settings */
-app.get('/weekend', (req, res) => { res.render('weekend')});
+//app.get('/weekend', (req, res) => { res.render('weekend')});
 
-/* manal program settings*/
-/*app.get('/prog', (req, res) => {
-  res.sendFile(path.join(__dirname,'frontend','prog_page.html'))
-});*/
 
 /* wifi settings*/
 app.get('/wifi', (req, res) => {
@@ -143,11 +113,11 @@ app.post('/connect', (req, res) => {
 })
 
 /* shutdown the device*/
-app.get('/poweroff', (req,res) => {
+/*app.get('/poweroff', (req,res) => {
   //res.send(200);
   console.log("poweroff");
   exec('shutdown now',(error,stdout,stderr) =>{ callback(stdout)});
-})
+})*/
 
 // start the server
 app.listen(3000, () => console.log('App listening on port 3000...'));
