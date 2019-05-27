@@ -65,7 +65,7 @@ router.post('/connect', (req, res) => {
             });
         }else{
           res.render('error', {
-            message: "failed to connect on " + req.body.ssid + ": " + err
+            message: "failed to connect on " + req.body.ssid
           })
           return console.error(err.message);
         }
