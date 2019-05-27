@@ -19,6 +19,7 @@
     "node-dht-sensor": "^0.3.0",
     "path": "^0.12.7",
     "pi-wifi": "^1.2.0",
-    "requirejs": "^2.3.6"
+    "requirejs": "^2.3.6",
+    "rpi-wifi-connection": "^1.0.14"
   }
 }
