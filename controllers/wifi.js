@@ -36,35 +36,45 @@ router.get('/:ssid', (req, res) => {
 });
 
 router.post('/connect', (req, res) => {
-    piWifi.connect(req.body.ssid, req.body.password, function(err) {
-      if (!err) {
-        setTimeout(() => {
-          console.log("timeout");
-          /*piwifi.check(ssid, function (err, status) {
-            if (!err && status.connected) {
-              console.log('Connected to the network ' + ssid + '!');
+  piWifi.status('wlan0', function(err, status) {
+    if (err) {return console.error(err.message);}
+    if(status.wpa_state == 'COMPLETED'){  // If the system is connected 
+      piWifi.disconnect(function(err) {     // disconnect it
+        if (err) {return console.error(err.message);}
+        console.log('Disconnected from network!');
+        // connect it 
+        piWifi.connect(req.body.ssid, req.body.password, function(err) {
+          if (!err) {
               res.render('ok', {
                 message: 'Connected to the network ' + ssid
               });
-            } else {
-              console.log('Unable to connect to the network ' + ssid + '!');
-              res.render('error', {
-                message: 'Unable to connect to the network ' + ssid
-              });
-            }
-          });*/
-          res.render('ok', {
-            message: 'Connected to the network ' + ssid
-          });
-        }, 2000);
-      }else{
-        res.render('error', {
-          message: "failed to connect on " + req.body.ssid + ": " + err
-        })
-        return console.error(err.message);
-      }
-      
-    });
+          }else{
+            res.render('error', {
+              message: "failed to connect on " + req.body.ssid + ": " + err
+            })
+            return console.error(err.message);
+          }
+        });
+      });
+    }else{//otherwise 
+      piWifi.connect(req.body.ssid, req.body.password, function(err) {
+        if (!err) {
+            res.render('ok', {
+              message: 'Connected to the network ' + ssid
+            });
+        }else{
+          res.render('error', {
+            message: "failed to connect on " + req.body.ssid + ": " + err
+          })
+          return console.error(err.message);
+        }
+      });
+    }
+  });
+  
+  
+
+    
   })
 
 module.exports = router
