@@ -8,28 +8,31 @@ var settings = require('../../settings.json');
 router.get('/', (req, res) => res.json(settings));
 
 //Get the current mode
-router.get('/mode', (req, res) => {
-    res.json(settings.mode);
-    console.log('Resp body: ' + settings.mode);
-});
+router.get('/mode', (req, res) => res.json(settings.mode));
 
 //Modify the current mode
 router.put('/mode', (req, res) => {
     const updated = req.body;
     console.log(updated);
-    console.log('received mode settings');
+    console.log('Received put request for mode settings');
     settings.mode = updated.mode;
     if(settings.mode == 'off') {
         settings.heating = 0;
         settings.cooling = 0;
     }
-    fs.writeFileSync(filename, JSON.stringify(settings));
+    //fs.writeFileSync(filename, JSON.stringify(settings));
+    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+        if (err) {
+            console.log('Error writing file', err);
+        } else {
+            console.log('Successfully wrote file');
+        }
+    });
     res.status(201).json(settings.mode);
 });
 
 //Get the manual temperature
 router.get('/manualtemp', (req, res) => {
-    console.log('received get request');
     res.json(settings.last_man_temperature);
 });
 
@@ -37,7 +40,14 @@ router.get('/manualtemp', (req, res) => {
 router.put('/manualtemp', (req, res) => {
     const updated = req.body;
     settings.temp_to_reach = settings.last_man_temperature = updated.last_man_temperature;
-    fs.writeFileSync(filename, JSON.stringify(settings));
+    //fs.writeFileSync(filename, JSON.stringify(settings));
+    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+        if (err) {
+            console.log('Error writing file', err);
+        } else {
+            console.log('Successfully wrote file');
+        }
+    });
     res.status(201).json(settings.last_man_temperature);
 });
 
@@ -51,7 +61,14 @@ router.put('/season', (req, res) => {
     if(settings.season == 'winter')
         settings.cooling = 0;
     else settings.heating = 0;
-    fs.writeFileSync(filename, JSON.stringify(settings));
+    //fs.writeFileSync(filename, JSON.stringify(settings));
+    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+        if (err) {
+            console.log('Error writing file', err);
+        } else {
+            console.log('Successfully wrote file');
+        }
+    });
     res.status(201).json(settings.season);
 });
 
@@ -62,7 +79,14 @@ router.get('/heating', (req, res) => res.json(settings.heating));
 router.put('/heating', (req, res) => {
     const updated = req.body;
     settings.heating = updated.heating;
-    fs.writeFileSync(filename, JSON.stringify(settings));
+    //fs.writeFileSync(filename, JSON.stringify(settings));
+    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+        if (err) {
+            console.log('Error writing file', err);
+        } else {
+            console.log('Successfully wrote file');
+        }
+    });
     res.status(201).json(settings.heating);
 });
 
@@ -73,7 +97,14 @@ router.get('/cooling', (req, res) => res.json(settings.cooling));
 router.put('/cooling', (req, res) => {
     const updated = req.body;
     settings.cooling = updated.cooling;
-    fs.writeFileSync(filename, JSON.stringify(settings));
+    //fs.writeFileSync(filename, JSON.stringify(settings));
+    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+        if (err) {
+            console.log('Error writing file', err);
+        } else {
+            console.log('Successfully wrote file');
+        }
+    });
     res.status(201).json(settings.cooling);
 });
 
@@ -83,9 +114,16 @@ router.get('/antifreeze', (req, res) => res.json(settings.antifreeze));
 //Modify the antifreeze settings
 router.put('/antifreeze', (req, res) => {
     const updated = req.body;
-    console.log(updated);
+    console.log('Received put request for antifreeze settings');
     settings.antifreeze = updated;
-    fs.writeFileSync(filename, JSON.stringify(settings));
+    //fs.writeFileSync(filename, JSON.stringify(settings));
+    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+        if (err) {
+            console.log('Error writing file', err);
+        } else {
+            console.log('Successfully wrote file');
+        }
+    });
     res.status(201).json(settings.antifreeze);
 });
 
@@ -95,8 +133,16 @@ router.get('/weekend', (req, res) => res.json(settings.weekend));
 //Modify the weekend settings
 router.put('/weekend', (req, res) => {
     const updated = req.body;
-    settings.weekend = updated.weekend;
-    fs.writeFileSync(filename, JSON.stringify(settings));
+    settings.weekend = updated;
+    console.log('Received put request for weekend mode settings');
+    //fs.writeFileSync(filename, JSON.stringify(settings));
+    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+        if (err) {
+            console.log('Error writing file', err);
+        } else {
+            console.log('Successfully wrote file');
+        }
+    });
     res.status(201).json(settings.weekend);
 });
 
@@ -106,6 +152,7 @@ router.get('/prog', (req, res) => res.json(settings.program));
 //Modify the program settings of a day
 router.put('/prog/:day', (req, res) => {
     const updated = req.body;
+    console.log('Received put request for program mode settings');
     let day = req.params.day;
     let to_return;
     switch(day) {
@@ -131,7 +178,14 @@ router.put('/prog/:day', (req, res) => {
                        to_return = settings.program.sunday;
                        break;
     }
-    fs.writeFileSync(filename, JSON.stringify(settings));
+    //fs.writeFileSync(filename, JSON.stringify(settings));
+    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+        if (err) {
+            console.log('Error writing file', err);
+        } else {
+            console.log('Successfully wrote file');
+        }
+    });
     res.status(201).json(to_return);
 });
 

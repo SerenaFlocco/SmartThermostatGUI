@@ -1,8 +1,5 @@
 #!/usr/bin/env node
 
-/**
- *  WebSocket server: listen on mqtt topic-->when a msg is received, send it to the client
-*/
 'use strict';
 const express   = require('express');
 const app       = express();
@@ -12,12 +9,16 @@ const exec      = require('child_process').exec;
 const wss       = require('ws').Server;
 const piWifi    = require('pi-wifi');
 const exphbs    = require('express-handlebars');
-//var settings    = require('./settings.json');
+const fs        = require('fs');
+var settings    = require('./settings.json');
+const filename  = 'settings.json';
 var mqtt_client   = mqtt.connect('mqtt://localhost');
 var server        = new wss({port: 8080});
 var received_temperature = '';
 //flag to change temperature shown during manual setting
 var flag = 0;
+//flag used in the weekend mode
+var flag2 = 0;
 
 function getDay(number, settings) {
   switch(number) {
@@ -29,6 +30,40 @@ function getDay(number, settings) {
       case 6: return settings.program.saturday;
       case 7: return settings.program.sunday;
   }
+}
+
+function parseTime(time, spec) {
+  if(spec == 'p.m.')
+      time += 12;
+  return time;
+}
+
+function parseDay(day) {
+  switch(day) {
+      case 'Monday': return 1;
+      case 'Tuesday': return 2;
+      case 'Wednesday': return 3;
+      case 'Thursday': return 4;
+      case 'Friday': return 5;
+      case 'Saturday': return 6;
+      case 'Sunday': return 7;
+  }
+}
+
+function parseDate(day, time, spec) {
+  let date = new Date();
+  let mydate = new Date();
+  let currentday = date.getDay();
+  let myday = parseDay(day);
+  let splittedtime = time.split(':');
+  if(currentday > myday)
+      mydate.setDate(date.getDate() + (currentday - myday));
+  if(currentday < myday)
+      mydate.setDate(date.getDate() - (myday - currentday));
+  mydate.setHours(parseTime(splittedtime[0], spec));
+  if(splittedtime[1] != '00')
+      mydate.setMinutes(splittedtime[1]);
+  return mydate;
 }
 
 // handlebars middleware
@@ -109,8 +144,8 @@ server.on('connection', (ws) => {
   //check periodically if the set temperature is greater than the current one:
   //if yes switch on the heating/cooling system, otherwise switch it off
   setInterval(() => {
-    let rawdata = fs.readFileSync('settings.json');  
-    let settings = JSON.parse(rawdata);
+    //let rawdata = fs.readFileSync('settings.json');  
+    //let settings = JSON.parse(rawdata);
     if(settings.mode != 'off' && flag == 0) {
       switch(settings.season) {
           case 'winter':
@@ -154,29 +189,59 @@ server.on('connection', (ws) => {
 
 //Check if weekend mode, antifreeze mode or the prog mode is enabled
 setInterval(() => {
-  let rawdata = fs.readFileSync('settings.json');  
-  let settings = JSON.parse(rawdata);
+  console.log('Interval to check the mode');
+  //let rawdata = fs.readFileSync('settings.json');  
+  //let settings = JSON.parse(rawdata);
   let date = new Date();
+  //to be tested
   if(settings.weekend.enabled == 1) {
-    if(date >= settings.weekend.from && date <= settings.weekend.to)
-            settings.mode = 'off';
-        else {
-            settings.mode = 'prog';
+    let from = parseDate(settings.weekend.from[0], settings.weekend.from[1], settings.weekend.from[2]);
+    let to = parseDate(settings.weekend.to[0], settings.weekend.to[1], settings.weekend.to[2]);
+    if(date >= from && date <= to) {
+        settings.mode = 'off';
+        if(flag2 != 0)
+          flag2 = 0;
+    } else {
+        if(flag2 != 1) {
+          settings.mode = 'prog';
+          flag2 = 1;
         }
-        fs.writeFileSync('settings.json', JSON.stringify(settings));
+    }
+    //fs.writeFileSync(filename, JSON.stringify(settings));
+    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+      if (err) {
+          console.log('Error writing file', err);
+      } else {
+          console.log('Successfully wrote file');
+      }
+    });
   }
-  if(settings.mode == 'prog') {
-    let progarray = getDay(date.getDay, settings);
+  //to be tested
+  if(settings.mode == 'prog' && settings.antifreeze.enabled == 0) {
+    let progarray = getDay(date.getDay(), settings);
     let index = date.getHours();
     settings.temp_to_reach = progarray[index];
-    fs.writeFileSync('settings.json', JSON.stringify(settings));
+    //fs.writeFileSync(filename, JSON.stringify(settings));
+    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+      if (err) {
+          console.log('Error writing file', err);
+      } else {
+          console.log('Successfully wrote file');
+      }
+    });
   }
   if(settings.antifreeze.enabled == 1) {
-    settings.mode = 'antifreeze';
     settings.temp_to_reach = settings.antifreeze.temp;
-    fs.writeFileSync('settings.json', JSON.stringify(settings));
+    //fs.writeFileSync(filename, JSON.stringify(settings));
+    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+      if (err) {
+          console.log('Error writing file', err);
+      } else {
+          console.log('Successfully wrote file');
+      }
+    });
   }
-}, 30000);
+}, 60000);
 
 mqtt_client.on('connect', () => {
     mqtt_client.subscribe('temperature');
@@ -187,6 +252,7 @@ mqtt_client.on('message', (topic, msg) => {
     console.log(`Message ${msg} received via MQTT`);
     received_temperature = msg.toString();
     //modify the json file
+    settings.current_temperature = msg; // to test
 });
 
 process.on('uncaughtException', () => {
