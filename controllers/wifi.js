@@ -28,9 +28,11 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:ssid', (req, res) => {
+  
     let ssid = req.params.ssid;
     res.render('wifi_ssid', {
-      ssid: ssid
+      ssid: ssid,
+      layout: 'main_no_options.handlebars'
     });
 });
 
