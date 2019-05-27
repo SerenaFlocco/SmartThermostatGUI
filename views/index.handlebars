@@ -17,19 +17,51 @@
             
             <div class="row">
               <div class="col"><h6>Internet:</h6></div>
-              <div class="col"><p class="text-info">{{internet}}</p></div>
+              <div class="col">
+                <p class="text-info">
+                  {{#if internet}}
+                    {{internet}}
+                  {{else}}
+                    -
+                  {{/if}}
+                </p>
+              </div>
             </div>
             <div class="row">
               <div class="col"><h6>Program:</h6></div>
-              <div class="col"><p class="text-info">manual</p></div>
+              <div class="col">
+                <p class="text-info">
+                  {{#if program}}
+                    {{program}}
+                  {{else}}
+                    -
+                  {{/if}}
+                </p>
+              </div>
             </div>
             <div class="row">
               <div class="col"><h6>Remote control:</h6></div>
-              <div class="col"><p class="text-info">disabled</p></div>
+              <div class="col">
+                <p class="text-info">
+                  {{#if remote}}
+                    {{remote}}
+                  {{else}}
+                    -
+                  {{/if}}
+                </p>
+              </div>
             </div>
             <div class="row">
               <div class="col"><h6>IPv4:</h6></div>
-              <div class="col"><p class="text-info">{{ipAddress}}</p></div>
+              <div class="col">
+                <p class="text-info">
+                  {{#if ipAddress}}
+                    {{ipAddress}}
+                  {{else}}
+                    -
+                  {{/if}}
+                </p>
+              </div>
             </div>
           </div>
         </div>
