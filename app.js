@@ -20,7 +20,10 @@ var server        = new wss({port: 8080});
 var received_temperature = '';
 
 // handlebars middleware
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.engine('handlebars', exphbs({
+  defaultLayout: 'main',
+  layoutsDir: __dirname + '/views/layouts/'
+}));
 app.set('view engine', 'handlebars');
 app.use(express.urlencoded());
 
