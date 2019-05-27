@@ -5,16 +5,31 @@
       <div class="form-group mx-sm-3 mb-2">
         <label for="inputPassword2" class="sr-only">Password</label>
         <input type="hidden" id="ssid" name="ssid" value="{{ssid}}">
-        <input type="password" class=" use-keyboard-input form-control" name="password" placeholder="Password">
+        <input id="password" type="password" class=" use-keyboard-input form-control" name="password" placeholder="Password">
       </div>
       <button type="submit" class="btn btn-primary mb-2">Confirm</button>
     </form>
     <div class="col"><a href="../wifi" class="btn btn-secondary mb-2">Go back</a></div>
-    <div class="col"><input type="checkbox" onclick="myFunction()" id="showPW">Show Password</div>
+    <div class="col"><button id="toggle" class="btn btn-info mb-2" onclick="showPasswd()">Show Password</button></div>
   </div>
 </div>
 
 <div class="simple-keyboard"></div>
+
+<script>
+  function showPasswd() {
+    var pwField = document.getElementById("password");
+    var button = document.getElementById("toggle");
+    if (pwField.type === "password") {
+      pwField.type = "text";
+      button.innerHTML= "Hide password";
+    } else {
+      pwField.type = "password";
+      button.innerHTML= "Show password";
+    }
+  }
+</script>
+
 
 <script src="/js/jquery.min.js"></script>
 <script src="/js/popper.min.js"></script>
