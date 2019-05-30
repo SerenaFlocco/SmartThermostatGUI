@@ -180,10 +180,12 @@ server.on('connection', (ws) => {
             break;
         }
     }
-  }, 20000);
+  }, 30000);
   var topic_id = setInterval(() => {
-    ws.send('temp:' + received_temperature);
-    console.log(`Message ${received_temperature} sent via websocket`);
+    if(received_temperature != '') {
+      ws.send('temp:' + received_temperature);
+      console.log(`Message ${received_temperature} sent via websocket`);
+    }
 	},30000);
 });
 
