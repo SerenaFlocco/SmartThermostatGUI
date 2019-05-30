@@ -15,8 +15,8 @@ const filename  = 'settings.json';
 var mqtt_client   = mqtt.connect('mqtt://localhost');
 var server        = new wss({port: 8080});
 var received_temperature = '';
-//flag to change temperature shown during manual setting
-var flag = 0;
+/*flag to change temperature shown during manual setting
+var flag = 0;*/
 //flag used in the weekend mode
 var flag2 = 0;
 
@@ -146,7 +146,7 @@ server.on('connection', (ws) => {
   setInterval(() => {
     //let rawdata = fs.readFileSync('settings.json');  
     //let settings = JSON.parse(rawdata);
-    if(settings.mode != 'off' && flag == 0) {
+    if(settings.mode != 'off' /*&& flag == 0*/) {
       switch(settings.season) {
           case 'winter':
             if((settings.temp_to_reach > settings.current_temperature) && settings.heating == 0) {
