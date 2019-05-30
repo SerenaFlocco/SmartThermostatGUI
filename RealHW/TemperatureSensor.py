@@ -22,4 +22,4 @@ while True:
 	#read temp and hum
 	h,t = dht.read_retry(dht.DHT22, dht_pin)
 	publisher.publish("temperature",t)
-	time.sleep(1)
+	time.sleep(30)
