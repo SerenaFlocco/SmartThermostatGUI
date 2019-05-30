@@ -18,9 +18,9 @@ wsc.onopen = () => {
 //When a new temperature is received, update the html page
 wsc.onmessage = (msg) => {
         let splittedmsg = msg.data.split(':');
-        console.log(`received ${msg.data} from websocket`);
+        console.log(`received ${splittedmsg[1]} from websocket`);
         switch(splittedmsg[0]) {
-            case 'temp': current_temperature = Number.parseFloat(msg.data);
+            case 'temp': current_temperature = Number.parseFloat(splittedmsg[1]);
                          console.log(current_temperature);
                          if($('#loader').length)
                              $('#loader').remove();
