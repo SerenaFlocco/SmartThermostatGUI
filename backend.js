@@ -253,6 +253,13 @@ mqtt_client.on('message', (topic, msg) => {
     received_temperature = msg.toString();
     //modify the json file
     settings.current_temperature = msg; // to test
+    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+      if (err) {
+          console.log('Error writing file', err);
+      } else {
+          console.log('Successfully wrote file');
+      }
+    });
 });
 
 process.on('uncaughtException', () => {

@@ -25,7 +25,7 @@ wsc.onmessage = (msg) => {
                          if($('#loader').length)
                              $('#loader').remove();
                          if(flag == 0)
-                             $('#temperature').text(settings.current_temperature.toFixed(1) + "°C");
+                             $('#temperature').text(current_temperature.toFixed(1) + "°C");
                          break;
             case 'heating': if(splittedmsg[1] == 'on')
                                 $('#on').text('whatshot'); //switch on
