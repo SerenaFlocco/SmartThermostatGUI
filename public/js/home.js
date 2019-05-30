@@ -19,22 +19,24 @@ wsc.onopen = () => {
 wsc.onmessage = (msg) => {
         let splittedmsg = msg.data.split(':');
         console.log(`received ${splittedmsg[1]} from websocket`);
-        switch(splittedmsg[0]) {
-            case 'temp': current_temperature = Number.parseFloat(splittedmsg[1]);
-                         console.log(current_temperature);
-                         if($('#loader').length)
-                             $('#loader').remove();
-                         if(flag == 0)
-                             $('#temperature').text(current_temperature.toFixed(1) + "°C");
-                         break;
-            case 'heating': if(splittedmsg[1] == 'on')
-                                $('#on').text('whatshot'); //switch on
-                            else $('#on').empty();
+        if(flag == 0) {
+            switch(splittedmsg[0]) {
+                case 'temp': current_temperature = Number.parseFloat(splittedmsg[1]);
+                            console.log(current_temperature);
+                            if($('#loader').length)
+                                $('#loader').remove();
+                            if(flag == 0)
+                                $('#temperature').text(current_temperature.toFixed(1) + "°C");
                             break;
-            case 'cooling': if(splittedmsg[1] == 'on')
-                                $('#on').text('toys'); //switch on
-                            else $('#on').empty();
-                            break;
+                case 'heating': if(splittedmsg[1] == 'on')
+                                    $('#on').text('whatshot'); //switch on
+                                else $('#on').empty();
+                                break;
+                case 'cooling': if(splittedmsg[1] == 'on')
+                                    $('#on').text('toys'); //switch on
+                                else $('#on').empty();
+                                break;
+            }
         }
 };
 

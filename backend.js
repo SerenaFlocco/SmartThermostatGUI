@@ -180,7 +180,7 @@ server.on('connection', (ws) => {
             break;
         }
     }
-  }, 30000);
+  }, 5000);
   var topic_id = setInterval(() => {
     if(received_temperature != '') {
       ws.send('temp:' + received_temperature);
@@ -243,7 +243,7 @@ setInterval(() => {
       }
     });
   }
-}, 60000);
+}, 5000);
 
 mqtt_client.on('connect', () => {
     mqtt_client.subscribe('temperature');
