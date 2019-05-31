@@ -15,27 +15,6 @@ wsc.onopen = () => {
     console.log('Web Socket client waiting for data from server on port 8080...');
 };
 
-//get the last current temperature, if any
-$.get({url:'http://localhost:3000/api/settings/currenttemp', async:false}, () => {
-    console.log('success');
-})
-.done((data) => {
-console.log('done');
-current_temperature = data;
-console.log(current_temperature);
-})
-.fail(() => {
-console.log('error');
-})
-.always(() => {
-console.log('finished');
-});
-if($('#loader').length)
-    $('#loader').remove();
-if(flag == 0)
-    $('#temperature').text(current_temperature.toFixed(1) + "°C");
-
-
 //When a new temperature is received, update the html page
 wsc.onmessage = (msg) => {
         let splittedmsg = msg.data.split(':');
