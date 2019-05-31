@@ -7,6 +7,12 @@ var settings = require('../../settings.json');
 //Get All Settings
 router.get('/', (req, res) => res.json(settings));
 
+//Get the current temperature
+router.get('/currenttemp', (req, res) => {
+    if(settings.current_temperature != 0)
+        res.json(settings.current_temperature);
+});
+
 //Get the current mode
 router.get('/mode', (req, res) => res.json(settings.mode));
 
