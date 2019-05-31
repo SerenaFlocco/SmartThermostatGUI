@@ -91,14 +91,6 @@ server.on('connection', (ws) => {
   }, 5000);
   var topic_id = setInterval(() => {
     if(received_temperature != '') {
-      settings.current_temperature = Number.parseFloat(received_temperature);
-      fs.writeFile(filename, JSON.stringify(settings), (err) => {
-        if (err) {
-            console.log('Error writing file', err);
-        } else {
-            console.log('Successfully wrote file');
-        }
-      });
       ws.send('temp:' + received_temperature);
       console.log(`Message ${received_temperature} sent via websocket`);
     }
