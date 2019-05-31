@@ -89,11 +89,18 @@
           <div class="card-body">
             <div class="row">
               <div class="col" style="text-align:right;">
-                <p class="card-text digital display-2 resize_font1" id="temperature"></p>
-              </div>
-              <div class="col" style="text-align: left;" id="loader">
-                <div class="loader"></div>
-              </div>
+                <p class="card-text digital display-2 resize_font1" id="temperature">
+			{{#if temperature}}
+				{{temperature}}
+		</p>
+		</div>
+			{{else}}
+		</p>
+		</div>
+		<div class="col" style="text-align: left;" id="loader">
+                	<div class="loader"></div>
+              	</div>
+			{{/if}}
               <div class="col text-center">
                 <div class="btn-group-vertical" style="width: 3rem;">
                   <button type="button" class="btn btn-secondary" style="margin-top:15px;" id="increase">+</button>

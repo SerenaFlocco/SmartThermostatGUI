@@ -11,7 +11,7 @@ dht_pin = 4 #pin
 
 # publisher callback
 def on_publish(client,userdata,result):
-	print("...publishing")
+	#print("...publishing")
 	pass
 
 publisher = paho.Client("TemperaturePublisher");
@@ -22,4 +22,5 @@ while True:
 	#read temp and hum
 	h,t = dht.read_retry(dht.DHT22, dht_pin)
 	publisher.publish("temperature",t)
+	print(t)
 	time.sleep(30)
