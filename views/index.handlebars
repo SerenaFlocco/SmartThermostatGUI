@@ -28,11 +28,23 @@
               </div>
             </div>
             <div class="row">
-              <div class="col"><h6>Program:</h6></div>
+              <div class="col"><h6 id="active_mode">Active mode:</h6></div>
               <div class="col">
                 <p class="text-info">
                   {{#if program}}
                     {{program}}
+                  {{else}}
+                    -
+                  {{/if}}
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col"><h6 id="active_season">Season:</h6></div>
+              <div class="col">
+                <p class="text-info">
+                  {{#if season}}
+                    {{season}}
                   {{else}}
                     -
                   {{/if}}
