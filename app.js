@@ -161,10 +161,10 @@ mqtt_client.on('connect', () => {
   });
 
 mqtt_client.on('message', (topic, msg) => {
-    console.log(`Message ${msg.data} received via MQTT`);
-    received_temperature = msg.data.toString();
+    console.log(`Message ${msg} received via MQTT`);
+    received_temperature = msg.toString();
     //modify the json file
-    settings.current_temperature = msg.data; // to test
+    settings.current_temperature = Number.parseFloat(msg.toString()); // to test
     console.log(settings.current_temperature);
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
       if (err) {
