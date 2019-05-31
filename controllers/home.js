@@ -9,27 +9,6 @@ var wifi = new Wifi();
 //router.use('/users', require('./users'))
 
 router.get('/', function(req, res) {
- 
-  
-      /*piWifi.status('wlan0', function(err, status) {
-  
-        if (err) {return console.error(err.message);}
-        
-        if(status.wpa_state == 'INACTIVE')
-          internet = "not connected";
-        else if(status.wpa_state == 'COMPLETED'){
-          internet = status.ssid;
-          ip = status.ip;
-        }
-          
-  
-        res.render('index', {
-          internet: internet,
-          ipAddress: ip
-        });
-  
-      });  */
-
       // new library
       
  
