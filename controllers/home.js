@@ -1,6 +1,6 @@
 var express = require('express');
 var piWifi = require('pi-wifi');
-var settings = require('./settings.json');
+var settings = require('../settings.json');
 var router = express.Router();
 var Wifi = require('rpi-wifi-connection');
 var wifi = new Wifi();
@@ -10,23 +10,25 @@ var wifi = new Wifi();
 //router.use('/users', require('./users'))
 
 router.get('/', function(req, res) {
-      // new library
-      
- 
+   var mode;
+   var temperature;
+
+   if(settings.mode == 'man') 
+	mode = "manual";
+   if(settings.mode == 'prog')
+	mode = 'program';
+   if(settings.current_temperature != 0)
+	temperature = settings.current_temperature.toFixed(1) + "°C";
     wifi.getStatus().then((status) => {
         console.log(status);
-        if(settings.mode != '' && settings.season != '')
+	
           res.render('index', {
-          program: settings.mode,
+	  temperature: temperature,
+          program: mode,
           season: settings.season,
           internet: status.ssid,
           ipAddress: status.ip_address
-        });
-        else
-          res.render('index', {
-            internet: status.ssid,
-            ipAddress: status.ip_address
-          });
+           });
     })
     .catch((error) => {
         console.log(error);

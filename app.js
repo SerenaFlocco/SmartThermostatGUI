@@ -97,7 +97,7 @@ server.on('connection', (ws) => {
 	},30000);
 });
 
-server.onclose() = () => {ws.close();};
+server.on('close', (ws) => {ws.close();});
 
 //Check if weekend mode, antifreeze mode or the prog mode is enabled
 setInterval(() => {
