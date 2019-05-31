@@ -18,7 +18,7 @@ router.get('/', function(req, res) {
    if(settings.mode == 'prog')
 	mode = 'program';
    if(settings.current_temperature != 0)
-	temperature = settings.current_temperature + "°C";
+	temperature = settings.current_temperature.toFixed(1) + "°C";
     wifi.getStatus().then((status) => {
         console.log(status);
 	
