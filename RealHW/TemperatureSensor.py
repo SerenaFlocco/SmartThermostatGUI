@@ -23,4 +23,4 @@ while True:
 	h,t = dht.read_retry(dht.DHT22, dht_pin)
 	publisher.publish("temperature",t)
 	print(t)
-	time.sleep(30)
+	time.sleep(5)
