@@ -13,20 +13,18 @@ router.get('/', (req, res) => {
     // new library 
     wifi.scan().then((ssids) => {
       //console.log(ssids);
-	var noDuplicates = []; // used for comparrisons
-	var noDuplicatesObj = []; // used to store objects
-	ssids.forEach(function(item){
-		if(!noDuplicates.includes(item.ssid)){
-		 	console.log({ssid: item.ssid});
-			noDuplicates.push(item.ssid);
-			noDuplicatesObj.push({ssid: item.ssid});
-		}
-	});
-      
-	res.render('wifi', {
-        	avNetworks: noDuplicatesObj
-        });
-
+    var noDuplicates = []; // used for comparrisons
+    var noDuplicatesObj = []; // used to store objects
+    ssids.forEach(function(item){
+      if(!noDuplicates.includes(item.ssid)){
+        console.log({ssid: item.ssid});
+        noDuplicates.push(item.ssid);
+        noDuplicatesObj.push({ssid: item.ssid});
+      }
+    });
+    res.render('wifi', {
+            avNetworks: noDuplicatesObj
+          });
 
     }).catch((error) => {
       console.log(error);

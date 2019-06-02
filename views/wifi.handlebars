@@ -11,7 +11,7 @@
     			-webkit-overflow-scrolling: touch;"
   		>
     			{{#each avNetworks }}
-      				<a href="/wifi/{{this}}" class="list-group-item list-group-item-action">
+      				<a href="/wifi/{{this.ssid}}" class="list-group-item list-group-item-action">
         				{{this.ssid}}
       				</a>
     			{{/each}}
