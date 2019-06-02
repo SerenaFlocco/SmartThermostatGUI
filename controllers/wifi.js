@@ -11,12 +11,20 @@ var router = express.Router();
 
 router.get('/', (req, res) => {  
     // new library 
-    /*wifi.scan().then((ssids) => {
-      console.log(ssids);
-
-
-      res.render('wifi', {
-        avNetworks: ssids
+    wifi.scan().then((ssids) => {
+      //console.log(ssids);
+	var noDuplicates = []; // used for comparrisons
+	var noDuplicatesObj = []; // used to store objects
+	ssids.forEach(function(item){
+		if(!noDuplicates.includes(item.ssid)){
+		 	console.log({ssid: item.ssid});
+			noDuplicates.push(item.ssid);
+			noDuplicatesObj.push({ssid: item.ssid});
+		}
+	});
+      
+	res.render('wifi', {
+        	avNetworks: noDuplicatesObj
         });
 
 
@@ -25,13 +33,6 @@ router.get('/', (req, res) => {
       res.render('error', {
         message: "failed to load wifi access points:" + error
       });
-    });*/
-
-    wifi.getNetworks().then((networks) => {
-      console.log(networks);
-      res.render('wifi', {
-        avNetworks: networks
-        });
     });
 });
 
