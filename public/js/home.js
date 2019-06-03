@@ -321,5 +321,5 @@ $('#wifi_page').on('click', () => {
 */
 
 window.onunload = function () {
-    wsc.terminate();
+    wsc.close();
 }
