@@ -20,6 +20,7 @@ var topic_id, msg_interval;
 var settings    = require('./settings.json');
 const filename    = 'settings.json';
 var flag2 = 0;
+var connections = []; // array of connections
 
 // handlebars middleware
 app.engine('handlebars', exphbs({
@@ -49,6 +50,7 @@ app.listen(3000, function() {
 
 
 server.on('connection', (ws) => {
+  console.log("NEW CONNECTION" + ws );
   //check periodically if the set temperature is greater than the current one:
   //if yes switch on the heating/cooling system, otherwise switch it off
   msg_interval = setInterval(() => {
@@ -59,13 +61,13 @@ server.on('connection', (ws) => {
           case 'winter':
             if((settings.temp_to_reach > settings.current_temperature) && settings.heating == 0) {
                 settings.heating = 1;
-                console.log('Sending settings to backend...');
+                console.log('Sending settings to frontend...');
                 //trigger the frontend to show the heating logo
                 ws.send('heating:on');
             } else {
                 if((settings.temp_to_reach <= settings.current_temperature) && settings.heating==1) {
                     settings.heating = 0;
-                    console.log('Sending settings to backend...');
+                    console.log('Sending settings to frontend...');
                     //trigger the frontend to hide the heating logo
                     ws.send('heating:off');
                 }
@@ -74,13 +76,13 @@ server.on('connection', (ws) => {
           case 'summer':
             if((settings.temp_to_reach < settings.current_temperature) && settings.cooling == 0) {
                 settings.cooling = 1;
-                console.log('Sending settings to backend...');
+                console.log('Sending settings to frontend...');
                 //trigger the frontend to show the cooling logo
                 ws.send('cooling:on');
             } else {
                 if((settings.temp_to_reach >= settings.current_temperature) && settings.cooling == 1) {
                     settings.cooling = 0;
-                    console.log('Sending settings to backend...');
+                    console.log('Sending settings to frontend...');
                     //trigger the frontend to hide the cooling logo
                     ws.send('cooling:off');
                 }
@@ -94,13 +96,8 @@ server.on('connection', (ws) => {
       ws.send('temp:' + received_temperature);
       console.log(`Message ${received_temperature} sent via websocket`);
     }
-	},30000);
-});
-
-server.on('closedconnection', (ws) => {
-  //ws.close();
-  //server.closeAllConnections();
-  console.log('Connection closed from client.');
+  },30000);
+  connections.push(ws);
 });
 
 //Check if weekend mode, antifreeze mode or the prog mode is enabled
@@ -180,11 +177,13 @@ mqtt_client.on('message', (topic, msg) => {
 });
 
 process.on('uncaughtException', () => {
-  server.close();
+  //server.close();
+  console.log("error!!!!!!!!!!")
 });
 
 process.on('SIGTERM', () => {
-  server.close();
+  //server.close();
+  console.log("error!!!!!!!!!!")
 });
 
   
