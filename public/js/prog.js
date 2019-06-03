@@ -8,7 +8,7 @@ function getDailyProg(day) {
         case 'Thursday': return program.thursday;
         case 'Friday': return program.friday;
         case 'Saturday': return program.saturday;
-        case 'Friday': return program.sunday;
+        case 'Sunday': return program.sunday;
     }
 }
 

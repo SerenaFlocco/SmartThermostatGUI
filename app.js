@@ -99,7 +99,8 @@ server.on('connection', (ws) => {
 
 server.on('close', (ws) => {
   //ws.close();
-  server.closeAllConnections();
+  //server.closeAllConnections();
+  console.log('Connection closed from client.');
 });
 
 //Check if weekend mode, antifreeze mode or the prog mode is enabled
