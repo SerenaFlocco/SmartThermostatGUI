@@ -16,7 +16,7 @@ const exphbs    = require('express-handlebars');
 var mqtt_client   = mqtt.connect('mqtt://localhost');
 var server        = new wss({port: 8080});
 var received_temperature = '';
-
+var topic_id, msg_interval;
 var settings    = require('./settings.json');
 const filename    = 'settings.json';
 var flag2 = 0;
@@ -51,7 +51,7 @@ app.listen(3000, function() {
 server.on('connection', (ws) => {
   //check periodically if the set temperature is greater than the current one:
   //if yes switch on the heating/cooling system, otherwise switch it off
-  setInterval(() => {
+  msg_interval = setInterval(() => {
     //let rawdata = fs.readFileSync('settings.json');  
     //let settings = JSON.parse(rawdata);
     if(settings.mode != 'off' /*&& flag == 0*/) {
@@ -89,7 +89,7 @@ server.on('connection', (ws) => {
         }
     }
   }, 5000);
-  var topic_id = setInterval(() => {
+  topic_id = setInterval(() => {
     if(received_temperature != '') {
       ws.send('temp:' + received_temperature);
       console.log(`Message ${received_temperature} sent via websocket`);
@@ -97,7 +97,11 @@ server.on('connection', (ws) => {
 	},30000);
 });
 
-//server.on('close', (ws) => {ws.close();});
+server.on('close', (ws) => {
+  //ws.close();
+  clearInterval(msg_interval);
+  clearInterval(topic_id);
+});
 
 //Check if weekend mode, antifreeze mode or the prog mode is enabled
 setInterval(() => {
