@@ -97,7 +97,7 @@ server.on('connection', (ws) => {
 	},30000);
 });
 
-server.on('close', (ws) => {
+server.on('closedconnection', (ws) => {
   //ws.close();
   //server.closeAllConnections();
   console.log('Connection closed from client.');
