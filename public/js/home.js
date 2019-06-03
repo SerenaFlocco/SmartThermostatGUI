@@ -303,7 +303,7 @@ $('#prog').on('click', () => {
     $('#active_mode').text('program');
 });
 
-$('#prog_page').on('click', () => {
+/*$('#prog_page').on('click', () => {
     wsc.close();
 });
 
@@ -318,3 +318,8 @@ $('#antifreeze_page').on('click', () => {
 $('#wifi_page').on('click', () => {
     wsc.close();
 });
+*/
+
+window.onunload = function () {
+    wsc.close();
+}
