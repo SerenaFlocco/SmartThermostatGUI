@@ -17,27 +17,27 @@ wsc.onopen = () => {
 
 //When a new temperature is received, update the html page
 wsc.onmessage = (msg) => {
-        let splittedmsg = msg.data.split(':');
-        console.log(`received ${splittedmsg[1]} from websocket`);
-        if(flag == 0) {
-            switch(splittedmsg[0]) {
-                case 'temp': current_temperature = Number.parseFloat(splittedmsg[1]);
-                            console.log(current_temperature);
-                            if($('#loader').length)
-                                $('#loader').remove();
-                            if(flag == 0)
-                                $('#temperature').text(current_temperature.toFixed(1) + "°C");
+    let splittedmsg = msg.data.split(':');
+    console.log(`received ${splittedmsg[1]} from websocket`);
+    if(flag == 0) {
+        switch(splittedmsg[0]) {
+            case 'temp': current_temperature = Number.parseFloat(splittedmsg[1]);
+                        console.log(current_temperature);
+                        if($('#loader').length)
+                            $('#loader').remove();
+                        if(flag == 0)
+                            $('#temperature').text(current_temperature.toFixed(1) + "°C");
+                        break;
+            case 'heating': if(splittedmsg[1] == 'on')
+                                $('#on').text('whatshot'); //switch on
+                            else $('#on').empty();
                             break;
-                case 'heating': if(splittedmsg[1] == 'on')
-                                    $('#on').text('whatshot'); //switch on
-                                else $('#on').empty();
-                                break;
-                case 'cooling': if(splittedmsg[1] == 'on')
-                                    $('#on').text('toys'); //switch on
-                                else $('#on').empty();
-                                break;
-            }
+            case 'cooling': if(splittedmsg[1] == 'on')
+                                $('#on').text('toys'); //switch on
+                            else $('#on').empty();
+                            break;
         }
+    }
 };
 
 //When mode is 'man', check the temperature periodically to switch on/off the heating system
@@ -51,6 +51,7 @@ $('#man').on('click', () => {
         contentType: "application/json; charset=utf-8", // this
         dataType: "json"});
     console.log('Sending settings to backend...');
+    $('#active_mode').text('manual');
 });
 
 //increase of 0.1 the value of the current temperature when + is clicked
@@ -197,6 +198,7 @@ $('#off').on('click', () => {
         type: 'PUT', 
         contentType: "application/json; charset=utf-8", // this
         dataType: "json"});
+    $('#active_mode').text('off');
 });
 
 $('#winter').on('click', () => {
@@ -212,6 +214,7 @@ $('#winter').on('click', () => {
         type: 'PUT', 
         contentType: "application/json; charset=utf-8", // this
         dataType: "json"});
+    $('#active_season').text('winter');
 });
 
 $('#summer').on('click', () => {
@@ -227,6 +230,7 @@ $('#summer').on('click', () => {
         type: 'PUT', 
         contentType: "application/json; charset=utf-8", // this
         dataType: "json"});
+    $('#active_season').text('summer');
 });
 
 $('#prog').on('click', () => {
@@ -240,6 +244,7 @@ $('#prog').on('click', () => {
         contentType: "application/json; charset=utf-8", // this
         dataType: "json"});
     console.log('Sending settings to backend...');
+    $('#active_mode').text('program');
 });
 
 $('#prog_page').on('click', () => {

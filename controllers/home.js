@@ -22,13 +22,13 @@ router.get('/', function(req, res) {
     wifi.getStatus().then((status) => {
         console.log(status);
 	
-          res.render('index', {
-	  temperature: temperature,
-          program: mode,
-          season: settings.season,
-          internet: status.ssid,
-          ipAddress: status.ip_address
-           });
+         res.render('index', {
+	         temperature: temperature,
+            program: mode,
+             season: settings.season,
+            internet: status.ssid,
+            ipAddress: status.ip_address
+         });
     })
     .catch((error) => {
         console.log(error);
