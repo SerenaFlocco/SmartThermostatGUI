@@ -99,8 +99,7 @@ server.on('connection', (ws) => {
 
 server.on('close', (ws) => {
   //ws.close();
-  clearInterval(msg_interval);
-  clearInterval(topic_id);
+  server.closeAllConnections();
 });
 
 //Check if weekend mode, antifreeze mode or the prog mode is enabled
