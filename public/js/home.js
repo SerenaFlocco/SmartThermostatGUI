@@ -9,6 +9,62 @@ var current_temperature = 0.0;
 var temp = 18.0;
 //var which stores the mode
 var mode = '';
+var heating = 0;
+var cooling = 0;
+
+//get the current temperature
+$.get({url: 'http://localhost:3000/api/settings/currenttemp', async: false}, () => {
+    console.log('success');
+})
+.done((data) => {
+    console.log('done');
+    current_temperature = data;
+    console.log(mode);
+})
+.fail(() => {
+    console.log('error');
+})
+.always(() => {
+    console.log('finished');
+});
+if(current_temperature != 0)
+    $('#temperature').text(current_temperature.toFixed(1) + "°C");
+
+//check if the heating system is on
+$.get({url: 'http://localhost:3000/api/settings/heating', async: false}, () => {
+        console.log('success');
+    })
+    .done((data) => {
+        console.log('done');
+        heating = data;
+        console.log(mode);
+    })
+    .fail(() => {
+        console.log('error');
+    })
+    .always(() => {
+        console.log('finished');
+    });
+if(heating == 1)
+    $('#on').text('whatshot');
+
+//check if the cooling system is on
+$.get({url: 'http://localhost:3000/api/settings/cooling', async: false}, () => {
+    console.log('success');
+})
+.done((data) => {
+    console.log('done');
+    cooling = data;
+    console.log(mode);
+})
+.fail(() => {
+    console.log('error');
+})
+.always(() => {
+    console.log('finished');
+});
+if(cooling == 1)
+    $('#on').text('toys');
 
 //WebSocket communication with the backend
 wsc.onopen = () => {
