@@ -17,11 +17,11 @@ const exphbs    = require('express-handlebars');
 var mqtt_client   = mqtt.connect('mqtt://localhost');
 var server        = new wss({port: 8080});
 var received_temperature = '';
-var topic_id, msg_interval;
 var settings    = require('./settings.json');
 const filename    = 'settings.json';
-var flag2 = 0;
-var connections = []; // array of connections
+const EventEmitter = require('events');
+var eventemitter = new EventEmitter();
+var flag = 0;
 
 // handlebars middleware
 app.engine('handlebars', exphbs({
@@ -52,53 +52,33 @@ app.listen(3000, function() {
 
 server.on('connection', (ws) => {
   console.log("NEW CONNECTION" + ws );
-  //check periodically if the set temperature is greater than the current one:
-  //if yes switch on the heating/cooling system, otherwise switch it off
-  msg_interval = setInterval(() => {
-    //let rawdata = fs.readFileSync('settings.json');  
-    //let settings = JSON.parse(rawdata);
-    if(settings.mode != 'off' && ws.readyState === WebSocket.OPEN) {
-      switch(settings.season) {
-          case 'winter':
-            if((settings.temp_to_reach > settings.current_temperature) && settings.heating == 0) {
-                settings.heating = 1;
-                console.log('Sending settings to frontend...');
-                //trigger the frontend to show the heating logo
-                ws.send('heating:on');
-            } else {
-                if((settings.temp_to_reach <= settings.current_temperature) && settings.heating==1) {
-                    settings.heating = 0;
-                    console.log('Sending settings to frontend...');
-                    //trigger the frontend to hide the heating logo
-                    ws.send('heating:off');
-                }
-            };
-            break;
-          case 'summer':
-            if((settings.temp_to_reach < settings.current_temperature) && settings.cooling == 0) {
-                settings.cooling = 1;
-                console.log('Sending settings to frontend...');
-                //trigger the frontend to show the cooling logo
-                ws.send('cooling:on');
-            } else {
-                if((settings.temp_to_reach >= settings.current_temperature) && settings.cooling == 1) {
-                    settings.cooling = 0;
-                    console.log('Sending settings to frontend...');
-                    //trigger the frontend to hide the cooling logo
-                    ws.send('cooling:off');
-                }
-            };
-            break;
-        }
-    }
-  }, 5000);
-  topic_id = setInterval(() => {
+
+  eventemitter.on('heatingon', () => {
+    if(ws.readyState === WebSocket.OPEN)
+      ws.send('heating:on');
+  });
+
+  eventemitter.on('heatingoff', () => {
+    if(ws.readyState === WebSocket.OPEN)
+      ws.send('heating:off');
+  });
+
+  eventemitter.on('coolingon', () => {
+    if(ws.readyState === WebSocket.OPEN)
+      ws.send('cooling:on');
+  });
+
+  eventemitter.on('coolingoff', () => {
+    if(ws.readyState === WebSocket.OPEN)
+      ws.send('cooling:off');
+  });
+
+  setInterval(() => {
     if(received_temperature != '' && ws.readyState === WebSocket.OPEN) {
       ws.send('temp:' + received_temperature);
       console.log(`Message ${received_temperature} sent via websocket`);
     }
   },5000);
-  connections.push(ws);
 
 });
 
@@ -107,11 +87,80 @@ server.on('close', (ws) =>{
   ws.close();
 })
 
+/*check periodically if the set temperature is greater than the current one:
+  if yes switch on the heating/cooling system, otherwise switch it off*/
+setInterval(() => {
+  if(settings.mode != 'off') {
+    switch(settings.season) {
+      case 'winter':
+        if((settings.temp_to_reach > settings.current_temperature) && settings.heating == 0) {
+            settings.heating = 1;
+            console.log('Sending settings to frontend...');
+            //trigger the frontend to show the heating logo-->emit event
+            eventemitter.emit('heatingon');
+            //write the json file
+            fs.writeFile(filename, JSON.stringify(settings), (err) => {
+              if (err) {
+                  console.log('Error writing file', err);
+              } else {
+                  console.log('Successfully wrote file');
+              }
+            });
+        } else {
+            if((settings.temp_to_reach <= settings.current_temperature) && settings.heating==1) {
+                settings.heating = 0;
+                console.log('Sending settings to frontend...');
+                //trigger the frontend to hide the heating logo-->emit event
+                eventemitter.emit('heatingoff');
+                //write the json file
+                fs.writeFile(filename, JSON.stringify(settings), (err) => {
+                  if (err) {
+                      console.log('Error writing file', err);
+                  } else {
+                      console.log('Successfully wrote file');
+                  }
+                });
+            }
+        };
+        break;
+      case 'summer':
+        if((settings.temp_to_reach < settings.current_temperature) && settings.cooling == 0) {
+            settings.cooling = 1;
+            console.log('Sending settings to frontend...');
+            //trigger the frontend to show the cooling logo-->emit event
+            eventemitter.emit('coolingon');
+            //write the json file
+            fs.writeFile(filename, JSON.stringify(settings), (err) => {
+              if (err) {
+                  console.log('Error writing file', err);
+              } else {
+                  console.log('Successfully wrote file');
+              }
+            });
+        } else {
+            if((settings.temp_to_reach >= settings.current_temperature) && settings.cooling == 1) {
+                settings.cooling = 0;
+                console.log('Sending settings to frontend...');
+                //trigger the frontend to hide the heating logo-->emit event
+                eventemitter.emit('coolingoff');
+                //write the json file
+                fs.writeFile(filename, JSON.stringify(settings), (err) => {
+                  if (err) {
+                      console.log('Error writing file', err);
+                  } else {
+                      console.log('Successfully wrote file');
+                  }
+                });
+            }
+        };
+        break;
+      }
+  }
+}, 5000);
+
 //Check if weekend mode, antifreeze mode or the prog mode is enabled
 setInterval(() => {
   console.log('Interval to check the mode');
-  //let rawdata = fs.readFileSync('settings.json');  
-  //let settings = JSON.parse(rawdata);
   let date = new Date();
   //to be tested
   if(settings.weekend.enabled == 1) {
@@ -119,15 +168,14 @@ setInterval(() => {
     let to = parseDate(settings.weekend.to[0], settings.weekend.to[1], settings.weekend.to[2]);
     if(date >= from && date <= to) {
         settings.mode = 'off';
-        if(flag2 != 0)
-          flag2 = 0;
+        if(flag != 0)
+          flag = 0;
     } else {
-        if(flag2 != 1) {
+        if(flag != 1) {
           settings.mode = 'prog';
-          flag2 = 1;
+          flag = 1;
         }
     }
-    //fs.writeFileSync(filename, JSON.stringify(settings));
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
       if (err) {
           console.log('Error writing file', err);
@@ -141,7 +189,6 @@ setInterval(() => {
     let progarray = getDay(date.getDay(), settings);
     let index = date.getHours();
     settings.temp_to_reach = progarray[index];
-    //fs.writeFileSync(filename, JSON.stringify(settings));
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
       if (err) {
           console.log('Error writing file', err);
@@ -152,7 +199,6 @@ setInterval(() => {
   }
   if(settings.antifreeze.enabled == 1) {
     settings.temp_to_reach = settings.antifreeze.temp;
-    //fs.writeFileSync(filename, JSON.stringify(settings));
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
       if (err) {
           console.log('Error writing file', err);

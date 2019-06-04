@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "EventEmitter": "^1.0.0",
     "bootstrap-slider": "^10.6.1",
     "express": "^4.16.4",
     "jquery": "^3.4.1",
