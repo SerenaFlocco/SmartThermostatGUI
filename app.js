@@ -238,7 +238,7 @@ relay_mqtt_client.on('connect', () => {
 });
 
 temperature_mqtt_client.on('connect', () => {
-    mqtt_client.subscribe('temperature');
+    temperature_mqtt_client.subscribe('temperature');
     console.log('Web App backend waiting for an mqtt message from the sensor...');
   });
 
