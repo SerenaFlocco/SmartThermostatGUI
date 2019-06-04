@@ -10,6 +10,7 @@ const app       = express();
 const path      = require('path');
 const fs        = require('fs');
 const mqtt      = require('mqtt');
+const WebSocket = require('ws');
 const wss       = require('ws').Server;
 const exphbs    = require('express-handlebars');
 //const exec      = require('child_process').exec;
@@ -56,7 +57,7 @@ server.on('connection', (ws) => {
   msg_interval = setInterval(() => {
     //let rawdata = fs.readFileSync('settings.json');  
     //let settings = JSON.parse(rawdata);
-    if(settings.mode != 'off' /*&& flag == 0*/) {
+    if(settings.mode != 'off' && ws.readyState === WebSocket.OPEN) {
       switch(settings.season) {
           case 'winter':
             if((settings.temp_to_reach > settings.current_temperature) && settings.heating == 0) {
@@ -92,13 +93,19 @@ server.on('connection', (ws) => {
     }
   }, 5000);
   topic_id = setInterval(() => {
-    if(received_temperature != '') {
+    if(received_temperature != '' && ws.readyState === WebSocket.OPEN) {
       ws.send('temp:' + received_temperature);
       console.log(`Message ${received_temperature} sent via websocket`);
     }
-  },30000);
+  },5000);
   connections.push(ws);
+
 });
+
+server.on('close', (ws) =>{
+  console.log("close conection")
+  ws.close();
+})
 
 //Check if weekend mode, antifreeze mode or the prog mode is enabled
 setInterval(() => {
@@ -176,14 +183,14 @@ mqtt_client.on('message', (topic, msg) => {
     });
 });
 
-process.on('uncaughtException', () => {
-  //server.close();
-  console.log("error!!!!!!!!!!")
-});
+/*process.on('uncaughtException', (err) => {
+  console.log(e);
+});*/
 
-process.on('SIGTERM', () => {
+process.on('SIGTERM', (e) => {
   //server.close();
-  console.log("error!!!!!!!!!!")
+  //console.log("error!!!!!!!!!!")
+  //console.log(e.data);
 });
 
   
