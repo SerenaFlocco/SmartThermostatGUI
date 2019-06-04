@@ -14,7 +14,8 @@ const WebSocket = require('ws');
 const wss       = require('ws').Server;
 const exphbs    = require('express-handlebars');
 //const exec      = require('child_process').exec;
-var mqtt_client   = mqtt.connect('mqtt://localhost');
+var temperature_mqtt_client   = mqtt.connect('mqtt://localhost');
+var relay_mqtt_client   = mqtt.connect('mqtt://localhost');
 var server        = new wss({port: 8080});
 var received_temperature = '';
 var settings    = require('./settings.json');
@@ -209,12 +210,39 @@ setInterval(() => {
   }
 }, 5000);
 
-mqtt_client.on('connect', () => {
+relay_mqtt_client.on('connect', () => {
+  if(relay_mqtt_client.connected){
+    console.log("Relay client: CONNECTED ");
+    eventemitter.on('heatingon', () => {
+      //publish
+      let message = 'heating:on';
+      publish('relay',message);
+    });
+    eventemitter.on('heatingoff', () => {
+      //publish
+      let message = 'heating:off';
+      publish('relay',message);
+    });
+    eventemitter.on('coolingon', () => {
+      //publish
+      let message = 'cooling:on';
+      publish('relay',message);
+    });
+    eventemitter.on('coolingoff', () => {
+      //publish
+      let message = 'cooling:off';
+      publish('relay',message);
+    });	   
+  } else
+    console.log("--- Relay client: CONNECTION FAILED ---");
+});
+
+temperature_mqtt_client.on('connect', () => {
     mqtt_client.subscribe('temperature');
     console.log('Web App backend waiting for an mqtt message from the sensor...');
   });
 
-mqtt_client.on('message', (topic, msg) => {
+temperature_mqtt_client.on('message', (topic, msg) => {
     console.log(`Message ${msg} received via MQTT`);
     received_temperature = msg.toString();
     //modify the json file
@@ -284,4 +312,10 @@ function parseDate(day, time, spec) {
   if(splittedtime[1] != '00')
       mydate.setMinutes(splittedtime[1]);
   return mydate;
+}
+
+function publish(topic,msg,options){
+  console.log("Relay control: PUBLISHING " + msg);
+  if (relay_mqtt_client.connected == true)
+    relay_mqtt_client.publish(topic,msg,options);
 }
