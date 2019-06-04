@@ -3,6 +3,7 @@ const router = express.Router();
 const fs = require('fs');
 const filename = 'settings.json';
 var settings = require('../../settings.json');
+const timestamp = require('time-stamp');
 
 //Get All Settings
 router.get('/', (req, res) => res.json(settings));
@@ -59,6 +60,7 @@ router.get('/season', (req, res) => res.json(settings.season));
 
 //Modify the current season
 router.put('/season', (req, res) => {
+    console.log("after");
     const updated = req.body;
     settings.season = updated.season;
     if(settings.season == 'winter')
