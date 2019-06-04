@@ -29,7 +29,7 @@ router.get('/', function(req, res) {
       mac.getMac(function(err, macAddress){
          if (err)  throw err
          console.log(macAddress);
-      })
+      });
 
       res.render('index', {
          temperature: temperature,

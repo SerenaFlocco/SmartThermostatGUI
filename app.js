@@ -10,9 +10,11 @@ const app       = express();
 const path      = require('path');
 const fs        = require('fs');
 const mqtt      = require('mqtt');
+const timestamp = require('time-stamp');
 const WebSocket = require('ws');
 const wss       = require('ws').Server;
 const exphbs    = require('express-handlebars');
+const mac = require('getmac');
 //const exec      = require('child_process').exec;
 var temperature_mqtt_client   = mqtt.connect('mqtt://localhost');
 var relay_mqtt_client   = mqtt.connect('mqtt://localhost');
@@ -22,7 +24,11 @@ var settings    = require('./settings.json');
 const filename    = 'settings.json';
 const EventEmitter = require('events');
 var eventemitter = new EventEmitter();
+/*flag used when weekend mode is active: it is 0 during the time interval in which mode=off,
+while it is 1 if it is expired and mode has to be set prog */
 var flag = 0;
+/*flag used to limit the times the mode is set to off during the weekend mode*/
+var counter = 0;
 
 // handlebars middleware
 app.engine('handlebars', exphbs({
@@ -50,6 +56,18 @@ app.listen(3000, function() {
   console.log('Listening on port 3000...')
 })
 
+mac.getMac((err, macAddress) => {
+  if (err)  throw err
+  settings.mac = macAddress;
+  //write the json file
+  fs.writeFile(filename, JSON.stringify(settings), (err) => {
+    if (err) {
+        console.log('Error writing file', err);
+    } else {
+        console.log('Successfully wrote file');
+    }
+  });
+});
 
 server.on('connection', (ws) => {
   console.log("NEW CONNECTION" + ws );
@@ -167,23 +185,34 @@ setInterval(() => {
   if(settings.weekend.enabled == 1) {
     let from = parseDate(settings.weekend.from[0], settings.weekend.from[1], settings.weekend.from[2]);
     let to = parseDate(settings.weekend.to[0], settings.weekend.to[1], settings.weekend.to[2]);
-    if(date >= from && date <= to) {
+    if(date >= from && date <= to && counter == 0) {
         settings.mode = 'off';
+        settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+        fs.writeFile(filename, JSON.stringify(settings), (err) => {
+          if (err) {
+              console.log('Error writing file', err);
+          } else {
+              console.log('Successfully wrote file');
+          }
+        });
+        counter = 1;
         if(flag != 0)
           flag = 0;
     } else {
         if(flag != 1) {
           settings.mode = 'prog';
+          settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+          fs.writeFile(filename, JSON.stringify(settings), (err) => {
+            if (err) {
+                console.log('Error writing file', err);
+            } else {
+                console.log('Successfully wrote file');
+            }
+          });
           flag = 1;
+          counter = 0;
         }
     }
-    fs.writeFile(filename, JSON.stringify(settings), (err) => {
-      if (err) {
-          console.log('Error writing file', err);
-      } else {
-          console.log('Successfully wrote file');
-      }
-    });
   }
   //to be tested
   if(settings.mode == 'prog' && settings.antifreeze.enabled == 0) {
