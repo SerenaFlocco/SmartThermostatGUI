@@ -125,7 +125,7 @@ setInterval(() => {
   if(settings.mode != 'off') {
     switch(settings.season) {
       case 'winter':
-        if((settings.temp_to_reach > settings.current_temperature) && settings.heating == 0) {
+        if((settings.temp_to_reach > settings.current_temperature) /*&& settings.heating == 0*/) {
             settings.heating = 1;
             console.log('Sending settings to frontend...');
             //trigger the frontend to show the heating logo-->emit event
@@ -139,7 +139,7 @@ setInterval(() => {
               }
             });
         } else {
-            if((settings.temp_to_reach <= settings.current_temperature) && settings.heating==1) {
+            if((settings.temp_to_reach <= settings.current_temperature) /*&& settings.heating==1*/) {
                 settings.heating = 0;
                 console.log('Sending settings to frontend...');
                 //trigger the frontend to hide the heating logo-->emit event
@@ -156,7 +156,7 @@ setInterval(() => {
         };
         break;
       case 'summer':
-        if((settings.temp_to_reach < settings.current_temperature) && settings.cooling == 0) {
+        if((settings.temp_to_reach < settings.current_temperature) /*&& settings.cooling == 0*/) {
             settings.cooling = 1;
             console.log('Sending settings to frontend...');
             //trigger the frontend to show the cooling logo-->emit event
@@ -170,7 +170,7 @@ setInterval(() => {
               }
             });
         } else {
-            if((settings.temp_to_reach >= settings.current_temperature) && settings.cooling == 1) {
+            if((settings.temp_to_reach >= settings.current_temperature) /*&& settings.cooling == 1*/) {
                 settings.cooling = 0;
                 console.log('Sending settings to frontend...');
                 //trigger the frontend to hide the heating logo-->emit event
