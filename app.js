@@ -49,6 +49,26 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 // setup controllers
 app.use(require('./controllers'))
+
+app.put('/api/settings/season', function (req, res, next) {
+  console.log("before");
+  const updated = req.body;
+  if(updated.season == 'winter')
+      eventemitter.emit('coolingoff');
+  else eventemitter.emit('heatingoff');
+  next();
+});
+
+app.put('/api/settings/mode', function (req, res, next) {
+  console.log("before");
+  const updated = req.body;
+  if(updated.mode == 'off') {
+      eventemitter.emit('coolingoff');
+      eventemitter.emit('heatingoff');
+  }
+  next();
+});
+
 // Members API Routes
 app.use('/api/settings', require('./routes/api/settings'));
 
@@ -112,7 +132,7 @@ setInterval(() => {
   if(settings.mode != 'off') {
     switch(settings.season) {
       case 'winter':
-        if((settings.temp_to_reach > settings.current_temperature) && settings.heating == 0) {
+        if((settings.temp_to_reach > settings.current_temperature) /*&& settings.heating == 0*/) {
             settings.heating = 1;
             console.log('Sending settings to frontend...');
             //trigger the frontend to show the heating logo-->emit event
@@ -126,7 +146,7 @@ setInterval(() => {
               }
             });
         } else {
-            if((settings.temp_to_reach <= settings.current_temperature) && settings.heating==1) {
+            if((settings.temp_to_reach <= settings.current_temperature) /*&& settings.heating==1*/) {
                 settings.heating = 0;
                 console.log('Sending settings to frontend...');
                 //trigger the frontend to hide the heating logo-->emit event
@@ -143,7 +163,7 @@ setInterval(() => {
         };
         break;
       case 'summer':
-        if((settings.temp_to_reach < settings.current_temperature) && settings.cooling == 0) {
+        if((settings.temp_to_reach < settings.current_temperature) /*&& settings.cooling == 0*/) {
             settings.cooling = 1;
             console.log('Sending settings to frontend...');
             //trigger the frontend to show the cooling logo-->emit event
@@ -157,7 +177,7 @@ setInterval(() => {
               }
             });
         } else {
-            if((settings.temp_to_reach >= settings.current_temperature) && settings.cooling == 1) {
+            if((settings.temp_to_reach >= settings.current_temperature) /*&& settings.cooling == 1*/) {
                 settings.cooling = 0;
                 console.log('Sending settings to frontend...');
                 //trigger the frontend to hide the heating logo-->emit event
@@ -267,7 +287,7 @@ relay_mqtt_client.on('connect', () => {
 });
 
 temperature_mqtt_client.on('connect', () => {
-    mqtt_client.subscribe('temperature');
+    temperature_mqtt_client.subscribe('temperature');
     console.log('Web App backend waiting for an mqtt message from the sensor...');
   });
 
