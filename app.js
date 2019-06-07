@@ -287,14 +287,15 @@ temperature_mqtt_client.on('message', (topic, msg) => {
 });
 
 /*process.on('uncaughtException', (err) => {
-  console.log(e);
-});*/
+  console.log(err);
+  server.close();
+});
 
 process.on('SIGTERM', (e) => {
-  //server.close();
+  server.close();
   //console.log("error!!!!!!!!!!")
   //console.log(e.data);
-});
+});*/
 
   
 function getDay(number, settings) {
