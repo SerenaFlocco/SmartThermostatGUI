@@ -60,7 +60,7 @@ $('#save').on('click', () => {
     let day = $('#day').children("option:selected").text();
     let mydayarray = new Array(24);
     for(i=1; i<25; i++) {
-        mydayarray[i-1] = $(`#formControlRange${i}`).val();
+        mydayarray[i-1] = Number.parseFloat($(`#formControlRange${i}`).val());
     }
     //put on program
     const url =  `http://localhost:3000/api/settings/prog/${day.toLowerCase()}`;
