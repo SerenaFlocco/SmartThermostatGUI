@@ -7,13 +7,13 @@ var settings = require('../../settings.json');
 const timestamp = require('time-stamp');
 
 //Get All Settings
-router.get('/', (req, res) => res.json(settings));
+router.get('/', (req, res) => res.json(settings.event));
 
 //Get the current temperature
-router.get('/currenttemp', (req, res) => res.json(settings.current_temperature));
+router.get('/currenttemp', (req, res) => res.json(settings.event.current_temperature));
 
 //Get the current mode
-router.get('/mode', (req, res) => res.json(settings.mode));
+router.get('/mode', (req, res) => res.json(settings.event.mode));
 
 //Modify the current mode
 router.put('/mode', (req, res) => {
@@ -25,7 +25,9 @@ router.put('/mode', (req, res) => {
         settings.heating = 0;
         settings.cooling = 0;
     }
-    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //send post request to configuration
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
             console.log('Error writing file', err);
@@ -45,7 +47,9 @@ router.get('/manualtemp', (req, res) => {
 router.put('/manualtemp', (req, res) => {
     const updated = req.body;
     settings.temp_to_reach = settings.last_man_temperature = updated.last_man_temperature;
-    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //send post request to configuration
+    settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
             console.log('Error writing file', err);
@@ -67,7 +71,9 @@ router.put('/season', (req, res) => {
     if(settings.season == 'winter')
         settings.cooling = 0;
     else settings.heating = 0;
-    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //send post request to configuration
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
             console.log('Error writing file', err);
@@ -79,12 +85,14 @@ router.put('/season', (req, res) => {
 });
 
 //Get the heating status
-router.get('/heating', (req, res) => res.json(settings.heating));
+router.get('/heating', (req, res) => res.json(settings.event.heating));
 
 //Modify the heating status
 router.put('/heating', (req, res) => {
     const updated = req.body;
     settings.heating = updated.heating;
+    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //set post request to configuration-->SET THE PASSIVE TIMESTAMP
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
             console.log('Error writing file', err);
@@ -102,7 +110,8 @@ router.get('/cooling', (req, res) => res.json(settings.cooling));
 router.put('/cooling', (req, res) => {
     const updated = req.body;
     settings.cooling = updated.cooling;
-    //fs.writeFileSync(filename, JSON.stringify(settings));
+    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //send post request to configuration-->SET THE PASSIVE TIMESTAMP
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
             console.log('Error writing file', err);
@@ -121,7 +130,9 @@ router.put('/antifreeze', (req, res) => {
     const updated = req.body;
     console.log('Received put request for antifreeze settings');
     settings.antifreeze = updated;
-    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //send post request to configuration
+    settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
             console.log('Error writing file', err);
@@ -140,7 +151,9 @@ router.put('/weekend', (req, res) => {
     const updated = req.body;
     settings.weekend = updated;
     console.log('Received put request for weekend mode settings');
-    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //send post request to configuration
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
             console.log('Error writing file', err);
@@ -183,7 +196,9 @@ router.put('/prog/:day', (req, res) => {
                        to_return = settings.program.sunday;
                        break;
     }
-    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //send post request to configuration
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
             console.log('Error writing file', err);

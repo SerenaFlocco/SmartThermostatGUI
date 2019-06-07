@@ -74,7 +74,21 @@ app.use('/api/settings', require('./routes/api/settings'));
 
 app.listen(3000, function() {
   console.log('Listening on port 3000...')
-})
+});
+
+/* Get request for the TOKEN-->SCADE OGNI 24H!!!*/
+
+/** Get request for the configuration: if the lastchange field is equal to the local one-->ok,
+ * otherwise modify the settings.json file
+ */
+
+/** Set interval to make a get request for the configuration:
+ * - if the lastchange field is equal to the local one-->ok,
+ * otherwise modify the settings.json file
+*/
+
+/*NOTA: DA REMOTO OCCORRE CONTROLLARE IL TIMESTAMP PASSIVO PER AGGIORNARE IL VALORE DELLA
+TEMPERATURA RILEVATA E LO STATO DEL SISTEMA DI RISCALDAMENTO/RAFFREDDAMENTO!!!*/
 
 mac.getMac((err, macAddress) => {
   if (err)  throw err
@@ -134,6 +148,8 @@ setInterval(() => {
       case 'winter':
         if((settings.temp_to_reach > settings.current_temperature) /*&& settings.heating == 0*/) {
             settings.heating = 1;
+            //send mqtt EVENT only if the heating was 0
+            //post request for configuration only if the heating was 0-->SET THE PASSIVE TIMESTAMP
             console.log('Sending settings to frontend...');
             //trigger the frontend to show the heating logo-->emit event
             eventemitter.emit('heatingon');
@@ -148,6 +164,8 @@ setInterval(() => {
         } else {
             if((settings.temp_to_reach <= settings.current_temperature) /*&& settings.heating==1*/) {
                 settings.heating = 0;
+                //send mqtt EVENT only if the heating was 1
+                //post request for configuration only if the heating was 1-->SET THE PASSIVE TIMESTAMP
                 console.log('Sending settings to frontend...');
                 //trigger the frontend to hide the heating logo-->emit event
                 eventemitter.emit('heatingoff');
@@ -165,6 +183,8 @@ setInterval(() => {
       case 'summer':
         if((settings.temp_to_reach < settings.current_temperature) /*&& settings.cooling == 0*/) {
             settings.cooling = 1;
+            //post request for configuration only if the cooling was 0-->SET THE PASSIVE TIMESTAMP
+            //send mqtt EVENT only if the cooling was 0
             console.log('Sending settings to frontend...');
             //trigger the frontend to show the cooling logo-->emit event
             eventemitter.emit('coolingon');
@@ -179,6 +199,8 @@ setInterval(() => {
         } else {
             if((settings.temp_to_reach >= settings.current_temperature) /*&& settings.cooling == 1*/) {
                 settings.cooling = 0;
+                //post request for configuration only if the cooling was 1-->SET THE PASSIVE TIMESTAMP
+                //send mqtt EVENT only if the cooling was 1
                 console.log('Sending settings to frontend...');
                 //trigger the frontend to hide the heating logo-->emit event
                 eventemitter.emit('coolingoff');
@@ -207,7 +229,9 @@ setInterval(() => {
     let to = parseDate(settings.weekend.to[0], settings.weekend.to[1], settings.weekend.to[2]);
     if(date >= from && date <= to && counter == 0) {
         settings.mode = 'off';
-        settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+        //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+        settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
+        //send post request to configuration
         fs.writeFile(filename, JSON.stringify(settings), (err) => {
           if (err) {
               console.log('Error writing file', err);
@@ -221,7 +245,9 @@ setInterval(() => {
     } else {
         if(flag != 1) {
           settings.mode = 'prog';
-          settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+          //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+          settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
+          //send post request to configuration
           fs.writeFile(filename, JSON.stringify(settings), (err) => {
             if (err) {
                 console.log('Error writing file', err);
@@ -239,6 +265,8 @@ setInterval(() => {
     let progarray = getDay(date.getDay(), settings);
     let index = date.getHours();
     settings.temp_to_reach = progarray[index];
+    //send post request to configuration only if the temp_to_reach has changed-->SET THE PASSIVE TIMESTAMP
+    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
       if (err) {
           console.log('Error writing file', err);
@@ -247,15 +275,17 @@ setInterval(() => {
       }
     });
   }
-  if(settings.antifreeze.enabled == 1) {
-    settings.temp_to_reach = settings.antifreeze.temp;
-    fs.writeFile(filename, JSON.stringify(settings), (err) => {
-      if (err) {
-          console.log('Error writing file', err);
-      } else {
-          console.log('Successfully wrote file');
-      }
-    });
+  if(settings.antifreeze.enabled == 1 && settings.season != 'summer') {
+      settings.temp_to_reach = settings.antifreeze.temp;
+      //send post request to configuration only if the temp_to_reach has changed-->SET THE PASSIVE TIMESTAMP
+      //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+      fs.writeFile(filename, JSON.stringify(settings), (err) => {
+        if (err) {
+            console.log('Error writing file', err);
+        } else {
+            console.log('Successfully wrote file');
+        }
+      });
   }
 }, 5000);
 
@@ -295,8 +325,11 @@ temperature_mqtt_client.on('message', (topic, msg) => {
     console.log(`Message ${msg} received via MQTT`);
     received_temperature = msg.toString();
     //modify the json file
-    settings.current_temperature = Number.parseFloat(msg.toString()); // to test
+    settings.current_temperature = Number.parseFloat(msg.toString());
     console.log(settings.current_temperature);
+    //send mqtt EVENT
+    //send post request to configuration-->SET THE PASSIVE TIMESTAMP
+    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
       if (err) {
           console.log('Error writing file', err);
