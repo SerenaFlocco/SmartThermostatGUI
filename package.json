@@ -12,7 +12,7 @@
   "dependencies": {
     "EventEmitter": "^1.0.0",
     "bootstrap-slider": "^10.6.1",
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     "getmac": "^1.4.6",
     "jquery": "^3.4.1",
     "jsdom": "^15.0.0",
