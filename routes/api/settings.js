@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const filename = 'settings.json';
-const timestamp = require('time-stamp');
 var settings = require('../../settings.json');
 const timestamp = require('time-stamp');
 
@@ -10,10 +9,10 @@ const timestamp = require('time-stamp');
 router.get('/', (req, res) => res.json(settings.event));
 
 //Get the current temperature
-router.get('/currenttemp', (req, res) => res.json(settings.event.current_temperature));
+router.get('/currenttemp', (req, res) => res.json(settings/*.event*/.current_temperature));
 
 //Get the current mode
-router.get('/mode', (req, res) => res.json(settings.event.mode));
+router.get('/mode', (req, res) => res.json(settings/*.event*/.mode));
 
 //Modify the current mode
 router.put('/mode', (req, res) => {
@@ -85,7 +84,7 @@ router.put('/season', (req, res) => {
 });
 
 //Get the heating status
-router.get('/heating', (req, res) => res.json(settings.event.heating));
+router.get('/heating', (req, res) => res.json(settings/*.event*/.heating));
 
 //Modify the heating status
 router.put('/heating', (req, res) => {
