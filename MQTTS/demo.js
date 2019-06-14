@@ -8,25 +8,30 @@ var awsIot = require('aws-iot-device-sdk');
 // connection will be terminated.
 //
 
+// mosquitto_sub -d -h a3cezb6rg1vyed-ats.iot.us-west-2.amazonaws.com -p 8443 --cafile root-CA.crt --cert PL-student.cert.pem --key PL-student.private.key -t pl19/notifications
+// openssl s_client -connect a3cezb6rg1vyed-ats.iot.us-west-2.amazonaws.com:8443 -CAfile root-CA.crt -cert PL-student.cert.pem -key PL-student.private.key
 
 var device = awsIot.device({
   keyPath: './PL-student.private.key',
   certPath: './PL-student.cert.pem',
   caPath: './root-CA.crt',
-  clientId: 'PL19-11',
+  clientId: 'sdk-nodejs-5',
   host: 'a3cezb6rg1vyed-ats.iot.us-west-2.amazonaws.com',
-  port: '8883'
+  port: '8883',
+  expires: 600,
+  protocol: 'mqtts'
 });
-console.log("New device created...");
+//console.log("New device created with id: basicPubSub");
 
 
-    //device.subscribe('pl19/notification');
-    //device.publish('pl19/event', JSON.stringify({ test_data: 1}));
+    //device.subscribe('pl19/debug');
+    //device.publish('pl19/debug', JSON.stringify({ test_data: 1}));
 
 
   device
       .on('connect', function() {
          console.log('connect');
+         device.subscribe('pl19/notification');
       });
    device
       .on('close', function() {
