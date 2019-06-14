@@ -3,6 +3,7 @@ var client = new Client();
 const uri = 'http://ec2-34-220-162-82.us-west-2.compute.amazonaws.com:5002';
 const username = 'PL19-11';
 const pwd = 'polit0';
+var settings;
 
 //TEST THE RESPONSES!!!
 
@@ -15,6 +16,7 @@ function getConfig(token, _function) {
             "Authorization": "JWT " + token
         }
     };
+    // direct way
     client.get(myuri, args, _function)
 }
 
@@ -37,7 +39,7 @@ function postConfig(settings, mac, nickname, token) {
 }
 
 //request for authentication-->response=token
-function authenticate(_function) {
+function authenticate(_function, settings) {
     const myuri = uri + '/auth';
     let args = {
         data : {"username":username, "password":pwd},
@@ -48,20 +50,16 @@ function authenticate(_function) {
     client.post(myuri, args, _function)
 }
 
-function _getConfig(data, response, _function){
-    getConfig(data.access_token, _function)
+function _checkConfig(data,response){
+        // parsed response body as js object
+        jsonObj = JSON.parse(data)
+        console.log(jsonObj.data.configuration)
 }
 
-/* Obtain the actual configuration*/
-function func2(data, response){
-    jsonObj = JSON.parse(data)
-    return jsonObj.data.configuration
+function _getConfig(data, response,){
+    console.log(data.access_token);
+    console.log("now ask for configurations")
+    getConfig(data.access_token,_checkConfig)
 }
 
-module.exports = {
-    getConfig: this.getConfig,
-    postConfig: this.postConfig,
-    authenticate: this.authenticate,
-    _getConfig:  this._getConfig,
-    func2: this.func2
-}
+authenticate(_getConfig);
