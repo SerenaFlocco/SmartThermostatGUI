@@ -86,8 +86,8 @@ app.listen(3000, function() {
 /** Get request for the configuration: if the lastchange field is equal to the local one-->ok,
  * otherwise modify the settings.json file
  */
-token = AWSclient.authenticate(); //request for the token
-config = AWSclient.getConfig(token);  //send post request to configuration
+config = AWSclient.authenticate(AWSclient.authAndGetConf); //request for the token
+
 if(config.lastchange > settings.lastchange) {
   settings = config;
   fs.writeFile(filename, JSON.stringify(settings), (err) => {
