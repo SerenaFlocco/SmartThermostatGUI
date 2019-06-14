@@ -4,12 +4,10 @@ const uri = 'http://ec2-34-220-162-82.us-west-2.compute.amazonaws.com:5002';
 const username = 'PL19-11';
 const pwd = 'polit0';
 
-const syncClient = require('sync-rest-client');
-
 //TEST THE RESPONSES!!!
 
 //get configuration
-function getConfig(token, _function) {
+var getConfig = function getConfig(token) {
     const myuri = uri + '/user/PL19-11/devices';
     let args = {
         headers: { 
@@ -17,7 +15,14 @@ function getConfig(token, _function) {
             "Authorization": "JWT " + token
         }
     };
-    client.get(myuri, args, _function)
+    // direct way
+    client.get(myuri, args, (data, response) => {
+        // parsed response body as js object
+        console.log(data);
+        // raw response
+        console.log(response);
+        return data.configuration;
+    });
 }
 
 //update configuration
@@ -40,7 +45,7 @@ var postConfig = function postConfig(settings, mac, nickname, token) {
 }
 
 //request for authentication-->response=token
-function authenticate(_function) {
+var authenticate = function authenticate(myFunc) {
     const myuri = uri + '/auth';
     let args = {
         data : {"username":username, "password":pwd},
@@ -48,23 +53,14 @@ function authenticate(_function) {
             "Content-Type": "application/json"
         }
     };
-    client.post(myuri, args, _function)
+    client.post(myuri, args, (data,response)=>{
+        console.log(data);
+    });
 }
 
-function _getConfig(data, response, _function){
-    getConfig(data.access_token, _function)
+function myFunc(data, response) {
+    console.log(data)
+    console.log
 }
 
-/* Obtain the actual configuration*/
-function func2(data, response){
-    jsonObj = JSON.parse(data)
-    return jsonObj.data.configuration
-}
-
-module.exports = {
-    getConfig: this.getConfig,
-    postConfig: this.postConfig,
-    authenticate: this.authenticate,
-    _getConfig:  this._getConfig,
-    func2: this.func2
-}
+authenticate(myFunc);
