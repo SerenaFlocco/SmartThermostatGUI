@@ -4,8 +4,6 @@ const uri = 'http://ec2-34-220-162-82.us-west-2.compute.amazonaws.com:5002';
 const username = 'PL19-11';
 const pwd = 'polit0';
 
-const syncClient = require('sync-rest-client');
-
 //TEST THE RESPONSES!!!
 
 //get configuration
@@ -18,7 +16,7 @@ var getConfig = function getConfig(token) {
         }
     };
     // direct way
-    syncClient.get(myuri, args, (data, response) => {
+    client.get(myuri, args, (data, response) => {
         // parsed response body as js object
         console.log(data);
         // raw response
@@ -47,7 +45,7 @@ var postConfig = function postConfig(settings, mac, nickname, token) {
 }
 
 //request for authentication-->response=token
-var authenticate = function authenticate() {
+var authenticate = function authenticate(myFunc) {
     const myuri = uri + '/auth';
     let args = {
         data : {"username":username, "password":pwd},
@@ -55,17 +53,14 @@ var authenticate = function authenticate() {
             "Content-Type": "application/json"
         }
     };
-    syncClient.post(myuri, args, (data, response) => {
-        // parsed response body as js object
+    client.post(myuri, args, (data,response)=>{
         console.log(data);
-        // raw response
-        console.log(response);
-        return data.access_token;
     });
 }
 
-module.exports = {
-    getConfig: getConfig,
-    postConfig: postConfig,
-    authenticate: authenticate
+function myFunc(data, response) {
+    console.log(data)
+    console.log
 }
+
+authenticate(myFunc);
