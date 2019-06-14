@@ -1,9 +1,13 @@
-/*var Client = require('node-rest-client').Client;
-var client = new Client();*/
+var Client = require('node-rest-client').Client;
+var client = new Client();
+const uri = 'http://ec2-34-220-162-82.us-west-2.compute.amazonaws.com:5002';
+const username = 'PL19-11';
+const pwd = 'polit0';
 
 //TEST THE RESPONSES!!!
 
-function getConfig(client, uri, token) {
+//get configuration
+function getConfig(token) {
     const myuri = uri + '/user/PL19-11/devices';
     let args = {
         headers: { 
@@ -21,7 +25,8 @@ function getConfig(client, uri, token) {
     });
 }
 
-function postConfig(uri, settings, mac, nickname, token) {
+//update configuration
+function postConfig(settings, mac, nickname, token) {
     const myuri = uri + '/user/PL19-11/devices';
     let args = {
         data: {"device_mac":mac, "nickname": nickname, "configuration":settings},
@@ -38,7 +43,8 @@ function postConfig(uri, settings, mac, nickname, token) {
     });
 }
 
-function authenticate(uri, username, pwd) {
+//request for authentication-->response=token
+function authenticate() {
     const myuri = uri + '/auth';
     let args = {
         data : {"username":username, "password":pwd},
@@ -54,3 +60,5 @@ function authenticate(uri, username, pwd) {
     });
     return data.access_token;
 }
+
+module.exports = AWSclient;
