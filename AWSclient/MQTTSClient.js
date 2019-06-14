@@ -65,3 +65,4 @@ function sendEvent(event_id, device_mac, event){
     device.publish('pl19/debug', JSON.stringify(jsonObject));
 }
     
+module.exports = MQTTSClient;

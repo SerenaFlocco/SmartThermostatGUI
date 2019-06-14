@@ -23,6 +23,7 @@ var received_temperature = '';
 var settings    = require('./settings.json');
 const filename    = 'settings.json';
 const AWSclient = require('./AWSclient/RESTclient.js');
+const MQTTSClient = require('./AWSclient/MQTTSClient.js');
 const EventEmitter = require('events');
 var eventemitter = new EventEmitter();
 /*flag used when weekend mode is active: it is 0 during the time interval in which mode=off,
@@ -194,6 +195,7 @@ setInterval(() => {
           });
           if(ischanged == 1) {
             //send mqtt EVENT only if the heating was 0
+            MQTTSClient.sendEvent(2, settings.mac, 'heating on');
             //post request for configuration only if the heating was 0-->SET THE PASSIVE TIMESTAMP
             settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
             token = AWSclient.authenticate();
@@ -219,6 +221,7 @@ setInterval(() => {
             });
             if(ischanged == 1) {
             //send mqtt EVENT only if the heating was 1
+            MQTTSClient.sendEvent(3, settings.mac, 'heating off');
             //post request for configuration only if the heating was 1-->SET THE PASSIVE TIMESTAMP
             settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
             token = AWSclient.authenticate();
@@ -247,6 +250,7 @@ setInterval(() => {
           });
           if(ischanged == 1) {
             //send mqtt EVENT only if the cooling was 0
+            MQTTSClient.sendEvent(4, settings.mac, 'cooling on');
             //post request for configuration only if the cooling was 0-->SET THE PASSIVE TIMESTAMP
             settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
             token = AWSclient.authenticate();
@@ -272,6 +276,7 @@ setInterval(() => {
             });
             if(ischanged == 1) {
               //send mqtt EVENT only if the cooling was 1
+              MQTTSClient.sendEvent(5, settings.mac, 'cooling off');
               //post request for configuration only if the cooling was 1-->SET THE PASSIVE TIMESTAMP
               settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
               token = AWSclient.authenticate();
@@ -317,7 +322,6 @@ setInterval(() => {
           settings.mode = 'prog';
           settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
           settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
-          //send post request to configuration
           fs.writeFile(filename, JSON.stringify(settings), (err) => {
             if (err) {
                 console.log('Error writing file', err);
@@ -408,6 +412,7 @@ temperature_mqtt_client.on('message', (topic, msg) => {
     settings.current_temperature = Number.parseFloat(msg.toString());
     console.log(settings.current_temperature);
     //send mqtt EVENT
+    MQTTSClient.sendEvent(6, settings.mac, 'received temperature');
     //SET THE PASSIVE TIMESTAMP
     settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     //request for the token
