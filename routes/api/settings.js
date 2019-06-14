@@ -4,15 +4,17 @@ const fs = require('fs');
 const filename = 'settings.json';
 var settings = require('../../settings.json');
 const timestamp = require('time-stamp');
+const AWSclient = require('../../AWSclient/RESTclient.js');
+var token = '';
 
 //Get All Settings
 router.get('/', (req, res) => res.json(settings.event));
 
 //Get the current temperature
-router.get('/currenttemp', (req, res) => res.json(settings/*.event*/.current_temperature));
+router.get('/currenttemp', (req, res) => res.json(settings.current_temperature));
 
 //Get the current mode
-router.get('/mode', (req, res) => res.json(settings/*.event*/.mode));
+router.get('/mode', (req, res) => res.json(settings.mode));
 
 //Modify the current mode
 router.put('/mode', (req, res) => {
@@ -24,9 +26,8 @@ router.put('/mode', (req, res) => {
         settings.heating = 0;
         settings.cooling = 0;
     }
-    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
-    //send post request to configuration
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
             console.log('Error writing file', err);
@@ -34,6 +35,10 @@ router.put('/mode', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
+    //request for the token
+    token = AWSclient.authenticate();
+    //send post request to configuration
+    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
     res.status(201).json(settings.mode);
 });
 
@@ -46,8 +51,7 @@ router.get('/manualtemp', (req, res) => {
 router.put('/manualtemp', (req, res) => {
     const updated = req.body;
     settings.temp_to_reach = settings.last_man_temperature = updated.last_man_temperature;
-    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-    //send post request to configuration
+    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
@@ -56,6 +60,10 @@ router.put('/manualtemp', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
+    //request for the token
+    token = AWSclient.authenticate();
+    //send post request to configuration
+    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
     res.status(201).json(settings.last_man_temperature);
 });
 
@@ -70,9 +78,8 @@ router.put('/season', (req, res) => {
     if(settings.season == 'winter')
         settings.cooling = 0;
     else settings.heating = 0;
-    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
-    //send post request to configuration
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
             console.log('Error writing file', err);
@@ -80,6 +87,10 @@ router.put('/season', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
+    //request for the token
+    token = AWSclient.authenticate();
+    //send post request to configuration
+    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
     res.status(201).json(settings.season);
 });
 
@@ -90,8 +101,8 @@ router.get('/heating', (req, res) => res.json(settings/*.event*/.heating));
 router.put('/heating', (req, res) => {
     const updated = req.body;
     settings.heating = updated.heating;
-    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-    //set post request to configuration-->SET THE PASSIVE TIMESTAMP
+    //SET ONLY THE PASSIVE TIMESTAMP
+    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
             console.log('Error writing file', err);
@@ -99,6 +110,10 @@ router.put('/heating', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
+    //request for the token
+    token = AWSclient.authenticate();
+    //send post request to configuration
+    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
     res.status(201).json(settings.heating);
 });
 
@@ -109,8 +124,8 @@ router.get('/cooling', (req, res) => res.json(settings.cooling));
 router.put('/cooling', (req, res) => {
     const updated = req.body;
     settings.cooling = updated.cooling;
-    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-    //send post request to configuration-->SET THE PASSIVE TIMESTAMP
+    //SET ONLY THE PASSIVE TIMESTAMP
+    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
             console.log('Error writing file', err);
@@ -118,6 +133,10 @@ router.put('/cooling', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
+    //request for the token
+    token = AWSclient.authenticate();
+    //send post request to configuration
+    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
     res.status(201).json(settings.cooling);
 });
 
@@ -129,8 +148,7 @@ router.put('/antifreeze', (req, res) => {
     const updated = req.body;
     console.log('Received put request for antifreeze settings');
     settings.antifreeze = updated;
-    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-    //send post request to configuration
+    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
@@ -139,6 +157,10 @@ router.put('/antifreeze', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
+    //request for the token
+    token = AWSclient.authenticate();
+    //send post request to configuration
+    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
     res.status(201).json(settings.antifreeze);
 });
 
@@ -150,9 +172,8 @@ router.put('/weekend', (req, res) => {
     const updated = req.body;
     settings.weekend = updated;
     console.log('Received put request for weekend mode settings');
-    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
-    //send post request to configuration
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
             console.log('Error writing file', err);
@@ -160,6 +181,10 @@ router.put('/weekend', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
+    //request for the token
+    token = AWSclient.authenticate();
+    //send post request to configuration
+    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
     res.status(201).json(settings.weekend);
 });
 
@@ -195,9 +220,8 @@ router.put('/prog/:day', (req, res) => {
                        to_return = settings.program.sunday;
                        break;
     }
-    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
-    //send post request to configuration
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
             console.log('Error writing file', err);
@@ -205,6 +229,10 @@ router.put('/prog/:day', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
+    //request for the token
+    token = AWSclient.authenticate();
+    //send post request to configuration
+    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
     res.status(201).json(to_return);
 });
 

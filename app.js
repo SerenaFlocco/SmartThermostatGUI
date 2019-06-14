@@ -22,13 +22,19 @@ var server        = new wss({port: 8080});
 var received_temperature = '';
 var settings    = require('./settings.json');
 const filename    = 'settings.json';
+const AWSclient = require('../../AWSclient/RESTclient.js');
 const EventEmitter = require('events');
 var eventemitter = new EventEmitter();
 /*flag used when weekend mode is active: it is 0 during the time interval in which mode=off,
 while it is 1 if it is expired and mode has to be set prog */
 var flag = 0;
-/*flag used to limit the times the mode is set to off during the weekend mode*/
+/*variable used to limit the times the mode is set to off during the weekend mode*/
 var counter = 0;
+var token = '';
+/*variable used to store the configuration get through REST calls to AWS*/
+var config;
+/*flag used to send mqtts events to AWS*/
+var ischanged = 0;
 
 // handlebars middleware
 app.engine('handlebars', exphbs({
@@ -76,16 +82,40 @@ app.listen(3000, function() {
   console.log('Listening on port 3000...')
 });
 
-/* Get request for the TOKEN-->SCADE OGNI 24H!!!*/
-
 /** Get request for the configuration: if the lastchange field is equal to the local one-->ok,
  * otherwise modify the settings.json file
  */
+token = AWSclient.authenticate(); //request for the token
+config = AWSclient.getConfig(token);  //send post request to configuration
+if(config.lastchange > settings.lastchange) {
+  settings = config;
+  fs.writeFile(filename, JSON.stringify(settings), (err) => {
+    if (err) {
+        console.log('Error writing file', err);
+    } else {
+        console.log('Successfully wrote file');
+    }
+  });
+}
 
 /** Set interval to make a get request for the configuration:
- * - if the lastchange field is equal to the local one-->ok,
+ * if the lastchange field is equal to the local one-->ok,
  * otherwise modify the settings.json file
 */
+setInterval( () => {
+  token = AWSclient.authenticate(); //request for the token
+  config = AWSclient.getConfig(token);  //send post request to configuration
+  if(config.lastchange > settings.lastchange) {
+    settings = config;
+    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+      if (err) {
+          console.log('Error writing file', err);
+      } else {
+          console.log('Successfully wrote file');
+      }
+    });
+  }
+}, 30000);
 
 /*NOTA: DA REMOTO OCCORRE CONTROLLARE IL TIMESTAMP PASSIVO PER AGGIORNARE IL VALORE DELLA
 TEMPERATURA RILEVATA E LO STATO DEL SISTEMA DI RISCALDAMENTO/RAFFREDDAMENTO!!!*/
@@ -101,6 +131,7 @@ mac.getMac((err, macAddress) => {
         console.log('Successfully wrote file');
     }
   });
+  //Notificare il mac?
 });
 
 server.on('connection', (ws) => {
@@ -146,13 +177,38 @@ setInterval(() => {
   if(settings.mode != 'off') {
     switch(settings.season) {
       case 'winter':
-        if((settings.temp_to_reach > settings.current_temperature) /*&& settings.heating == 0*/) {
-            settings.heating = 1;
+        if(settings.temp_to_reach > settings.current_temperature) {
+          if(settings.heating == 0)
+            ischanged = 1;
+          settings.heating = 1;
+          console.log('Sending settings to frontend...');
+          //trigger the frontend to show the heating logo-->emit event
+          eventemitter.emit('heatingon');
+          //write the json file
+          fs.writeFile(filename, JSON.stringify(settings), (err) => {
+            if (err) {
+                console.log('Error writing file', err);
+            } else {
+                console.log('Successfully wrote file');
+            }
+          });
+          if(ischanged == 1) {
             //send mqtt EVENT only if the heating was 0
             //post request for configuration only if the heating was 0-->SET THE PASSIVE TIMESTAMP
+            settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+            token = AWSclient.authenticate();
+            AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+            //reset the flag
+            ischanged = 0;
+          }
+        } else {
+          if(settings.temp_to_reach <= settings.current_temperature) {
+            if(settings.heating == 1)
+              ischanged = 1;
+            settings.heating = 0;
             console.log('Sending settings to frontend...');
-            //trigger the frontend to show the heating logo-->emit event
-            eventemitter.emit('heatingon');
+            //trigger the frontend to hide the heating logo-->emit event
+            eventemitter.emit('heatingoff');
             //write the json file
             fs.writeFile(filename, JSON.stringify(settings), (err) => {
               if (err) {
@@ -161,33 +217,51 @@ setInterval(() => {
                   console.log('Successfully wrote file');
               }
             });
-        } else {
-            if((settings.temp_to_reach <= settings.current_temperature) /*&& settings.heating==1*/) {
-                settings.heating = 0;
-                //send mqtt EVENT only if the heating was 1
-                //post request for configuration only if the heating was 1-->SET THE PASSIVE TIMESTAMP
-                console.log('Sending settings to frontend...');
-                //trigger the frontend to hide the heating logo-->emit event
-                eventemitter.emit('heatingoff');
-                //write the json file
-                fs.writeFile(filename, JSON.stringify(settings), (err) => {
-                  if (err) {
-                      console.log('Error writing file', err);
-                  } else {
-                      console.log('Successfully wrote file');
-                  }
-                });
+            if(ischanged == 1) {
+            //send mqtt EVENT only if the heating was 1
+            //post request for configuration only if the heating was 1-->SET THE PASSIVE TIMESTAMP
+            settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+            token = AWSclient.authenticate();
+            AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+            //reset the flag
+            ischanged = 0;
             }
+          }
         };
         break;
       case 'summer':
-        if((settings.temp_to_reach < settings.current_temperature) /*&& settings.cooling == 0*/) {
-            settings.cooling = 1;
-            //post request for configuration only if the cooling was 0-->SET THE PASSIVE TIMESTAMP
+        if(settings.temp_to_reach < settings.current_temperature) {
+          if(settings.cooling == 0)
+            ischanged = 1;
+          settings.cooling = 1;
+          console.log('Sending settings to frontend...');
+          //trigger the frontend to show the cooling logo-->emit event
+          eventemitter.emit('coolingon');
+          //write the json file
+          fs.writeFile(filename, JSON.stringify(settings), (err) => {
+            if (err) {
+                console.log('Error writing file', err);
+            } else {
+                console.log('Successfully wrote file');
+            }
+          });
+          if(ischanged == 1) {
             //send mqtt EVENT only if the cooling was 0
+            //post request for configuration only if the cooling was 0-->SET THE PASSIVE TIMESTAMP
+            settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+            token = AWSclient.authenticate();
+            AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+            //reset the flag
+            ischanged = 0;
+          }
+        } else {
+          if(settings.temp_to_reach >= settings.current_temperature) {
+            if(settings.cooling == 1)
+              ischanged = 1;
+            settings.cooling = 0;
             console.log('Sending settings to frontend...');
-            //trigger the frontend to show the cooling logo-->emit event
-            eventemitter.emit('coolingon');
+            //trigger the frontend to hide the heating logo-->emit event
+            eventemitter.emit('coolingoff');
             //write the json file
             fs.writeFile(filename, JSON.stringify(settings), (err) => {
               if (err) {
@@ -196,26 +270,19 @@ setInterval(() => {
                   console.log('Successfully wrote file');
               }
             });
-        } else {
-            if((settings.temp_to_reach >= settings.current_temperature) /*&& settings.cooling == 1*/) {
-                settings.cooling = 0;
-                //post request for configuration only if the cooling was 1-->SET THE PASSIVE TIMESTAMP
-                //send mqtt EVENT only if the cooling was 1
-                console.log('Sending settings to frontend...');
-                //trigger the frontend to hide the heating logo-->emit event
-                eventemitter.emit('coolingoff');
-                //write the json file
-                fs.writeFile(filename, JSON.stringify(settings), (err) => {
-                  if (err) {
-                      console.log('Error writing file', err);
-                  } else {
-                      console.log('Successfully wrote file');
-                  }
-                });
+            if(ischanged == 1) {
+              //send mqtt EVENT only if the cooling was 1
+              //post request for configuration only if the cooling was 1-->SET THE PASSIVE TIMESTAMP
+              settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+              token = AWSclient.authenticate();
+              AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+              //reset the flag
+              ischanged = 0;
             }
+          }
         };
         break;
-      }
+    }
   }
 }, 5000);
 
@@ -228,24 +295,27 @@ setInterval(() => {
     let from = parseDate(settings.weekend.from[0], settings.weekend.from[1], settings.weekend.from[2]);
     let to = parseDate(settings.weekend.to[0], settings.weekend.to[1], settings.weekend.to[2]);
     if(date >= from && date <= to && counter == 0) {
-        settings.mode = 'off';
-        //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-        settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
-        //send post request to configuration
-        fs.writeFile(filename, JSON.stringify(settings), (err) => {
-          if (err) {
-              console.log('Error writing file', err);
-          } else {
-              console.log('Successfully wrote file');
-          }
-        });
-        counter = 1;
-        if(flag != 0)
-          flag = 0;
+      settings.mode = 'off';
+      settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+      settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
+      fs.writeFile(filename, JSON.stringify(settings), (err) => {
+        if (err) {
+            console.log('Error writing file', err);
+        } else {
+            console.log('Successfully wrote file');
+        }
+      });
+      counter = 1;
+      if(flag != 0)
+        flag = 0;
+      //request for the token
+      token = AWSclient.authenticate();
+      //send post request to configuration
+      AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
     } else {
         if(flag != 1) {
           settings.mode = 'prog';
-          //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+          settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
           settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
           //send post request to configuration
           fs.writeFile(filename, JSON.stringify(settings), (err) => {
@@ -257,6 +327,10 @@ setInterval(() => {
           });
           flag = 1;
           counter = 0;
+          //request for the token
+          token = AWSclient.authenticate();
+          //send post request to configuration
+          AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
         }
     }
   }
@@ -265,8 +339,7 @@ setInterval(() => {
     let progarray = getDay(date.getDay(), settings);
     let index = date.getHours();
     settings.temp_to_reach = progarray[index];
-    //send post request to configuration only if the temp_to_reach has changed-->SET THE PASSIVE TIMESTAMP
-    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
       if (err) {
           console.log('Error writing file', err);
@@ -274,18 +347,25 @@ setInterval(() => {
           console.log('Successfully wrote file');
       }
     });
+    //request for the token
+    token = AWSclient.authenticate();
+    //send post request to configuration only if the temp_to_reach has changed-->SET THE PASSIVE TIMESTAMP
+    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
   }
   if(settings.antifreeze.enabled == 1 && settings.season != 'summer') {
-      settings.temp_to_reach = settings.antifreeze.temp;
-      //send post request to configuration only if the temp_to_reach has changed-->SET THE PASSIVE TIMESTAMP
-      //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-      fs.writeFile(filename, JSON.stringify(settings), (err) => {
-        if (err) {
-            console.log('Error writing file', err);
-        } else {
-            console.log('Successfully wrote file');
-        }
-      });
+    settings.temp_to_reach = settings.antifreeze.temp;
+    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+      if (err) {
+          console.log('Error writing file', err);
+      } else {
+          console.log('Successfully wrote file');
+      }
+    });
+    //request for the token
+    token = AWSclient.authenticate();
+    //send post request to configuration only if the temp_to_reach has changed-->SET THE PASSIVE TIMESTAMP
+    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
   }
 }, 5000);
 
@@ -328,8 +408,12 @@ temperature_mqtt_client.on('message', (topic, msg) => {
     settings.current_temperature = Number.parseFloat(msg.toString());
     console.log(settings.current_temperature);
     //send mqtt EVENT
-    //send post request to configuration-->SET THE PASSIVE TIMESTAMP
-    //settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //SET THE PASSIVE TIMESTAMP
+    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    //request for the token
+    token = AWSclient.authenticate();
+    //send post request to configuration
+    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
       if (err) {
           console.log('Error writing file', err);
