@@ -18,6 +18,7 @@ publisher = paho.Client("TemperaturePublisher");
 publisher.on_publish = on_publish
 publisher.connect(broker,port)
 
+
 while True:
 	#read temp and hum
 	h,t = dht.read_retry(dht.DHT22, dht_pin)
