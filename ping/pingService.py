@@ -56,7 +56,7 @@ parser.add_argument("-k", "--key", action="store", default="../certs/PL-student.
 parser.add_argument("-p", "--port", action="store", dest="port", type=int, help="Port number override")
 parser.add_argument("-w", "--websocket", action="store_true", dest="useWebsocket", default=False,
                     help="Use MQTT over WebSocket")
-parser.add_argument("-id", "--clientId", action="store", dest="clientId", default="basicPubSub",
+parser.add_argument("-id", "--clientId", action="store", dest="clientId", default="pl19-11",
                     help="Targeted client id")
 parser.add_argument("-t", "--topic", action="store", dest="topic", default="pl19/event", help="Event topic")
 parser.add_argument("-m", "--mode", action="store", dest="mode", default="both",

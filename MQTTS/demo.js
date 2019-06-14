@@ -15,7 +15,7 @@ var device = awsIot.device({
   keyPath: './PL-student.private.key',
   certPath: './PL-student.cert.pem',
   caPath: './root-CA.crt',
-  clientId: 'sdk-nodejs-5',
+  clientId: 'pl91-11',
   host: 'a3cezb6rg1vyed-ats.iot.us-west-2.amazonaws.com',
   port: '8883',
   expires: 600,
