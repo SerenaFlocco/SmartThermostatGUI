@@ -18,7 +18,7 @@ var device = awsIot.device({
   keyPath: path.resolve(__dirname + '/../certs/PL-student.private.key'),
   certPath: path.resolve(__dirname + '/../certs/PL-student.cert.pem'),
   caPath: path.resolve(__dirname + '/../certs/root-CA.crt'),
-  clientId: 'pl91-11',
+  clientId: 'pl19-11',
   host: 'a3cezb6rg1vyed-ats.iot.us-west-2.amazonaws.com',
   port: '8883',
   expires: 600,
@@ -57,14 +57,15 @@ var device = awsIot.device({
          console.log('message', topic, payload.toString());
       });*/
 
-var sendEvent = function sendEvent(event_id, device_mac, event){
+function sendEvent(event_id, device_mac, event){
     jsonObject = {
         event_id: event_id,
         timestamp: timestamp('YYYY-MM-DD HH:mm:ss.ms'),
         device_mac: device_mac,
         event: event
     }
-    device.publish('pl19/debug', JSON.stringify(jsonObject));
+    device.publish('pl19/event', JSON.stringify(jsonObject));
+    console.log("sending to event...")
 }
 
 module.exports = {

@@ -86,36 +86,14 @@ app.listen(3000, function() {
 /** Get request for the configuration: if the lastchange field is equal to the local one-->ok,
  * otherwise modify the settings.json file
  */
-config = AWSclient.authenticate(AWSclient.authAndGetConf); //request for the token
-
-if(config.lastchange > settings.lastchange) {
-  settings = config;
-  fs.writeFile(filename, JSON.stringify(settings), (err) => {
-    if (err) {
-        console.log('Error writing file', err);
-    } else {
-        console.log('Successfully wrote file');
-    }
-  });
-}
+ AWSclient.authenticate(AWSclient._getConfig); //request for the token
 
 /** Set interval to make a get request for the configuration:
  * if the lastchange field is equal to the local one-->ok,
  * otherwise modify the settings.json file
 */
 setInterval( () => {
-  token = AWSclient.authenticate(); //request for the token
-  config = AWSclient.getConfig(token);  //send post request to configuration
-  if(config.lastchange > settings.lastchange) {
-    settings = config;
-    fs.writeFile(filename, JSON.stringify(settings), (err) => {
-      if (err) {
-          console.log('Error writing file', err);
-      } else {
-          console.log('Successfully wrote file');
-      }
-    });
-  }
+  AWSclient.authenticate(AWSclient._getConfig);
 }, 30000);
 
 /*NOTA: DA REMOTO OCCORRE CONTROLLARE IL TIMESTAMP PASSIVO PER AGGIORNARE IL VALORE DELLA
@@ -198,8 +176,8 @@ setInterval(() => {
             MQTTSClient.sendEvent(2, settings.mac, 'heating on');
             //post request for configuration only if the heating was 0-->SET THE PASSIVE TIMESTAMP
             settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-            token = AWSclient.authenticate();
-            AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+            // post new configuration
+            AWSclient.authenticate(AWSclient.postConfig);
             //reset the flag
             ischanged = 0;
           }
@@ -224,8 +202,8 @@ setInterval(() => {
             MQTTSClient.sendEvent(3, settings.mac, 'heating off');
             //post request for configuration only if the heating was 1-->SET THE PASSIVE TIMESTAMP
             settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-            token = AWSclient.authenticate();
-            AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+            // post new configuration
+            AWSclient.authenticate(AWSclient.postConfig);
             //reset the flag
             ischanged = 0;
             }
@@ -253,8 +231,8 @@ setInterval(() => {
             MQTTSClient.sendEvent(4, settings.mac, 'cooling on');
             //post request for configuration only if the cooling was 0-->SET THE PASSIVE TIMESTAMP
             settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-            token = AWSclient.authenticate();
-            AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+            // post new configuration
+            AWSclient.authenticate(AWSclient.postConfig);
             //reset the flag
             ischanged = 0;
           }
@@ -279,8 +257,8 @@ setInterval(() => {
               MQTTSClient.sendEvent(5, settings.mac, 'cooling off');
               //post request for configuration only if the cooling was 1-->SET THE PASSIVE TIMESTAMP
               settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-              token = AWSclient.authenticate();
-              AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+              // post new configuration
+              AWSclient.authenticate(AWSclient.postConfig);
               //reset the flag
               ischanged = 0;
             }
@@ -313,10 +291,8 @@ setInterval(() => {
       counter = 1;
       if(flag != 0)
         flag = 0;
-      //request for the token
-      token = AWSclient.authenticate();
-      //send post request to configuration
-      AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+      // post new configuration
+      AWSclient.authenticate(AWSclient.postConfig);
     } else {
         if(flag != 1) {
           settings.mode = 'prog';
@@ -331,10 +307,8 @@ setInterval(() => {
           });
           flag = 1;
           counter = 0;
-          //request for the token
-          token = AWSclient.authenticate();
-          //send post request to configuration
-          AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+          // post new configuration
+          AWSclient.authenticate(AWSclient.postConfig);
         }
     }
   }
@@ -351,10 +325,8 @@ setInterval(() => {
           console.log('Successfully wrote file');
       }
     });
-    //request for the token
-    token = AWSclient.authenticate();
-    //send post request to configuration only if the temp_to_reach has changed-->SET THE PASSIVE TIMESTAMP
-    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+    // post new configuration
+    AWSclient.authenticate(AWSclient.postConfig);
   }
   if(settings.antifreeze.enabled == 1 && settings.season != 'summer') {
     settings.temp_to_reach = settings.antifreeze.temp;
@@ -367,9 +339,9 @@ setInterval(() => {
       }
     });
     //request for the token
-    token = AWSclient.authenticate();
+    /*token = AWSclient.authenticate();
     //send post request to configuration only if the temp_to_reach has changed-->SET THE PASSIVE TIMESTAMP
-    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);*/
   }
 }, 5000);
 
@@ -415,10 +387,8 @@ temperature_mqtt_client.on('message', (topic, msg) => {
     MQTTSClient.sendEvent(6, settings.mac, 'received temperature');
     //SET THE PASSIVE TIMESTAMP
     settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-    //request for the token
-    token = AWSclient.authenticate();
-    //send post request to configuration
-    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+    // post new configuration
+    AWSclient.authenticate(AWSclient.postConfig);
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
       if (err) {
           console.log('Error writing file', err);

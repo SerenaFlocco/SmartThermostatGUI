@@ -35,10 +35,10 @@ router.put('/mode', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
-    //request for the token
-    token = AWSclient.authenticate();
+
     //send post request to configuration
-    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+    AWSclient.authenticate(AWSclient.postConfig);
+
     res.status(201).json(settings.mode);
 });
 
@@ -60,10 +60,9 @@ router.put('/manualtemp', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
-    //request for the token
-    token = AWSclient.authenticate();
     //send post request to configuration
-    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+    AWSclient.authenticate(AWSclient.postConfig);
+
     res.status(201).json(settings.last_man_temperature);
 });
 
@@ -87,10 +86,8 @@ router.put('/season', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
-    //request for the token
-    token = AWSclient.authenticate();
     //send post request to configuration
-    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+    AWSclient.authenticate(AWSclient.postConfig);
     res.status(201).json(settings.season);
 });
 
@@ -110,10 +107,8 @@ router.put('/heating', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
-    //request for the token
-    token = AWSclient.authenticate();
     //send post request to configuration
-    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+    AWSclient.authenticate(AWSclient.postConfig);
     res.status(201).json(settings.heating);
 });
 
@@ -133,10 +128,8 @@ router.put('/cooling', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
-    //request for the token
-    token = AWSclient.authenticate();
     //send post request to configuration
-    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+    AWSclient.authenticate(AWSclient.postConfig);
     res.status(201).json(settings.cooling);
 });
 
@@ -157,10 +150,8 @@ router.put('/antifreeze', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
-    //request for the token
-    token = AWSclient.authenticate();
     //send post request to configuration
-    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+    AWSclient.authenticate(AWSclient.postConfig);
     res.status(201).json(settings.antifreeze);
 });
 
@@ -181,10 +172,8 @@ router.put('/weekend', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
-    //request for the token
-    token = AWSclient.authenticate();
     //send post request to configuration
-    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+    AWSclient.authenticate(AWSclient.postConfig);
     res.status(201).json(settings.weekend);
 });
 
@@ -229,10 +218,8 @@ router.put('/prog/:day', (req, res) => {
             console.log('Successfully wrote file');
         }
     });
-    //request for the token
-    token = AWSclient.authenticate();
     //send post request to configuration
-    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);
+    AWSclient.authenticate(AWSclient.postConfig);
     res.status(201).json(to_return);
 });
 
