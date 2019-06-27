@@ -1,5 +1,6 @@
 var awsIot = require('aws-iot-device-sdk');
 const timestamp = require('time-stamp');
+const path      = require('path');
 
 //
 // Replace the values of '<YourUniqueClientIdentifier>' and '<YourCustomEndpoint>'
@@ -12,11 +13,12 @@ const timestamp = require('time-stamp');
 // mosquitto_sub -d -h a3cezb6rg1vyed-ats.iot.us-west-2.amazonaws.com -p 8443 --cafile root-CA.crt --cert PL-student.cert.pem --key PL-student.private.key -t pl19/notifications
 // openssl s_client -connect a3cezb6rg1vyed-ats.iot.us-west-2.amazonaws.com:8443 -CAfile root-CA.crt -cert PL-student.cert.pem -key PL-student.private.key
 
+
 var device = awsIot.device({
-  keyPath: '../certs/PL-student.private.key',
-  certPath: '../certs/PL-student.cert.pem',
-  caPath: '../certs/root-CA.crt',
-  clientId: 'pl91-11',
+  keyPath: path.resolve(__dirname + '/../certs/PL-student.private.key'),
+  certPath: path.resolve(__dirname + '/../certs/PL-student.cert.pem'),
+  caPath: path.resolve(__dirname + '/../certs/root-CA.crt'),
+  clientId: 'pl19-11',
   host: 'a3cezb6rg1vyed-ats.iot.us-west-2.amazonaws.com',
   port: '8883',
   expires: 600,
@@ -62,7 +64,10 @@ function sendEvent(event_id, device_mac, event){
         device_mac: device_mac,
         event: event
     }
-    device.publish('pl19/debug', JSON.stringify(jsonObject));
+    device.publish('pl19/event', JSON.stringify(jsonObject));
+    console.log("sending to event...")
 }
-    
-module.exports = MQTTSClient;
+
+module.exports = {
+   sendEvent: sendEvent
+}
