@@ -75,26 +75,24 @@ function _getConfigBiss(data, response){
             eventemitter.emit('newtemp');
         if(settings.heating != config.heating && config.season == 'winter') {
             switch(settings.heating) {
-                case 0: eventemitter.emit('heatingon');
+                case 0: settings.heating = config.heating;
+                        eventemitter.emit('heatingon');
                         break;
-                case 1: eventemitter.emit('heatingoff');
+                case 1: settings.heating = config.heating;
+                        eventemitter.emit('heatingoff');
+                        break;
             }
         }
         if(settings.cooling != config.cooling && config.season == 'summer') {
             switch(settings.cooling) {
-                case 0: eventemitter.emit('coolingon');
+                case 0: settings.cooling = config.cooling;
+                        eventemitter.emit('coolingon');
                         break;
-                case 1: eventemitter.emit('coolingoff');
+                case 1: settings.cooling = config.cooling;
+                        eventemitter.emit('coolingoff');
+                        break;
             }
         }
-        settings = config;
-        fs.writeFile(filename, JSON.stringify(settings), (err) => {
-            if (err) {
-                console.log('Error writing file', err);
-            } else {
-                console.log('Successfully wrote file');
-            }
-        });
     }
 
     //check the active timestamp!!!
