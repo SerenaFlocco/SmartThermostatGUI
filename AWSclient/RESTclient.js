@@ -4,8 +4,8 @@ const uri = 'http://ec2-34-220-162-82.us-west-2.compute.amazonaws.com:5002';
 const username = 'PL19-11';
 const pwd = 'polit0';
 var settings    = require('../settings.json');
-
-const syncClient = require('sync-rest-client');
+const EventEmitter = require('events');
+var eventemitter = new EventEmitter();
 
 //TEST THE RESPONSES!!!
 
@@ -18,7 +18,7 @@ function getConfig(token, _function) {
             "Authorization": "JWT " + token
         }
     };
-    client.get(myuri, args, _function)
+    client.get(myuri, args, _function);
 }
 
 //update configuration
@@ -50,30 +50,64 @@ function authenticate(_function) {
             "Content-Type": "application/json"
         }
     };
-
-    client.post(myuri, args, _function)
+    client.post(myuri, args, _function);
 }
 
 function _getConfig(data, response){
-    console.log("new token:" + data.access_token)
-    getConfig(data.access_token, _getConfigBiss)
+    console.log("new token:" + data.access_token);
+    getConfig(data.access_token, _getConfigBiss);
 }
 
 /* Obtain the actual configuration*/
 function _getConfigBiss(data, response){
-    jsonObj = JSON.parse(data)
-    config = jsonObj.data.configuration
+    jsonObj = JSON.parse(data);
+    config = jsonObj.data.configuration;
 
+    if(config.timestamp > settings.timestamp) {
+        /** check what happened!!!
+         * -heating on?
+         * -heating off?
+         * -cooling on?
+         * -cooling off?
+         * -new temperature?
+         */
+        if(settings.current_temperature != config.current_temperature)
+            eventemitter.emit('newtemp');
+        if(settings.heating != config.heating && config.season == 'winter') {
+            switch(settings.heating) {
+                case 0: eventemitter.emit('heatingon');
+                        break;
+                case 1: eventemitter.emit('heatingoff');
+            }
+        }
+        if(settings.cooling != config.cooling && config.season == 'summer') {
+            switch(settings.cooling) {
+                case 0: eventemitter.emit('coolingon');
+                        break;
+                case 1: eventemitter.emit('coolingoff');
+            }
+        }
+        settings = config;
+        fs.writeFile(filename, JSON.stringify(settings), (err) => {
+            if (err) {
+                console.log('Error writing file', err);
+            } else {
+                console.log('Successfully wrote file');
+            }
+        });
+    }
+
+    //check the active timestamp!!!
     if(config.lastchange > settings.lastchange) {
         settings = config;
         fs.writeFile(filename, JSON.stringify(settings), (err) => {
-        if (err) {
-            console.log('Error writing file', err);
-        } else {
-            console.log('Successfully wrote file');
-        }
-    });
-}
+            if (err) {
+                console.log('Error writing file', err);
+            } else {
+                console.log('Successfully wrote file');
+            }
+        });
+    }
 }
 
 module.exports = {

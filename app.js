@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * Entry point of the application
  */
@@ -15,7 +13,6 @@ const WebSocket = require('ws');
 const wss       = require('ws').Server;
 const exphbs    = require('express-handlebars');
 const mac = require('getmac');
-//const exec      = require('child_process').exec;
 var temperature_mqtt_client   = mqtt.connect('mqtt://localhost');
 var relay_mqtt_client   = mqtt.connect('mqtt://localhost');
 var server        = new wss({port: 8080});
@@ -31,7 +28,6 @@ while it is 1 if it is expired and mode has to be set prog */
 var flag = 0;
 /*variable used to limit the times the mode is set to off during the weekend mode*/
 var counter = 0;
-var token = '';
 /*variable used to store the configuration get through REST calls to AWS*/
 var config;
 /*flag used to send mqtts events to AWS*/
