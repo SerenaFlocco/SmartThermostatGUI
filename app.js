@@ -272,7 +272,7 @@ setInterval(() => {
 //Check if weekend mode, antifreeze mode or the prog mode is enabled
 setInterval(() => {
   console.log('Interval to check the mode');
-  let date = new Date();
+  var date = new Date();
   //to be tested
   if(settings.weekend.enabled == 1) {
     let from = parseDate(settings.weekend.from[0], settings.weekend.from[1], settings.weekend.from[2]);
@@ -315,6 +315,7 @@ setInterval(() => {
   //to be tested
   if(settings.mode == 'prog' && settings.antifreeze.enabled == 0) {
     let progarray = getDay(date.getDay(), settings);
+    console.log(progarray);
     let index = date.getHours();
     settings.temp_to_reach = progarray[index];
     settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
