@@ -6,7 +6,6 @@
 const express   = require('express');
 const app       = express();
 const path      = require('path');
-const fs        = require('fs');
 const WebSocket = require('ws');
 const wss       = require('ws').Server;
 const exphbs    = require('express-handlebars');
