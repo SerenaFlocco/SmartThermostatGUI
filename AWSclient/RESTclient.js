@@ -61,8 +61,8 @@ function _getConfigBiss(data, response){
     jsonObj = JSON.parse(data);
     config = jsonObj.data.configuration;
 
-    const configTime_ = new Date(config.timestamp).valueOf()
-    const settingsTime_ = new Date(settings.timestamp).valueOf()
+    let configTime_ = parseTimestamp(config.timestamp);
+    let settingsTime_ = parseTimestamp(settings.timestamp);
 
     //check the passive timpestamp
     if(configTime_ > settingsTime_) {
@@ -97,8 +97,8 @@ function _getConfigBiss(data, response){
         }
     }
 
-    const configTime = new Date(config.lastchange).valueOf()
-    const settingsTime = new Date(settings.lastchange).valueOf()
+    let configTime = parseTimestamp(config.lastchange);
+    let settingsTime = parseTimestamp(settings.lastchange);
 
     //check the active timestamp!!!
     if(configTime > settingsTime) {
