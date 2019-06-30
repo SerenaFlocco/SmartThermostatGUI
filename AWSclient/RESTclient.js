@@ -61,8 +61,11 @@ function _getConfigBiss(data, response){
     jsonObj = JSON.parse(data);
     config = jsonObj.data.configuration;
 
+    const configTime_ = new Date(config.timestamp).valueOf()
+    const settingsTime_ = new Date(settings.timestamp).valueOf()
+
     //check the passive timpestamp
-    if(config.timestamp > settings.timestamp) {
+    if(configTime_ > settingsTime_) {
         /** check what happened!!!
          * -heating on?
          * -heating off?
@@ -94,8 +97,11 @@ function _getConfigBiss(data, response){
         }
     }
 
+    const configTime = new Date(config.lastchange).valueOf()
+    const settingsTime = new Date(settings.lastchange).valueOf()
+
     //check the active timestamp!!!
-    if(config.lastchange > settings.lastchange) {
+    if(configTime > settingsTime) {
         settings = config;
         fs.writeFile(filename, JSON.stringify(settings), (err) => {
             if (err) {

@@ -13,29 +13,12 @@ router.get('/', function(req, res) {
    if(settings.current_temperature != 0)
    temperature = settings.current_temperature.toFixed(1) + "°C";
    
-   
-   
-   wifi.getStatus().then((status) => {
-        console.log(status);
-
-      mac.getMac(function(err, macAddress){
-         if (err)  throw err
-         console.log(macAddress);
-      });
-
-      res.render('index', {
-         temperature: temperature,
-         program: mode,
-         season: settings.season,
-         internet: status.ssid,
-         ipAddress: status.ip_address
-      });
-	
-         
-   })
-   .catch((error) => {
-      console.log(error);
+   res.render('index', {
+      temperature: temperature,
+      program: mode,
+      season: settings.season,
    });
+
 })
 
 module.exports = router
