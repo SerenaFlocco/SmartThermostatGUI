@@ -6,6 +6,8 @@ const pwd = 'polit0';
 var settings    = require('../settings.json');
 const EventEmitter = require('events');
 var eventemitter = new EventEmitter();
+const fs        = require('fs');
+const filename    = 'settings.json';
 
 //TEST THE RESPONSES!!!
 
@@ -58,8 +60,15 @@ function _getConfig(data, response){
 
 /* Obtain the actual configuration*/
 function _getConfigBiss(data, response){
-    jsonObj = JSON.parse(data);
-    config = jsonObj.data.configuration;
+    
+    clearString = data.replace(/u'/g, "'")
+    clearString2 = clearString.replace(/'/g, '"')
+    res = clearString2.split('"configuration": "')
+    res2 = res[1].split('", "device_mac":')
+    final = res2[0]
+    config = JSON.parse(final);
+    console.log(config);
+
 
     let configTime_ = parseTimestamp(config.timestamp);
     let settingsTime_ = parseTimestamp(settings.timestamp);

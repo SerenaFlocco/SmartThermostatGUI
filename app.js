@@ -11,6 +11,7 @@ const wss       = require('ws').Server;
 const exphbs    = require('express-handlebars');
 var server        = new wss({port: 8080});
 var settings    = require('./settings.json');
+
 //const filename    = 'settings.json';
 const AWSclient = require('./AWSclient/RESTclient.js');
 const EventEmitter = require('events');
@@ -73,7 +74,7 @@ app.listen(3000, function() {
 */
 setInterval( () => {
   AWSclient.authenticate(AWSclient._getConfig);
-}, 60000);
+}, 1000);
 
 /*NOTA: DA REMOTO OCCORRE CONTROLLARE IL TIMESTAMP PASSIVO PER AGGIORNARE IL VALORE DELLA
 TEMPERATURA RILEVATA E LO STATO DEL SISTEMA DI RISCALDAMENTO/RAFFREDDAMENTO!!!*/
