@@ -423,7 +423,6 @@ function getDay(number, settings) {
       case 4: return settings.program.thursday;
       case 5: return settings.program.friday;
       case 6: return settings.program.saturday;
-
   }
 }
 
@@ -441,7 +440,7 @@ function parseDay(day) {
       case 'Thursday': return 4;
       case 'Friday': return 5;
       case 'Saturday': return 6;
-      case 'Sunday': return 7;
+      case 'Sunday': return 0;
   }
 }
 
