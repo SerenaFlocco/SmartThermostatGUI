@@ -64,7 +64,10 @@ function _getConfigBiss(data, response){
     jsonObj = JSON.parse(data)
     config = jsonObj.data.configuration
 
-    if(config.lastchange > settings.lastchange) {
+    const configTime = new Date(config.lastchange).valueOf()
+    const settingsTime = new Date(settings.lastchange).valueOf()
+
+    if(configTime > settingsTime) {
         settings = config;
         fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
