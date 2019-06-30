@@ -39,8 +39,6 @@ function _postConfig(data, response){
     console.log("POST CONFIG ended correctly")
 }
 
-
-
 //request for authentication-->response=token
 function authenticate(_function) {
     const myuri = uri + '/auth';
@@ -63,6 +61,7 @@ function _getConfigBiss(data, response){
     jsonObj = JSON.parse(data);
     config = jsonObj.data.configuration;
 
+    //check the passive timpestamp
     if(config.timestamp > settings.timestamp) {
         /** check what happened!!!
          * -heating on?
