@@ -32,11 +32,11 @@ function postConfig(data,response) {
             "Authorization": "JWT " + data.access_token
         }
     };
-    client.post(myuri, args,_postConfig)
+    client.post(myuri, args,_postConfig);
 }
 
 function _postConfig(data, response){
-    console.log("POST CONFIG ended correctly")
+    console.log("POST CONFIG ended correctly");
 }
 
 
@@ -51,7 +51,7 @@ function authenticate(_function) {
         }
     };
 
-    client.post(myuri, args, _function)
+    client.post(myuri, args, _function);
 }
 
 function _getConfig(data, response){
@@ -61,11 +61,11 @@ function _getConfig(data, response){
 
 /* Obtain the actual configuration*/
 function _getConfigBiss(data, response){
-    jsonObj = JSON.parse(data)
-    config = jsonObj.data.configuration
+    jsonObj = JSON.parse(data);
+    config = jsonObj.data.configuration;
 
-    const configTime = new Date(config.lastchange).valueOf()
-    const settingsTime = new Date(settings.lastchange).valueOf()
+    const configTime = new Date(config.lastchange).valueOf();
+    const settingsTime = new Date(settings.lastchange).valueOf();
 
     if(configTime > settingsTime) {
         settings = config;
