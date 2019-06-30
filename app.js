@@ -315,7 +315,6 @@ setInterval(() => {
   //to be tested
   if(settings.mode == 'prog' && settings.antifreeze.enabled == 0) {
     let progarray = getDay(date.getDay(), settings);
-    console.log(progarray);
     let index = date.getHours();
     settings.temp_to_reach = progarray[index];
     settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
@@ -413,13 +412,14 @@ process.on('SIGTERM', (e) => {
   
 function getDay(number, settings) {
   switch(number) {
+      case 0: return settings.program.sunday;
       case 1: return settings.program.monday;
       case 2: return settings.program.tuesday;
       case 3: return settings.program.wednesday;
       case 4: return settings.program.thursday;
       case 5: return settings.program.friday;
       case 6: return settings.program.saturday;
-      case 7: return settings.program.sunday;
+
   }
 }
 
