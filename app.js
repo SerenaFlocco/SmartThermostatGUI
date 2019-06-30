@@ -317,32 +317,36 @@ setInterval(() => {
     let progarray = getDay(date.getDay(), settings);
     console.log(progarray);
     let index = date.getHours();
-    settings.temp_to_reach = progarray[index];
-    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-    fs.writeFile(filename, JSON.stringify(settings), (err) => {
-      if (err) {
-          console.log('Error writing file', err);
-      } else {
-          console.log('Successfully wrote file');
-      }
-    });
-    // post new configuration
-    AWSclient.authenticate(AWSclient.postConfig);
+    if(settings.temp_to_reach != progarray[index]) {
+      settings.temp_to_reach = progarray[index];
+      //set only the passive timestamp
+      settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+      fs.writeFile(filename, JSON.stringify(settings), (err) => {
+        if (err) {
+            console.log('Error writing file', err);
+        } else {
+            console.log('Successfully wrote file');
+        }
+      });
+      // post new configuration
+      AWSclient.authenticate(AWSclient.postConfig);
+    }
   }
+  //check if the antifreeze is enabled
   if(settings.antifreeze.enabled == 1 && settings.season != 'summer') {
-    settings.temp_to_reach = settings.antifreeze.temp;
-    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-    fs.writeFile(filename, JSON.stringify(settings), (err) => {
-      if (err) {
-          console.log('Error writing file', err);
-      } else {
-          console.log('Successfully wrote file');
-      }
-    });
-    //request for the token
-    /*token = AWSclient.authenticate();
-    //send post request to configuration only if the temp_to_reach has changed-->SET THE PASSIVE TIMESTAMP
-    AWSclient.postConfig(settings, settings.mac, 'smartNSG', token);*/
+    if(settings.temp_to_reach != settings.antifreeze.temp) {
+      settings.temp_to_reach = settings.antifreeze.temp;
+      settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+      fs.writeFile(filename, JSON.stringify(settings), (err) => {
+        if (err) {
+            console.log('Error writing file', err);
+        } else {
+            console.log('Successfully wrote file');
+        }
+      });
+      //send post request to configuration only if the temp_to_reach has changed-->SET THE PASSIVE TIMESTAMP
+      AWSclient.authenticate(AWSclient.postConfig);
+    }
   }
 }, 5000);
 
