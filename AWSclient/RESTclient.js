@@ -67,7 +67,7 @@ function _getConfigBiss(data, response){
     res2 = res[1].split('", "device_mac":')
     final = res2[0]
     config = JSON.parse(final);
-    console.log(config);
+    //console.log(config);
 
 
     let configTime_ = parseTimestamp(config.timestamp);
@@ -82,6 +82,7 @@ function _getConfigBiss(data, response){
          * -cooling off?
          * -new temperature?
          */
+        console.log("entrato1")
         if(settings.current_temperature != config.current_temperature)
             eventemitter.emit('newtemp');
         if(settings.heating != config.heating && config.season == 'winter') {
@@ -113,6 +114,7 @@ function _getConfigBiss(data, response){
 
     //check the active timestamp!!!
     if(configTime > settingsTime) {
+        console.log("entrato2")
         settings = config;
         fs.writeFile(filename, JSON.stringify(settings), (err) => {
             if (err) {

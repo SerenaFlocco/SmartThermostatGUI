@@ -87,26 +87,31 @@ server.on('connection', (ws) => {
   AWSclient.eventemitter.on('heatingon', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('heating:on');
+      console.log("event recieved")
   });
 
   AWSclient.eventemitter.on('heatingoff', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('heating:off');
+      console.log("event recieved")
   });
 
   AWSclient.eventemitter.on('coolingon', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('cooling:on');
+      console.log("event recieved")
   });
 
   AWSclient.eventemitter.on('coolingoff', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('cooling:off');
+      console.log("event recieved")
   });
 
   AWSclient.eventemitter.on('newtemp', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('temp:' + settings.current_temperature);
+      console.log("event recieved")
   });
 
 });
