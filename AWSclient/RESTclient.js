@@ -74,7 +74,7 @@ function _getConfigBiss(data, response){
     let settingsTime = parseTimestamp(settings.lastchange);
 
     //check the active timestamp!!!
-    if(configTime.getTime() > settingsTime.getTime()) {
+    if(configTime > settingsTime) {
         settings = config;
         fs.writeFile(filename, JSON.stringify(settings), (err) => {
             if (err) {
