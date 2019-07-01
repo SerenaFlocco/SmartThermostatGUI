@@ -60,24 +60,41 @@ function _getConfig(data, response){
 }
 
 /* Obtain the actual configuration*/
+/* Obtain the actual configuration*/
 function _getConfigBiss(data, response){
-    jsonObj = JSON.parse(data);
-    config = jsonObj.data.configuration;
+    
+    clearString = data.replace(/u'/g, "'")
+    clearString2 = clearString.replace(/'/g, '"')
+    res = clearString2.split('"configuration": "')
+    res2 = res[1].split('", "device_mac":')
+    final = res2[0]
+    config = JSON.parse(final);
+    console.log(config);
 
-    const configTime = new Date(config.lastchange).valueOf();
-    const settingsTime = new Date(settings.lastchange).valueOf();
 
+    let configTime = parseTimestamp(config.lastchange);
+    let settingsTime = parseTimestamp(settings.lastchange);
+
+    //check the active timestamp!!!
     if(configTime > settingsTime) {
         settings = config;
         fs.writeFile(filename, JSON.stringify(settings), (err) => {
-        if (err) {
-            console.log('Error writing file', err);
-        } else {
-            console.log('Successfully wrote file');
-        }
-    });
+            if (err) {
+                console.log('Error writing file', err);
+            } else {
+                console.log('Successfully wrote file');
+            }
+        });
+    }
 }
+
+function parseTimestamp(timestamp) {
+    let array = timestamp.split(':');
+    let day = array[0].split('/');
+    let date = new Date(day[2], day[1], day[0], array[1], array[2], array[3]);
+    return date;
 }
+
 
 module.exports = {
     getConfig: getConfig,
