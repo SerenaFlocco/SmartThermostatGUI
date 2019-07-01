@@ -58,7 +58,6 @@ function _getConfig(data, response){
 }
 
 /* Obtain the actual configuration*/
-/* Obtain the actual configuration*/
 function _getConfigBiss(data, response){
     
     clearString = data.replace(/u'/g, "'")
