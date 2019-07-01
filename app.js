@@ -31,9 +31,6 @@ while it is 1 if it is expired and mode has to be set prog */
 var flag = 0;
 /*variable used to limit the times the mode is set to off during the weekend mode*/
 var counter = 0;
-var token = '';
-/*variable used to store the configuration get through REST calls to AWS*/
-var config;
 /*flag used to send mqtts events to AWS*/
 var ischanged = 0;
 
