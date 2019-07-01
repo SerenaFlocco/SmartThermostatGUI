@@ -84,11 +84,20 @@ function _getConfigBiss(data, response){
             }
         });
     }*/
+    settings = config;
+    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+            if (err) {
+                console.log('Error writing file', err);
+            } else {
+                console.log('Successfully wrote file');
+            }
+        });
 }
 
 function parseTimestamp(timestamp) {
     let array = timestamp.split(':');
-    let day = array[0].toString().split('/');
+	console.log(array);    
+let day = array[0].toString().split('/');
     //let date = new Date(day[2], day[1], day[0], array[1], array[2], array[3]);
     let date = new Date();
     date.setFullYear(day[2]);
