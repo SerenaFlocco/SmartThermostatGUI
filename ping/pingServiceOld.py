@@ -1,30 +1,19 @@
 #!/usr/bin/env python
 
-
-'''
-/*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
- '''
-
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 import logging
 import time
 import argparse
 import json
 import datetime 
+
 AllowedActions = ['both', 'publish', 'subscribe']
+mac = "b8:27:eb:9b:35:5a"
+event_topic = "pl19/event"
+notification_topic = "pl19/notification"
+ping_request_id = 0
+ping_response_id = 1
+
 
 def replyToPing(sequence):
     pingData = {}
@@ -33,12 +22,13 @@ def replyToPing(sequence):
     pingData['message'] = "Ping response."
 
     message = {}
-    message['device_mac'] = "b8:27:eb:9b:35:5a"
+    message['device_mac'] = mac
     message['timestamp'] = str(datetime.datetime.now())
-    message['event_id'] = 1
-    message['event'] = pingData
+    message['event_id'] = ping_response_id
+
+    message['event'] = json.dumps(pingData)
     messageJson = json.dumps(message)
-    myAWSIoTMQTTClient.publishAsync("pl19/event", messageJson, 1)
+    myAWSIoTMQTTClient.publishAsync(event_topic, messageJson, 1)
 
     print('Published topic %s: %s\n' % (topic, messageJson))
 
@@ -46,14 +36,14 @@ def replyToPing(sequence):
 def customCallback(client, userdata, message):
     print("Received a new message: ")
     messageContent = json.loads(message.payload)
-    messageData = messageContent['event']
+    messageData = json.loads(messageContent['event'])
     print(messageContent)
     print(messageData['message'])
     print("Sequence ", messageData['sequence'])
     print("from topic: ")
     print(message.topic)
     print("--------------\n\n")
-    if messageContent['event_id'] == 0:
+    if messageContent['event_id'] == ping_request_id:
         replyToPing(messageData['sequence'])
 
 
@@ -125,9 +115,14 @@ myAWSIoTMQTTClient.configureDrainingFrequency(2)  # Draining: 2 Hz
 myAWSIoTMQTTClient.configureConnectDisconnectTimeout(10)  # 10 sec
 myAWSIoTMQTTClient.configureMQTTOperationTimeout(5)  # 5 sec
 
+
+#wait few seconds in order to connect the device
+time.sleep(10)
+
 myAWSIoTMQTTClient.connect()
 if args.mode == 'both' or args.mode == 'subscribe':
-    myAWSIoTMQTTClient.subscribe("pl19/notification", 1, customCallback)
+    myAWSIoTMQTTClient.subscribe(notification_topic, 1, customCallback)
+    print("*** Subscrbed ***")
 time.sleep(2)
 
 while True:
