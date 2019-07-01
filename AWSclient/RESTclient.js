@@ -82,6 +82,7 @@ function _getConfigBiss(data, response){
          * -cooling off?
          * -new temperature?
          */
+        console.log("entrato1")
         if(settings.current_temperature != config.current_temperature) {
             settings.current_temperature = config.current_temperature;
             eventemitter.emit('newtemp');
@@ -115,6 +116,7 @@ function _getConfigBiss(data, response){
 
     //check the active timestamp!!!
     if(configTime > settingsTime) {
+        console.log("entrato2")
         settings = config;
         fs.writeFile(filename, JSON.stringify(settings), (err) => {
             if (err) {

@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname,'views')));
 // setup controllers
 app.use(require('./controllers'))
 
-app.put('/api/settings/season', function (req, res, next) {
+/*app.put('/api/settings/season', function (req, res, next) {
   console.log("before");
   const updated = req.body;
   if(updated.season == 'winter')
@@ -54,7 +54,7 @@ app.put('/api/settings/mode', function (req, res, next) {
     AWSclient.eventemitter.emit('heatingoff');
   }
   next();
-});
+});*/
 
 // Members API Routes
 app.use('/api/settings', require('./routes/api/settings'));
@@ -74,7 +74,7 @@ app.listen(3000, function() {
 */
 setInterval( () => {
   AWSclient.authenticate(AWSclient._getConfig);
-}, 1000);
+}, 10000);
 
 /*NOTA: DA REMOTO OCCORRE CONTROLLARE IL TIMESTAMP PASSIVO PER AGGIORNARE IL VALORE DELLA
 TEMPERATURA RILEVATA E LO STATO DEL SISTEMA DI RISCALDAMENTO/RAFFREDDAMENTO!!!*/
@@ -87,26 +87,31 @@ server.on('connection', (ws) => {
   AWSclient.eventemitter.on('heatingon', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('heating:on');
+      console.log("event recieved")
   });
 
   AWSclient.eventemitter.on('heatingoff', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('heating:off');
+      console.log("event recieved")
   });
 
   AWSclient.eventemitter.on('coolingon', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('cooling:on');
+      console.log("event recieved")
   });
 
   AWSclient.eventemitter.on('coolingoff', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('cooling:off');
+      console.log("event recieved")
   });
 
   AWSclient.eventemitter.on('newtemp', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('temp:' + settings.current_temperature);
+      console.log("event recieved")
   });
 
 });
