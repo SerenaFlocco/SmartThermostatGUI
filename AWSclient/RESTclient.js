@@ -32,6 +32,7 @@ function postConfig(data,response) {
             "Authorization": "JWT " + data.access_token
         }
     };
+    console.log(args);
     client.post(myuri, args,_postConfig);
 }
 
