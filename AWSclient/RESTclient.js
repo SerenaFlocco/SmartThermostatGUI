@@ -83,8 +83,10 @@ function _getConfigBiss(data, response){
          * -new temperature?
          */
         console.log("entrato1")
-        if(settings.current_temperature != config.current_temperature)
+        if(settings.current_temperature != config.current_temperature) {
+            settings.current_temperature = config.current_temperature;
             eventemitter.emit('newtemp');
+        }
         if(settings.heating != config.heating && config.season == 'winter') {
             switch(settings.heating) {
                 case 0: settings.heating = config.heating;
