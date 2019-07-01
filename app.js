@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname,'views')));
 // setup controllers
 app.use(require('./controllers'))
 
-app.put('/api/settings/season', function (req, res, next) {
+/*app.put('/api/settings/season', function (req, res, next) {
   console.log("before");
   const updated = req.body;
   if(updated.season == 'winter')
@@ -54,7 +54,7 @@ app.put('/api/settings/mode', function (req, res, next) {
       eventemitter.emit('heatingoff');
   }
   next();
-});
+});*/
 
 // Members API Routes
 app.use('/api/settings', require('./routes/api/settings'));
