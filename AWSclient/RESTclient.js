@@ -3,9 +3,7 @@ var client = new Client();
 const uri = 'http://ec2-34-220-162-82.us-west-2.compute.amazonaws.com:5002';
 const username = 'PL19-11';
 const pwd = 'polit0';
-var settings    = require('../settings.json');
-
-const syncClient = require('sync-rest-client');
+var settings = require('../settings.json');
 
 //TEST THE RESPONSES!!!
 
