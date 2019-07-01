@@ -37,12 +37,12 @@ app.use(express.static(path.join(__dirname,'views')));
 // setup controllers
 app.use(require('./controllers'))
 
-/*app.put('/api/settings/season', function (req, res, next) {
+app.put('/api/settings/season', function (req, res, next) {
   console.log("before");
   const updated = req.body;
   if(updated.season == 'winter')
-      eventemitter.emit('coolingoff');
-  else eventemitter.emit('heatingoff');
+      AWSclient.eventemitter.emit('coolingoff');
+  else AWSclient.eventemitter.emit('heatingoff');
   next();
 });
 
@@ -50,11 +50,11 @@ app.put('/api/settings/mode', function (req, res, next) {
   console.log("before");
   const updated = req.body;
   if(updated.mode == 'off') {
-      eventemitter.emit('coolingoff');
-      eventemitter.emit('heatingoff');
+    AWSclient.eventemitter.emit('coolingoff');
+    AWSclient.eventemitter.emit('heatingoff');
   }
   next();
-});*/
+});
 
 // Members API Routes
 app.use('/api/settings', require('./routes/api/settings'));
