@@ -67,7 +67,7 @@ function _getConfigBiss(data, response){
     res2 = res[1].split('", "device_mac":')
     final = res2[0]
     config = JSON.parse(final);
-    //console.log(config);
+    console.log(config);
 
 
     let configTime_ = parseTimestamp(config.timestamp);
