@@ -5,7 +5,6 @@ const filename = 'settings.json';
 var settings = require('../../settings.json');
 const timestamp = require('time-stamp');
 const AWSclient = require('../../AWSclient/RESTclient.js');
-var token = '';
 
 //Get All Settings
 router.get('/', (req, res) => res.json(settings.event));
@@ -92,7 +91,7 @@ router.put('/season', (req, res) => {
 });
 
 //Get the heating status
-router.get('/heating', (req, res) => res.json(settings/*.event*/.heating));
+router.get('/heating', (req, res) => res.json(settings.heating));
 
 //Modify the heating status
 router.put('/heating', (req, res) => {
