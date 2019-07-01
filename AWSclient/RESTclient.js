@@ -91,9 +91,9 @@ function parseTimestamp(timestamp) {
     let day = array[0].toString().split('/');
     //let date = new Date(day[2], day[1], day[0], array[1], array[2], array[3]);
     let date = new Date();
-    date.setFullYear(day[0]);
+    date.setFullYear(day[2]);
     date.setMonth(day[1] - 1);
-    date.setDate(day[2]);
+    date.setDate(day[0]);
     date.setHours(array[1]);
     date.setMinutes(array[2]);
     date.setSeconds(array[3]);
