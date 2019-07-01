@@ -32,6 +32,7 @@ function postConfig(data,response) {
             "Authorization": "JWT " + data.access_token
         }
     };
+    console.log(args);
     client.post(myuri, args,_postConfig);
 }
 
@@ -73,7 +74,7 @@ function _getConfigBiss(data, response){
     let settingsTime = parseTimestamp(settings.lastchange);
 
     //check the active timestamp!!!
-    if(configTime > settingsTime) {
+    /*if(configTime > settingsTime) {
         settings = config;
         fs.writeFile(filename, JSON.stringify(settings), (err) => {
             if (err) {
@@ -82,7 +83,7 @@ function _getConfigBiss(data, response){
                 console.log('Successfully wrote file');
             }
         });
-    }
+    }*/
 }
 
 function parseTimestamp(timestamp) {
@@ -96,6 +97,7 @@ function parseTimestamp(timestamp) {
     date.setHours(array[1]);
     date.setMinutes(array[2]);
     date.setSeconds(array[3]);
+    console.log(date)
     return date;
 }
 
