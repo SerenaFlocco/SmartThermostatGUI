@@ -14,8 +14,8 @@ var settings    = require('./settings.json');
 
 //const filename    = 'settings.json';
 const AWSclient = require('./AWSclient/RESTclient.js');
-const EventEmitter = require('events');
-var eventemitter = new EventEmitter();
+//const EventEmitter = require('events');
+//var eventemitter = new EventEmitter();
 
 // handlebars middleware
 app.engine('handlebars', exphbs({
@@ -84,27 +84,27 @@ TEMPERATURA RILEVATA E LO STATO DEL SISTEMA DI RISCALDAMENTO/RAFFREDDAMENTO!!!*/
 server.on('connection', (ws) => {
   console.log("NEW CONNECTION" + ws );
 
-  eventemitter.on('heatingon', () => {
+  AWSclient.eventemitter.on('heatingon', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('heating:on');
   });
 
-  eventemitter.on('heatingoff', () => {
+  AWSclient.eventemitter.on('heatingoff', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('heating:off');
   });
 
-  eventemitter.on('coolingon', () => {
+  AWSclient.eventemitter.on('coolingon', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('cooling:on');
   });
 
-  eventemitter.on('coolingoff', () => {
+  AWSclient.eventemitter.on('coolingoff', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('cooling:off');
   });
 
-  eventemitter.on('newtemp', () => {
+  AWSclient.eventemitter.on('newtemp', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('temp:' + settings.current_temperature);
   });

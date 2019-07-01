@@ -104,6 +104,8 @@ function _getConfigBiss(data, response){
                         break;
             }
         }
+
+        //add the remaining case in which only the passive timestamp is set
     }
 
     let configTime = parseTimestamp(config.lastchange);
@@ -134,4 +136,5 @@ module.exports = {
     postConfig: postConfig,
     authenticate: authenticate,
     _getConfig:  _getConfig,
+    eventemitter: eventemitter
 }
