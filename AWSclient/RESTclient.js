@@ -74,7 +74,7 @@ function _getConfigBiss(data, response){
     let settingsTime = parseTimestamp(settings.lastchange);
 
     //check the active timestamp!!!
-    if(configTime > settingsTime) {
+    /*if(configTime > settingsTime) {
         settings = config;
         fs.writeFile(filename, JSON.stringify(settings), (err) => {
             if (err) {
@@ -83,13 +83,14 @@ function _getConfigBiss(data, response){
                 console.log('Successfully wrote file');
             }
         });
-    }
+    }*/
 }
 
 function parseTimestamp(timestamp) {
     let array = timestamp.split(':');
     let day = array[0].split('/');
     let date = new Date(day[2], day[1], day[0], array[1], array[2], array[3]);
+    console.log(date)
     return date;
 }
 
