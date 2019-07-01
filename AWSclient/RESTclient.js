@@ -5,6 +5,7 @@ const username = 'PL19-11';
 const pwd = 'polit0';
 var settings = require('../settings.json');
 const fs = require('fs');
+const filename    = 'settings.json';
 
 //TEST THE RESPONSES!!!
 
