@@ -4,6 +4,7 @@ const uri = 'http://ec2-34-220-162-82.us-west-2.compute.amazonaws.com:5002';
 const username = 'PL19-11';
 const pwd = 'polit0';
 var settings = require('../settings.json');
+const fs = require('fs');
 
 //TEST THE RESPONSES!!!
 
@@ -36,8 +37,6 @@ function postConfig(data,response) {
 function _postConfig(data, response){
     console.log("POST CONFIG ended correctly");
 }
-
-
 
 //request for authentication-->response=token
 function authenticate(_function) {
