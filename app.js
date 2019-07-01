@@ -391,8 +391,6 @@ temperature_mqtt_client.on('message', (topic, msg) => {
     MQTTSClient.sendEvent(6, settings.mac, 'received temperature');
     //SET THE PASSIVE TIMESTAMP
     settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-    // post new configuration
-    AWSclient.authenticate(AWSclient.postConfig);
     fs.writeFile(filename, JSON.stringify(settings), (err) => {
       if (err) {
           console.log('Error writing file', err);
@@ -400,6 +398,8 @@ temperature_mqtt_client.on('message', (topic, msg) => {
           console.log('Successfully wrote file');
       }
     });
+    // post new configuration
+    AWSclient.authenticate(AWSclient.postConfig);
 });
 
 /*process.on('uncaughtException', (err) => {
