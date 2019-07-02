@@ -92,6 +92,10 @@ wsc.onmessage = (msg) => {
                                 $('#on').text('toys'); //switch on
                             else $('#on').empty();
                             break;
+            case 'mode' : $('#active_mode').text(splittedmsg[1]);
+                          break;
+            case 'season' : $('#active_season').text(splittedmsg[1]);
+                            break;
         }
     }
 };

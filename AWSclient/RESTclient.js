@@ -3,11 +3,12 @@ var client = new Client();
 const uri = 'http://ec2-34-220-162-82.us-west-2.compute.amazonaws.com:5002';
 const username = 'PL19-11';
 const pwd = 'polit0';
-var settings    = require('../settings.json');
+//var settings    = require('../settings.json');
 const EventEmitter = require('events');
 var eventemitter = new EventEmitter();
-const fs        = require('fs');
+const fs = require('fs');
 const filename    = 'settings.json';
+const syncfiles = require('../syncfiles.js');
 
 //TEST THE RESPONSES!!!
 
@@ -27,7 +28,7 @@ function getConfig(token, _function) {
 function postConfig(data,response) {
     const myuri = uri + '/user/PL19-11/devices';
 
-    const configuration = getSettings();
+    const configuration = syncfiles.getSettings(filename);
 
     let args = {
         data: {"device_mac":settings.mac, "nickname": settings.nickname, "configuration":configuration},
@@ -71,7 +72,7 @@ function _getConfigBiss(data, response){
     final = res2[0]
     config = JSON.parse(final);
 
-    const configuration = getSettings();
+    const configuration = syncfiles.getSettings(filename);
 
     let configTime_ = parseTimestamp(config.timestamp);
     let settingsTime_ = parseTimestamp(configuration.timestamp);
@@ -96,11 +97,11 @@ function _getConfigBiss(data, response){
             switch(configuration.heating) {
                 case 0: configuration.heating = config.heating;
                         eventemitter.emit('heatingon');
-                        console.log("hratingon");
+                        console.log("heatingon");
                         break;
                 case 1: configuration.heating = config.heating;
                         eventemitter.emit('heatingoff');
-                        console.log("hratingoff");
+                        console.log("heatingoff");
                         break;
             }
         }
@@ -118,13 +119,7 @@ function _getConfigBiss(data, response){
             }
         }
 
-        fs.writeFile(filename, JSON.stringify(config), (err) => {
-            if (err) {
-                console.log('Error writing file', err);
-            } else {
-                console.log('Successfully wrote file');
-            }
-        });
+        syncfiles.updateSettings(filename, config);
 
         //add the remaining case in which only the passive timestamp is set
     }
@@ -134,15 +129,10 @@ function _getConfigBiss(data, response){
 
     //check the active timestamp!!!
     if(configTime > settingsTime) {
-        console.log("entrato2")
-        //settings = config;
-        fs.writeFile(filename, JSON.stringify(config), (err) => {
-            if (err) {
-                console.log('Error writing file', err);
-            } else {
-                console.log('Successfully wrote file');
-            }
-        });
+        console.log("entrato2");
+        eventemitter.emit('mode');
+        eventemitter.emit('season');
+        syncfiles.updateSettings(filename, config);
     }
 }
 
@@ -158,26 +148,6 @@ function parseTimestamp(timestamp) {
     date.setMinutes(array[2]);
     date.setSeconds(array[3]);
     return date;
-}
-
-
-function getSettings(){
-    /*fs.readFile(filename, 'utf8', (err, jsonString) => {
-	    if (err) {
-		console.log("Error reading file from disk:", err);
-		return;
-	    }*/
-
-    const jsonString = fs.readFileSync(filename, 'utf8');
-
-    try {
-	//console.log(jsonString);
-	const configuration = JSON.parse(jsonString);
-	return configuration;
-    } catch(err) {
-	console.log('Error parsing JSON string:', err);
-    }
-    //});
 }
 
 module.exports = {

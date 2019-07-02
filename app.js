@@ -10,12 +10,9 @@ const WebSocket = require('ws');
 const wss       = require('ws').Server;
 const exphbs    = require('express-handlebars');
 var server        = new wss({port: 8080});
-var settings    = require('./settings.json');
-
-//const filename    = 'settings.json';
+const syncfiles    = require('./syncfiles.json');
+const filename = 'settings.json';
 const AWSclient = require('./AWSclient/RESTclient.js');
-//const EventEmitter = require('events');
-//var eventemitter = new EventEmitter();
 
 // handlebars middleware
 app.engine('handlebars', exphbs({
@@ -37,7 +34,7 @@ app.use(express.static(path.join(__dirname,'views')));
 // setup controllers
 app.use(require('./controllers'))
 
-/*app.put('/api/settings/season', function (req, res, next) {
+app.put('/api/settings/season', function (req, res, next) {
   console.log("before");
   const updated = req.body;
   if(updated.season == 'winter')
@@ -54,7 +51,7 @@ app.put('/api/settings/mode', function (req, res, next) {
     AWSclient.eventemitter.emit('heatingoff');
   }
   next();
-});*/
+});
 
 // Members API Routes
 app.use('/api/settings', require('./routes/api/settings'));
@@ -87,31 +84,49 @@ server.on('connection', (ws) => {
   AWSclient.eventemitter.on('heatingon', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('heating:on');
-      console.log("event recieved")
+      console.log("event received");
   });
 
   AWSclient.eventemitter.on('heatingoff', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('heating:off');
-      console.log("event recieved")
+      console.log("event received");
   });
 
   AWSclient.eventemitter.on('coolingon', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('cooling:on');
-      console.log("event recieved")
+      console.log("event received");
   });
 
   AWSclient.eventemitter.on('coolingoff', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('cooling:off');
-      console.log("event recieved")
+      console.log("event received");
   });
 
   AWSclient.eventemitter.on('newtemp', () => {
-    if(ws.readyState === WebSocket.OPEN)
+    if(ws.readyState === WebSocket.OPEN) {
+      const settings = syncfiles.getSettings(filename);
       ws.send('temp:' + settings.current_temperature);
-      console.log("event recieved")
+    }
+      console.log("event received");
+  });
+
+  AWSclient.eventemitter.on('mode', () => {
+    if(ws.readyState === WebSocket.OPEN) {
+      const settings = syncfiles.getSettings(filename);
+      ws.send('mode:' + settings.mode);
+    }
+      console.log("event received");
+  });
+
+  AWSclient.eventemitter.on('season', () => {
+    if(ws.readyState === WebSocket.OPEN) {
+      const settings = syncfiles.getSettings(filename);
+      ws.send('season:' + settings.season);
+    }
+      console.log("event received");
   });
 
 });
