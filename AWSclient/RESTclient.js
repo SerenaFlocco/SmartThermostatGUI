@@ -23,20 +23,26 @@ function getConfig(token, _function) {
 
 //update configuration
 function postConfig(data,response) {
+    console.log(" ### POST CONFIG ###")
     const myuri = uri + '/user/PL19-11/devices';
 
+    const configuration = getSettings();
+
     let args = {
-        data: {"device_mac":settings.mac, "nickname": settings.nickname, "configuration":settings},
+        data: {"device_mac":settings.mac, "nickname": settings.nickname, "configuration":configuration},
         headers: { 
             "Content-Type": "application/json",
             "Authorization": "JWT " + data.access_token
         }
     };
+    
+    console.log(" ### Post Arguments ###")
     console.log(args);
     client.post(myuri, args,_postConfig);
 }
 
 function _postConfig(data, response){
+    console.log(" ### _ POST CONFIG ###")
     console.log("POST CONFIG ended correctly");
 }
 
@@ -67,16 +73,19 @@ function _getConfigBiss(data, response){
     res2 = res[1].split('", "device_mac":')
     final = res2[0]
     config = JSON.parse(final);
+    console.log("############ Config:\n");
     console.log(config);
 
+    const configuration = getSettings();
 
     let configTime = parseTimestamp(config.lastchange);
-    let settingsTime = parseTimestamp(settings.lastchange);
+    let settingsTime = parseTimestamp(configuration.lastchange);
 
     //check the active timestamp!!!
     if(configTime > settingsTime) {
-        settings = config;
-        fs.writeFile(filename, JSON.stringify(settings), (err) => {
+	console.log("Remote timestamp more recent than the local one-->if entered");
+        //settings = config;
+        fs.writeFile(filename, JSON.stringify(config), (err) => {
             if (err) {
                 console.log('Error writing file', err);
             } else {
@@ -100,6 +109,25 @@ let day = array[0].toString().split('/');
     date.setSeconds(array[3]);
     console.log(date);
     return date;
+}
+
+function getSettings(){
+    /*fs.readFile(filename, 'utf8', (err, jsonString) => {
+	    if (err) {
+		console.log("Error reading file from disk:", err);
+		return;
+	    }*/
+
+    const jsonString = fs.readFileSync(filename, 'utf8');
+
+    try {
+	//console.log(jsonString);
+	const configuration = JSON.parse(jsonString);
+	return configuration;
+    } catch(err) {
+	console.log('Error parsing JSON string:', err);
+    }
+    //});
 }
 
 
