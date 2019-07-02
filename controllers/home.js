@@ -15,9 +15,11 @@ router.get('/', function(req, res) {
    var temperature;
 
    if(settings.mode == 'man') 
-	mode = "manual";
+	   mode = "manual";
    if(settings.mode == 'prog')
-	mode = 'program';
+      mode = "program";
+   if(settings.mode == 'off' )
+      mode = "off";
    if(settings.current_temperature != 0)
    temperature = settings.current_temperature.toFixed(1) + "°C";
    
