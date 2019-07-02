@@ -98,7 +98,7 @@ let day = array[0].toString().split('/');
     date.setHours(array[1]);
     date.setMinutes(array[2]);
     date.setSeconds(array[3]);
-    console.log(date)
+    console.log(date);
     return date;
 }
 
