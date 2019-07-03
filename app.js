@@ -87,8 +87,9 @@ app.listen(3000, function() {
  * otherwise modify the settings.json file
 */
 setInterval( () => {
+		console.log("---TIMER EXPIRED---");
   AWSclient.authenticate(AWSclient._getConfig);
-}, 60000);
+}, 10000);
 
 /*NOTA: DA REMOTO OCCORRE CONTROLLARE IL TIMESTAMP PASSIVO PER AGGIORNARE IL VALORE DELLA
 TEMPERATURA RILEVATA E LO STATO DEL SISTEMA DI RISCALDAMENTO/RAFFREDDAMENTO!!!*/
@@ -157,7 +158,7 @@ server.on('close', (ws) =>{
 /*check periodically if the set temperature is greater than the current one:
   if yes switch on the heating/cooling system, otherwise switch it off*/
 setInterval(() => {
-  const settings = syncfiles.updateSettings(filename);
+  const settings = syncfiles.getSettings(filename);
   if(settings.mode != 'off') {
     switch(settings.season) {
       case 'winter':
@@ -245,7 +246,10 @@ setInterval(() => {
         };
         break;
     }
-  }
+  }else{
+			AWSclient.eventemitter.emit("coolingoff");
+			AWSclient.eventemitter.emit("heatingoff");
+		}
 }, 5000);
 
 //Check if weekend mode, antifreeze mode or the prog mode is enabled

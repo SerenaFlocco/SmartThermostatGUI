@@ -12,13 +12,22 @@ function getSettings(filename){
 }
 
 function updateSettings(filename, settings) {
-    fs.writeFile(filename, JSON.stringify(settings), (err) => {
+				//console.log("sto scrivendo: ");
+				//console.log(settings);
+
+    /*fs.writeFile(filename, JSON.stringify(settings), (err) => {
         if (err) {
             console.log('Error writing file', err);
         } else {
             console.log('Successfully wrote file');
         }
-    });
+    });*/
+				
+			try {
+							fs.writeFileSync(filename, JSON.stringify(settings), 'utf8');
+			} catch(err) {
+							console.log('Error writing file: ' + err);
+			}
 }
 
 module.exports = {

@@ -6,6 +6,7 @@ const pwd = 'polit0';
 const filename    = 'settings.json';
 const EventEmitter = require('events');
 var eventemitter = new EventEmitter();
+const syncfiles = require("../syncfiles.js");
 
 //TEST THE RESPONSES!!!
 
@@ -29,7 +30,7 @@ function postConfig(data,response) {
     const settings = syncfiles.getSettings(filename);
 
     let args = {
-        data: {"device_mac":settings.mac, "nickname": settings.nickname, "configuration":configuration},
+        data: {"device_mac":settings.mac, "nickname": settings.nickname, "configuration":settings},
         headers: { 
             "Content-Type": "application/json",
             "Authorization": "JWT " + data.access_token
@@ -84,13 +85,13 @@ function _getConfigBiss(data, response){
     let settingsTime = parseTimestamp(settings.lastchange);
 
     //if remote settings > local settings
+
     if(configTime > settingsTime) {
         console.log('local settings are older-->update them');
+								syncfiles.updateSettings(filename, config);
         eventemitter.emit('mode');
         eventemitter.emit('season');
-        syncfiles.updateSettings(filename, settings);
-    }
-    else {
+    }else{
         console.log('local settings are more recent-->send a post');
         authenticate(postConfig);
     }

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const filename = 'settings.json';
 const timestamp = require('time-stamp');
-const syncfiles = require('../syncfiles.js');
+const syncfiles = require('../../syncfiles.js');
 
 //Get All Settings
 router.get('/', (req, res) => {
