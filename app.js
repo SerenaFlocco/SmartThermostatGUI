@@ -10,7 +10,7 @@ const WebSocket = require('ws');
 const wss       = require('ws').Server;
 const exphbs    = require('express-handlebars');
 var server        = new wss({port: 8080});
-const syncfiles    = require('./syncfiles.json');
+const syncfiles    = require('./syncfiles.js');
 const filename = 'settings.json';
 const AWSclient = require('./AWSclient/RESTclient.js');
 
