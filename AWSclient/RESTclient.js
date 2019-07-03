@@ -87,39 +87,37 @@ function _getConfigBiss(data, response){
          * -cooling off?
          * -new temperature?
          */
-        console.log("entrato1")
-        if(configuration.current_temperature != config.current_temperature) {
-            configuration.current_temperature = config.current_temperature;
-            eventemitter.emit('newtemp');
-        }
-        if(configuration.heating != config.heating && config.season == 'winter') {
-            console.log(configuration.heating)
-            switch(configuration.heating) {
-                case 0: configuration.heating = config.heating;
-                        eventemitter.emit('heatingon');
-                        console.log("heatingon");
-                        break;
-                case 1: configuration.heating = config.heating;
+        console.log("entrato1");
+        
+        syncfiles.updateSettings(filename, config);
+
+        configuration.current_temperature = config.current_temperature;
+        eventemitter.emit('newtemp');
+
+        if(config.season == 'winter') {
+            switch(config.heating) {
+                case 0: //configuration.heating = config.heating;
                         eventemitter.emit('heatingoff');
                         console.log("heatingoff");
                         break;
+                case 1: //configuration.heating = config.heating;
+                        eventemitter.emit('heatingon');
+                        console.log("heatingon");
+                        break;
             }
         }
-        if(configuration.cooling != config.cooling && config.season == 'summer') {
-            console.log(configuration.cooling)
-            switch(configuration.cooling) {
-                case 0: configuration.cooling = config.cooling;
-                        eventemitter.emit('coolingon');
-                        console.log("coolingon");
-                        break;
-                case 1: configuration.cooling = config.cooling;
+        if(config.season == 'summer') {
+            switch(config.cooling) {
+                case 0: //configuration.cooling = config.cooling;
                         eventemitter.emit('coolingoff');
                         console.log("coolingoff");
                         break;
+                case 1: //configuration.cooling = config.cooling;
+                        eventemitter.emit('coolingon');
+                        console.log("coolingon");
+                        break;
             }
         }
-
-        syncfiles.updateSettings(filename, config);
 
         //add the remaining case in which only the passive timestamp is set
     }
