@@ -8,7 +8,6 @@
 const express   = require('express');
 const app       = express();
 const path      = require('path');
-const fs        = require('fs');
 const mqtt      = require('mqtt');
 const timestamp = require('time-stamp');
 const WebSocket = require('ws');
@@ -20,12 +19,10 @@ var temperature_mqtt_client   = mqtt.connect('mqtt://localhost');
 var relay_mqtt_client   = mqtt.connect('mqtt://localhost');
 var server        = new wss({port: 8080});
 var received_temperature = '';
-var settings    = require('./settings.json');
 const filename    = 'settings.json';
+const syncfiles = require('./syncfiles.js');
 const AWSclient = require('./AWSclient/RESTclient.js');
 const MQTTSClient = require('./AWSclient/MQTTSClient.js');
-const EventEmitter = require('events');
-var eventemitter = new EventEmitter();
 /*flag used when weekend mode is active: it is 0 during the time interval in which mode=off,
 while it is 1 if it is expired and mode has to be set prog */
 var flag = 0;
@@ -58,8 +55,8 @@ app.put('/api/settings/season', function (req, res, next) {
   console.log("before");
   const updated = req.body;
   if(updated.season == 'winter')
-      eventemitter.emit('coolingoff');
-  else eventemitter.emit('heatingoff');
+      AWSclient.eventemitter.emit('coolingoff');
+  else AWSclient.eventemitter.emit('heatingoff');
   next();
 });
 
@@ -67,8 +64,8 @@ app.put('/api/settings/mode', function (req, res, next) {
   console.log("before");
   const updated = req.body;
   if(updated.mode == 'off') {
-      eventemitter.emit('coolingoff');
-      eventemitter.emit('heatingoff');
+    AWSclient.eventemitter.emit('coolingoff');
+    AWSclient.eventemitter.emit('heatingoff');
   }
   next();
 });
@@ -86,51 +83,61 @@ app.listen(3000, function() {
  AWSclient.authenticate(AWSclient._getConfig); //request for the token
 
 /** Set interval to make a get request for the configuration:
- * if the lastchange field is equal to the local one-->ok,
+ * if the lastchange field is less than the local one-->send a post,
  * otherwise modify the settings.json file
 */
 setInterval( () => {
   AWSclient.authenticate(AWSclient._getConfig);
-}, 30000);
+}, 60000);
 
 /*NOTA: DA REMOTO OCCORRE CONTROLLARE IL TIMESTAMP PASSIVO PER AGGIORNARE IL VALORE DELLA
 TEMPERATURA RILEVATA E LO STATO DEL SISTEMA DI RISCALDAMENTO/RAFFREDDAMENTO!!!*/
 
 mac.getMac((err, macAddress) => {
-  if (err)  throw err
-  settings.mac = macAddress;
+  if (err)  throw err;
+  const conf = syncfiles.getSettings(filename);
+  conf.mac = macAddress;
   //write the json file
-  fs.writeFile(filename, JSON.stringify(settings), (err) => {
-    if (err) {
-        console.log('Error writing file', err);
-    } else {
-        console.log('Successfully wrote file');
-    }
-  });
-  //Notificare il mac?
+  syncfiles.updateSettings(filename, conf);
 });
 
 server.on('connection', (ws) => {
   console.log("NEW CONNECTION" + ws );
 
-  eventemitter.on('heatingon', () => {
+  AWSclient.eventemitter.on('heatingon', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('heating:on');
   });
 
-  eventemitter.on('heatingoff', () => {
+  AWSclient.eventemitter.on('heatingoff', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('heating:off');
   });
 
-  eventemitter.on('coolingon', () => {
+  AWSclient.eventemitter.on('coolingon', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('cooling:on');
   });
 
-  eventemitter.on('coolingoff', () => {
+  AWSclient.eventemitter.on('coolingoff', () => {
     if(ws.readyState === WebSocket.OPEN)
       ws.send('cooling:off');
+  });
+
+  AWSclient.eventemitter.on('mode', () => {
+    if(ws.readyState === WebSocket.OPEN) {
+      const settings1 = syncfiles.getSettings(filename);
+      ws.send('mode:' + settings1.mode);
+    }
+      console.log("event received");
+  });
+
+  AWSclient.eventemitter.on('season', () => {
+    if(ws.readyState === WebSocket.OPEN) {
+      const settings2 = syncfiles.getSettings(filename);
+      ws.send('season:' + settings2.season);
+    }
+      console.log("event received");
   });
 
   setInterval(() => {
@@ -150,6 +157,7 @@ server.on('close', (ws) =>{
 /*check periodically if the set temperature is greater than the current one:
   if yes switch on the heating/cooling system, otherwise switch it off*/
 setInterval(() => {
+  const settings = syncfiles.updateSettings(filename);
   if(settings.mode != 'off') {
     switch(settings.season) {
       case 'winter':
@@ -159,25 +167,17 @@ setInterval(() => {
           settings.heating = 1;
           console.log('Sending settings to frontend...');
           //trigger the frontend to show the heating logo-->emit event
-          eventemitter.emit('heatingon');
-          //write the json file
-          fs.writeFile(filename, JSON.stringify(settings), (err) => {
-            if (err) {
-                console.log('Error writing file', err);
-            } else {
-                console.log('Successfully wrote file');
-            }
-          });
+          AWSclient.eventemitter.emit('heatingon');
           if(ischanged == 1) {
             //send mqtt EVENT only if the heating was 0
             MQTTSClient.sendEvent(2, settings.mac, 'heating on');
             //post request for configuration only if the heating was 0-->SET THE PASSIVE TIMESTAMP
             settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-            // post new configuration
-            AWSclient.authenticate(AWSclient.postConfig);
             //reset the flag
             ischanged = 0;
           }
+          // update configuration
+          syncfiles.updateSettings(filename, settings);
         } else {
           if(settings.temp_to_reach <= settings.current_temperature) {
             if(settings.heating == 1)
@@ -185,25 +185,19 @@ setInterval(() => {
             settings.heating = 0;
             console.log('Sending settings to frontend...');
             //trigger the frontend to hide the heating logo-->emit event
-            eventemitter.emit('heatingoff');
-            //write the json file
-            fs.writeFile(filename, JSON.stringify(settings), (err) => {
-              if (err) {
-                  console.log('Error writing file', err);
-              } else {
-                  console.log('Successfully wrote file');
-              }
-            });
+            AWSclient.eventemitter.emit('heatingoff');
             if(ischanged == 1) {
             //send mqtt EVENT only if the heating was 1
             MQTTSClient.sendEvent(3, settings.mac, 'heating off');
             //post request for configuration only if the heating was 1-->SET THE PASSIVE TIMESTAMP
             settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
             // post new configuration
-            AWSclient.authenticate(AWSclient.postConfig);
+            //AWSclient.authenticate(AWSclient.postConfig);
             //reset the flag
             ischanged = 0;
             }
+            //update configuration
+            syncfiles.updateSettings(filename, settings);
           }
         };
         break;
@@ -214,25 +208,19 @@ setInterval(() => {
           settings.cooling = 1;
           console.log('Sending settings to frontend...');
           //trigger the frontend to show the cooling logo-->emit event
-          eventemitter.emit('coolingon');
-          //write the json file
-          fs.writeFile(filename, JSON.stringify(settings), (err) => {
-            if (err) {
-                console.log('Error writing file', err);
-            } else {
-                console.log('Successfully wrote file');
-            }
-          });
+          AWSclient.eventemitter.emit('coolingon');
           if(ischanged == 1) {
             //send mqtt EVENT only if the cooling was 0
             MQTTSClient.sendEvent(4, settings.mac, 'cooling on');
             //post request for configuration only if the cooling was 0-->SET THE PASSIVE TIMESTAMP
             settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
             // post new configuration
-            AWSclient.authenticate(AWSclient.postConfig);
+            //AWSclient.authenticate(AWSclient.postConfig);
             //reset the flag
             ischanged = 0;
           }
+          //update configuration
+          syncfiles.updateSettings(filename, settings);
         } else {
           if(settings.temp_to_reach >= settings.current_temperature) {
             if(settings.cooling == 1)
@@ -240,25 +228,19 @@ setInterval(() => {
             settings.cooling = 0;
             console.log('Sending settings to frontend...');
             //trigger the frontend to hide the heating logo-->emit event
-            eventemitter.emit('coolingoff');
-            //write the json file
-            fs.writeFile(filename, JSON.stringify(settings), (err) => {
-              if (err) {
-                  console.log('Error writing file', err);
-              } else {
-                  console.log('Successfully wrote file');
-              }
-            });
+            AWSclient.eventemitter.emit('coolingoff');
             if(ischanged == 1) {
               //send mqtt EVENT only if the cooling was 1
               MQTTSClient.sendEvent(5, settings.mac, 'cooling off');
               //post request for configuration only if the cooling was 1-->SET THE PASSIVE TIMESTAMP
               settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
               // post new configuration
-              AWSclient.authenticate(AWSclient.postConfig);
+              //AWSclient.authenticate(AWSclient.postConfig);
               //reset the flag
               ischanged = 0;
             }
+            //update configuration
+            syncfiles.updateSettings(filename, settings);
           }
         };
         break;
@@ -270,78 +252,55 @@ setInterval(() => {
 setInterval(() => {
   console.log('Interval to check the mode');
   var date = new Date();
+  const settings3 = syncfiles.getSettings(filename);
   //to be tested
-  if(settings.weekend.enabled == 1) {
-    let from = parseDate(settings.weekend.from[0], settings.weekend.from[1], settings.weekend.from[2]);
-    let to = parseDate(settings.weekend.to[0], settings.weekend.to[1], settings.weekend.to[2]);
+  if(settings3.weekend.enabled == 1) {
+    let from = parseDate(settings3.weekend.from[0], settings3.weekend.from[1], settings3.weekend.from[2]);
+    let to = parseDate(settings3.weekend.to[0], settings3.weekend.to[1], settings3.weekend.to[2]);
     if(date >= from && date <= to && counter == 0) {
-      settings.mode = 'off';
-      settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-      settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
-      fs.writeFile(filename, JSON.stringify(settings), (err) => {
-        if (err) {
-            console.log('Error writing file', err);
-        } else {
-            console.log('Successfully wrote file');
-        }
-      });
+      settings3.mode = 'off';
+      settings3.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+      settings3.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
+      syncfiles.updateSettings(filename, settings3);
       counter = 1;
       if(flag != 0)
         flag = 0;
       // post new configuration
-      AWSclient.authenticate(AWSclient.postConfig);
+      //AWSclient.authenticate(AWSclient.postConfig);
     } else {
         if(flag != 1) {
-          settings.mode = 'prog';
-          settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-          settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
-          fs.writeFile(filename, JSON.stringify(settings), (err) => {
-            if (err) {
-                console.log('Error writing file', err);
-            } else {
-                console.log('Successfully wrote file');
-            }
-          });
+          settings3.mode = 'prog';
+          settings3.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+          settings3.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
+          syncfiles.updateSettings(filename, settings3);
           flag = 1;
           counter = 0;
           // post new configuration
-          AWSclient.authenticate(AWSclient.postConfig);
+          //AWSclient.authenticate(AWSclient.postConfig);
         }
     }
   }
   //to be tested
-  if(settings.mode == 'prog' && settings.antifreeze.enabled == 0) {
-    let progarray = getDay(date.getDay(), settings);
+  if(settings3.mode == 'prog' && settings3.antifreeze.enabled == 0) {
+    let progarray = getDay(date.getDay(), settings3);
     let index = date.getHours();
-    if(settings.temp_to_reach != progarray[index]) {
-      settings.temp_to_reach = progarray[index];
+    if(settings3.temp_to_reach != progarray[index]) {
+      settings3.temp_to_reach = progarray[index];
       //set only the passive timestamp
-      settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-      fs.writeFile(filename, JSON.stringify(settings), (err) => {
-        if (err) {
-            console.log('Error writing file', err);
-        } else {
-            console.log('Successfully wrote file');
-        }
-      });
+      settings3.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+      syncfiles.updateSettings(filename, settings3);
       // post new configuration
-      AWSclient.authenticate(AWSclient.postConfig);
+      //AWSclient.authenticate(AWSclient.postConfig);
     }
   }
   //check if the antifreeze is enabled
-  if(settings.antifreeze.enabled == 1 && settings.season != 'summer') {
-    if(settings.temp_to_reach != settings.antifreeze.temp) {
-      settings.temp_to_reach = settings.antifreeze.temp;
-      settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-      fs.writeFile(filename, JSON.stringify(settings), (err) => {
-        if (err) {
-            console.log('Error writing file', err);
-        } else {
-            console.log('Successfully wrote file');
-        }
-      });
+  if(settings3.antifreeze.enabled == 1 && settings3.season != 'summer') {
+    if(settings3.temp_to_reach != settings3.antifreeze.temp) {
+      settings3.temp_to_reach = settings3.antifreeze.temp;
+      settings3.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+      syncfiles.updateSettings(filename, settings3);
       //send post request to configuration only if the temp_to_reach has changed-->SET THE PASSIVE TIMESTAMP
-      AWSclient.authenticate(AWSclient.postConfig);
+      //AWSclient.authenticate(AWSclient.postConfig);
     }
   }
 }, 5000);
@@ -349,22 +308,22 @@ setInterval(() => {
 relay_mqtt_client.on('connect', () => {
   if(relay_mqtt_client.connected){
     console.log("Relay client: CONNECTED ");
-    eventemitter.on('heatingon', () => {
+    AWSclient.eventemitter.on('heatingon', () => {
       //publish
       let message = 'heating:on';
       publish('relay',message);
     });
-    eventemitter.on('heatingoff', () => {
+    AWSclient.eventemitter.on('heatingoff', () => {
       //publish
       let message = 'heating:off';
       publish('relay',message);
     });
-    eventemitter.on('coolingon', () => {
+    AWSclient.eventemitter.on('coolingon', () => {
       //publish
       let message = 'cooling:on';
       publish('relay',message);
     });
-    eventemitter.on('coolingoff', () => {
+    AWSclient.eventemitter.on('coolingoff', () => {
       //publish
       let message = 'cooling:off';
       publish('relay',message);
@@ -381,22 +340,17 @@ temperature_mqtt_client.on('connect', () => {
 temperature_mqtt_client.on('message', (topic, msg) => {
     console.log(`Message ${msg} received via MQTT`);
     received_temperature = msg.toString();
+    const config = syncfiles.getSettings(filename);
     //modify the json file
-    settings.current_temperature = Number.parseFloat(msg.toString());
-    console.log(settings.current_temperature);
+    config.current_temperature = Number.parseFloat(msg.toString());
+    console.log(config.current_temperature);
     //send mqtt EVENT
-    MQTTSClient.sendEvent(6, settings.mac, 'received temperature');
+    MQTTSClient.sendEvent(6, config.mac, 'received temperature');
     //SET THE PASSIVE TIMESTAMP
-    settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-    fs.writeFile(filename, JSON.stringify(settings), (err) => {
-      if (err) {
-          console.log('Error writing file', err);
-      } else {
-          console.log('Successfully wrote file');
-      }
-    });
+    config.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    syncfiles.updateSettings(filename, config);
     // post new configuration
-    AWSclient.authenticate(AWSclient.postConfig);
+    //AWSclient.authenticate(AWSclient.postConfig);
 });
 
 /*process.on('uncaughtException', (err) => {

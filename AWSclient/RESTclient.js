@@ -3,9 +3,9 @@ var client = new Client();
 const uri = 'http://ec2-34-220-162-82.us-west-2.compute.amazonaws.com:5002';
 const username = 'PL19-11';
 const pwd = 'polit0';
-var settings = require('../settings.json');
-const fs = require('fs');
 const filename    = 'settings.json';
+const EventEmitter = require('events');
+var eventemitter = new EventEmitter();
 
 //TEST THE RESPONSES!!!
 
@@ -24,6 +24,8 @@ function getConfig(token, _function) {
 //update configuration
 function postConfig(data,response) {
     const myuri = uri + '/user/PL19-11/devices';
+
+    const settings = syncfiles.getSettings(filename);
 
     let args = {
         data: {"device_mac":settings.mac, "nickname": settings.nickname, "configuration":settings},
@@ -69,20 +71,23 @@ function _getConfigBiss(data, response){
     config = JSON.parse(final);
     console.log(config);
 
+    const settings = syncfiles.getSettings(filename);
 
+    //from remote
     let configTime = parseTimestamp(config.lastchange);
+    //local
     let settingsTime = parseTimestamp(settings.lastchange);
 
-    //check the active timestamp!!!
+    //if remote settings > local settings
     if(configTime > settingsTime) {
-        settings = config;
-        fs.writeFile(filename, JSON.stringify(settings), (err) => {
-            if (err) {
-                console.log('Error writing file', err);
-            } else {
-                console.log('Successfully wrote file');
-            }
-        });
+        console.log('local settings are older-->update them');
+        eventemitter.emit('mode');
+        eventemitter.emit('season');
+        syncfiles.updateSettings(filename, settings);
+    }
+    else {
+        console.log('local settings are more recent-->send a post');
+        authenticate(postConfig);
     }
 }
 
@@ -107,4 +112,5 @@ module.exports = {
     postConfig: postConfig,
     authenticate: authenticate,
     _getConfig:  _getConfig,
+    eventemitter: eventemitter,
 }
