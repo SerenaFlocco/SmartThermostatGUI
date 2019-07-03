@@ -23,22 +23,26 @@ function getConfig(token, _function) {
 
 //update configuration
 function postConfig(data,response) {
+    console.log(" ### POST CONFIG ###")
     const myuri = uri + '/user/PL19-11/devices';
 
     const settings = syncfiles.getSettings(filename);
 
     let args = {
-        data: {"device_mac":settings.mac, "nickname": settings.nickname, "configuration":settings},
+        data: {"device_mac":settings.mac, "nickname": settings.nickname, "configuration":configuration},
         headers: { 
             "Content-Type": "application/json",
             "Authorization": "JWT " + data.access_token
         }
     };
+    
+    console.log(" ### Post Arguments ###")
     console.log(args);
     client.post(myuri, args,_postConfig);
 }
 
 function _postConfig(data, response){
+    console.log(" ### _ POST CONFIG ###")
     console.log("POST CONFIG ended correctly");
 }
 
@@ -69,6 +73,7 @@ function _getConfigBiss(data, response){
     res2 = res[1].split('", "device_mac":')
     final = res2[0]
     config = JSON.parse(final);
+    console.log("############ Config:\n");
     console.log(config);
 
     const settings = syncfiles.getSettings(filename);
@@ -93,7 +98,8 @@ function _getConfigBiss(data, response){
 
 function parseTimestamp(timestamp) {
     let array = timestamp.split(':');
-    let day = array[0].toString().split('/');
+	console.log(array);    
+let day = array[0].toString().split('/');
     //let date = new Date(day[2], day[1], day[0], array[1], array[2], array[3]);
     let date = new Date();
     date.setFullYear(day[2]);
@@ -104,6 +110,25 @@ function parseTimestamp(timestamp) {
     date.setSeconds(array[3]);
     console.log(date);
     return date;
+}
+
+function getSettings(){
+    /*fs.readFile(filename, 'utf8', (err, jsonString) => {
+	    if (err) {
+		console.log("Error reading file from disk:", err);
+		return;
+	    }*/
+
+    const jsonString = fs.readFileSync(filename, 'utf8');
+
+    try {
+	//console.log(jsonString);
+	const configuration = JSON.parse(jsonString);
+	return configuration;
+    } catch(err) {
+	console.log('Error parsing JSON string:', err);
+    }
+    //});
 }
 
 

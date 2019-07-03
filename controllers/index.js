@@ -5,13 +5,14 @@
  */
 var express = require('express');
 var router = express.Router();
-var exec      = require('child_process').exec;
+var exec   = require('child_process').exec;
 
 router.use('/antifreeze', require('./antifreeze'));
 router.use('/', require('./home'));
 router.use('/prog', require('./prog'));
 router.use('/weekend', require('./weekend'));
 router.use('/wifi', require('./wifi'));
+router.use('/peering', require('./peering'));
 
 router.get('/demo', (req, res) => {res.render('demo')})
 
