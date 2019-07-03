@@ -91,7 +91,7 @@ function _getConfigBiss(data, response){
         
         syncfiles.updateSettings(filename, config);
 
-        configuration.current_temperature = config.current_temperature;
+        //configuration.current_temperature = config.current_temperature;
         eventemitter.emit('newtemp');
 
         if(config.season == 'winter') {
