@@ -41,7 +41,7 @@ router.put('/mode', (req, res) => {
     syncfiles.updateSettings(filename, settings);
 
     //send post request to configuration
-    AWSclient.authenticate(AWSclient.postConfig);
+    //AWSclient.authenticate(AWSclient.postConfig);
 
     res.status(201).json(settings.mode);
 });
@@ -60,8 +60,9 @@ router.put('/manualtemp', (req, res) => {
     settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
     syncfiles.updateSettings(filename, settings);
+    
     //send post request to configuration
-    AWSclient.authenticate(AWSclient.postConfig);
+    //AWSclient.authenticate(AWSclient.postConfig);
 
     res.status(201).json(settings.last_man_temperature);
 });
@@ -84,8 +85,10 @@ router.put('/season', (req, res) => {
     settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
     syncfiles.updateSettings(filename, settings);
+    
     //send post request to configuration
-    AWSclient.authenticate(AWSclient.postConfig);
+    //AWSclient.authenticate(AWSclient.postConfig);
+    
     res.status(201).json(settings.season);
 });
 
@@ -103,8 +106,10 @@ router.put('/heating', (req, res) => {
     //SET ONLY THE PASSIVE TIMESTAMP
     settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     syncfiles.updateSettings(filename, settings);
+    
     //send post request to configuration
-    AWSclient.authenticate(AWSclient.postConfig);
+    //AWSclient.authenticate(AWSclient.postConfig);
+    
     res.status(201).json(settings.heating);
 });
 
@@ -122,8 +127,10 @@ router.put('/cooling', (req, res) => {
     //SET ONLY THE PASSIVE TIMESTAMP
     settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     syncfiles.updateSettings(filename, settings);
+    
     //send post request to configuration
-    AWSclient.authenticate(AWSclient.postConfig);
+    //AWSclient.authenticate(AWSclient.postConfig);
+    
     res.status(201).json(settings.cooling);
 });
 
@@ -142,8 +149,10 @@ router.put('/antifreeze', (req, res) => {
     settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
     syncfiles.updateSettings(filename, settings);
+    
     //send post request to configuration
-    AWSclient.authenticate(AWSclient.postConfig);
+    //AWSclient.authenticate(AWSclient.postConfig);
+    
     res.status(201).json(settings.antifreeze);
 });
 
@@ -162,8 +171,10 @@ router.put('/weekend', (req, res) => {
     settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
     syncfiles.updateSettings(filename, settings);
+    
     //send post request to configuration
-    AWSclient.authenticate(AWSclient.postConfig);
+    //AWSclient.authenticate(AWSclient.postConfig);
+    
     res.status(201).json(settings.weekend);
 });
 
@@ -206,8 +217,10 @@ router.put('/prog/:day', (req, res) => {
     settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
     syncfiles.updateSettings(filename, settings);
+    
     //send post request to configuration
-    AWSclient.authenticate(AWSclient.postConfig);
+    //AWSclient.authenticate(AWSclient.postConfig);
+    
     res.status(201).json(to_return);
 });
 

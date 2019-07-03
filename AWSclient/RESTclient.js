@@ -31,7 +31,7 @@ function postConfig(data,response) {
     const configuration = syncfiles.getSettings(filename);
 
     let args = {
-        data: {"device_mac":settings.mac, "nickname": settings.nickname, "configuration":configuration},
+        data: {"device_mac":configuration.mac, "nickname": configuration.nickname, "configuration":configuration},
         headers: { 
             "Content-Type": "application/json",
             "Authorization": "JWT " + data.access_token
@@ -73,21 +73,76 @@ function _getConfigBiss(data, response){
     config = JSON.parse(final);
 
     const configuration = syncfiles.getSettings(filename);
-    console.log(configuration);
+    //console.log(configuration);
 
-    let configTime_ = parseTimestamp(config.timestamp);
-    let settingsTime_ = parseTimestamp(configuration.timestamp);
-    console.log(configTime_ + " " + settingsTime_)
+    /* NEW LOGIC BLOCK */
+
+    let rasp_lastChange = parseTimestamp(config.lastchange);
+    let lastChange = parseTimestamp(configuration.lastchange);
+    let rasp_timeStamp = parseTimestamp(config.timestamp);
+    let timeStamp = parseTimestamp(configuration.timestamp);
+
+    if(lastChange > rasp_lastChange){
+        // the configuration is more recent than one stored on AWS
+        if(timeStamp < rasp_timeStamp){
+            // the configuration stored on AWS is older but contains a new temperature
+            console.log("NEW TEMPERATURE")
+            // write temperature
+            let newConfiguration = configuration;
+            newConfiguration.current_temperature =  config.current_temperature;
+            console.log(newConfiguration)
+            syncfiles.updateSettings(filename, newConfiguration);
+
+            // new temperature event
+            eventemitter.emit('newtemp');
+        }
+        // post the new configuration
+        authenticate(postConfig);
+    }else{
+        // theconfiguration is NOT more recent then the one stored on AWS
+        
+        // write file
+        syncfiles.updateSettings(filename, config);
+
+        // check all the events
+        if(config.season == 'winter') {
+            switch(config.heating) {
+                case 0: //configuration.heating = config.heating;
+                        eventemitter.emit('heatingoff');
+                        console.log("heatingoff");
+                        break;
+                case 1: //configuration.heating = config.heating;
+                        eventemitter.emit('heatingon');
+                        console.log("heatingon");
+                        break;
+            }
+        }
+        if(config.season == 'summer') {
+            switch(config.cooling) {
+                case 0: //configuration.cooling = config.cooling;
+                        eventemitter.emit('coolingoff');
+                        console.log("coolingoff");
+                        break;
+                case 1: //configuration.cooling = config.cooling;
+                        eventemitter.emit('coolingon');
+                        console.log("coolingon");
+                        break;
+            }
+        }
+        eventemitter.emit('mode');
+        eventemitter.emit('season');
+        eventemitter.emit('newtemp');
+       
+    }
+
+    /*******************/
+
+
+    /*let configTime_ = parseTimestamp(config.timestamp);
+    let settingsTime_ = parseTimestamp(configuration.timestamp);*/
 
     //check the passive timpestamp
-    if(configTime_ > settingsTime_) {
-        /** check what happened!!!
-         * -heating on?
-         * -heating off?
-         * -cooling on?
-         * -cooling off?
-         * -new temperature?
-         */
+    /*if(configTime_ > settingsTime_) {
         console.log("entrato1");
         
         syncfiles.updateSettings(filename, config);
@@ -132,7 +187,7 @@ function _getConfigBiss(data, response){
         eventemitter.emit('mode');
         eventemitter.emit('season');
         syncfiles.updateSettings(filename, config);
-    }
+    }*/
 }
 
 function parseTimestamp(timestamp) {
