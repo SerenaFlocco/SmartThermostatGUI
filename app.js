@@ -115,16 +115,16 @@ server.on('connection', (ws) => {
 
   AWSclient.eventemitter.on('mode', () => {
     if(ws.readyState === WebSocket.OPEN) {
-      const settings = syncfiles.getSettings(filename);
-      ws.send('mode:' + settings.mode);
+      const settings1 = syncfiles.getSettings(filename);
+      ws.send('mode:' + settings1.mode);
     }
       console.log("event received");
   });
 
   AWSclient.eventemitter.on('season', () => {
     if(ws.readyState === WebSocket.OPEN) {
-      const settings = syncfiles.getSettings(filename);
-      ws.send('season:' + settings.season);
+      const settings2 = syncfiles.getSettings(filename);
+      ws.send('season:' + settings2.season);
     }
       console.log("event received");
   });
