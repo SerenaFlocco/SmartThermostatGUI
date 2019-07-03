@@ -73,6 +73,7 @@ function _getConfigBiss(data, response){
     config = JSON.parse(final);
 
     const configuration = syncfiles.getSettings(filename);
+    console.log(configuration);
 
     let configTime_ = parseTimestamp(config.timestamp);
     let settingsTime_ = parseTimestamp(configuration.timestamp);
