@@ -5,6 +5,10 @@ var topic = "relay";
 const raspi = require('raspi');
 const gpio = require('raspi-gpio');
 
+var sys = require('sys')
+var exec = require('child_process').exec;
+function puts(error, stdout, stderr) { sys.puts(stdout) }
+exec("killall pigpiod", puts);
  
 
 raspi.init(() => {

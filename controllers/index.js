@@ -5,7 +5,10 @@
  */
 var express = require('express');
 var router = express.Router();
-var exec   = require('child_process').exec;
+var sys = require('sys')
+var exec = require('child_process').exec;
+function puts(error, stdout, stderr) { sys.puts(stdout) }
+
 
 router.use('/antifreeze', require('./antifreeze'));
 router.use('/', require('./home'));
@@ -30,7 +33,7 @@ router.get('/ok', function(req, res) {
 
 router.get('/poweroff', (req,res) => {
     console.log("poweroff");
-    exec('shutdown now',(error,stdout,stderr) =>{ callback(stdout)});
+				exec("shutdown now", puts);
 })
 
 

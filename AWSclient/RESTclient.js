@@ -43,8 +43,10 @@ function postConfig(data,response) {
 }
 
 function _postConfig(data, response){
-    console.log(" ### _ POST CONFIG ###")
-    console.log("POST CONFIG ended correctly");
+			
+    console.log(" ### POST CONFIG ###")
+				console.log(data)
+    console.log("######################");
 }
 
 //request for authentication-->response=token
@@ -73,9 +75,10 @@ function _getConfigBiss(data, response){
     res = clearString2.split('"configuration": "')
     res2 = res[1].split('", "device_mac":')
     final = res2[0]
+    console.log(final)
     config = JSON.parse(final);
-    console.log("############ Config:\n");
-    console.log(config);
+    //console.log("############ Config:\n");
+    //console.log(config);
 
     const settings = syncfiles.getSettings(filename);
 
@@ -85,15 +88,20 @@ function _getConfigBiss(data, response){
     let settingsTime = parseTimestamp(settings.lastchange);
 
     //if remote settings > local settings
-
-    if(configTime > settingsTime) {
-        console.log('local settings are older-->update them');
-								syncfiles.updateSettings(filename, config);
-        eventemitter.emit('mode');
-        eventemitter.emit('season');
-    }else{
-        console.log('local settings are more recent-->send a post');
-        authenticate(postConfig);
+    if(configTime.getTime() === settingsTime.getTime()) {
+        //do nothing
+        console.log("Configuration already up to date\n");
+    }
+    else {
+        if(configTime > settingsTime) {
+            console.log('local settings are older-->update them');
+                                    syncfiles.updateSettings(filename, config);
+            eventemitter.emit('mode');
+            eventemitter.emit('season');
+        }else{
+            console.log('local settings are more recent-->send a post');
+            authenticate(postConfig);
+        }
     }
 }
 
