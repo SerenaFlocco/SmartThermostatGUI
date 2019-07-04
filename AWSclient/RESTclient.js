@@ -90,7 +90,7 @@ function _getConfigBiss(data, response){
             // write temperature
             let newConfiguration = configuration;
             newConfiguration.current_temperature =  config.current_temperature;
-            console.log(newConfiguration)
+            console.log(newConfiguration);
             syncfiles.updateSettings(filename, newConfiguration);
 
             // new temperature event

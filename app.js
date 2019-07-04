@@ -108,6 +108,8 @@ server.on('connection', (ws) => {
   AWSclient.eventemitter.on('newtemp', () => {
     if(ws.readyState === WebSocket.OPEN) {
       const settings = syncfiles.getSettings(filename);
+      console.log("Current temperature:");
+      console.log(settings.current_temperature);
       ws.send('temp:' + settings.current_temperature);
     }
       console.log("event received");
