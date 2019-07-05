@@ -8,6 +8,7 @@ var router = express.Router();
 var exec      = require('child_process').exec;
 
 router.use('/antifreeze', require('./antifreeze'));
+router.use('/token', require('./token'));
 router.use('/', require('./home'));
 router.use('/prog', require('./prog'));
 router.use('/weekend', require('./weekend'));
