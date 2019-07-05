@@ -24,7 +24,7 @@ function getConfig(token, _function) {
 
 //update configuration
 function postConfig(data,response) {
-    console.log(" ### POST CONFIG ###")
+    //console.log(" ### POST CONFIG ###")
     const myuri = uri + '/user/PL19-11/devices';
 
     const settings = syncfiles.getSettings(filename);
@@ -37,16 +37,16 @@ function postConfig(data,response) {
         }
     };
     
-    console.log(" ### Post Arguments ###")
-    console.log(args);
+    //console.log(" ### Post Arguments ###")
+    //console.log(args);
     client.post(myuri, args,_postConfig);
 }
 
 function _postConfig(data, response){
 			
-    console.log(" ### POST CONFIG ###")
-				console.log(data)
-    console.log("######################");
+    //console.log(" ### POST CONFIG ###")
+				//console.log(data)
+    //console.log("######################");
 }
 
 //request for authentication-->response=token
@@ -63,6 +63,7 @@ function authenticate(_function) {
 }
 
 function _getConfig(data, response){
+    console.log(response);
     console.log("new token:" + data.access_token)
     getConfig(data.access_token, _getConfigBiss)
 }
@@ -75,7 +76,7 @@ function _getConfigBiss(data, response){
     res = clearString2.split('"configuration": "')
     res2 = res[1].split('", "device_mac":')
     final = res2[0]
-    console.log(final)
+    //console.log(final)
     config = JSON.parse(final);
     //console.log("############ Config:\n");
     //console.log(config);
@@ -94,21 +95,20 @@ function _getConfigBiss(data, response){
     }
     else {
         if(configTime > settingsTime) {
-            console.log('local settings are older-->update them');
-                                    syncfiles.updateSettings(filename, config);
+            //console.log('local settings are older-->update them');
+            syncfiles.updateSettings(filename, config);
             eventemitter.emit('mode');
             eventemitter.emit('season');
         }else{
-            console.log('local settings are more recent-->send a post');
+            //console.log('local settings are more recent-->send a post');
             authenticate(postConfig);
         }
     }
 }
 
 function parseTimestamp(timestamp) {
-    let array = timestamp.split(':');
-	console.log(array);    
-let day = array[0].toString().split('/');
+    let array = timestamp.split(':'); 
+				let day = array[0].toString().split('/');
     //let date = new Date(day[2], day[1], day[0], array[1], array[2], array[3]);
     let date = new Date();
     date.setFullYear(day[2]);
@@ -117,27 +117,19 @@ let day = array[0].toString().split('/');
     date.setHours(array[1]);
     date.setMinutes(array[2]);
     date.setSeconds(array[3]);
-    console.log(date);
     return date;
 }
 
 function getSettings(){
-    /*fs.readFile(filename, 'utf8', (err, jsonString) => {
-	    if (err) {
-		console.log("Error reading file from disk:", err);
-		return;
-	    }*/
 
     const jsonString = fs.readFileSync(filename, 'utf8');
 
     try {
-	//console.log(jsonString);
-	const configuration = JSON.parse(jsonString);
-	return configuration;
+								const configuration = JSON.parse(jsonString);
+								return configuration;
     } catch(err) {
-	console.log('Error parsing JSON string:', err);
+								console.log('Error parsing JSON string:', err);
     }
-    //});
 }
 
 
