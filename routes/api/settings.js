@@ -209,4 +209,27 @@ router.put('/prog/:day', (req, res) => {
     res.status(201).json(to_return);
 });
 
+//Request for a new token
+router.get('/token', (req, res) => {
+    let token = makeid(8);
+    const settings = syncfiles.getSettings(filename);
+    let settings_bis = settings;
+    while(token == settings_bis.token) {
+        token = makeid(8);
+    }
+    settings_bis.token = token;
+    syncfiles.updateSettings(filename, settings_bis);
+    res.status(200).json(token);
+});
+
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
 module.exports = router;

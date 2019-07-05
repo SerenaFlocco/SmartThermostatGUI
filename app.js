@@ -14,6 +14,8 @@ const WebSocket = require('ws');
 const wss       = require('ws').Server;
 const exphbs    = require('express-handlebars');
 const mac = require('getmac');
+var Wifi = require('rpi-wifi-connection');
+var wifi = new Wifi();
 //const exec      = require('child_process').exec;
 var temperature_mqtt_client   = mqtt.connect('mqtt://localhost');
 var relay_mqtt_client   = mqtt.connect('mqtt://localhost');
@@ -77,18 +79,50 @@ app.listen(3000, function() {
   console.log('Listening on port 3000...')
 });
 
-/** Get request for the configuration: if the lastchange field is equal to the local one-->ok,
- * otherwise modify the settings.json file
- */
- AWSclient.authenticate(AWSclient._getConfig); //request for the token
+//Check if Internet connection is available
+wifi.getState().then((connected) => {
+  if (connected) {    
+      console.log('Connected to network.');
+      /** Get request for the configuration: if the lastchange field is equal to the local one-->ok,
+        * otherwise modify the settings.json file
+        */
+      AWSclient.authenticate(AWSclient._getConfig); //request for the token
+  }
+  else {
+      console.log('Not connected to network.');
+  }
+})
+.catch((error) => {
+  console.log(error);
+});
+
+/** Generate a token at bootstrap */
+const s = syncfiles.getSettings(filename);
+let s_bis = s;
+new_token = makeid(8);
+while(new_token == s_bis.token) {
+  new_token = makeid(8);
+}
+s_bis.token = new_token;
+syncfiles.updateSettings(filename, s_bis);
 
 /** Set interval to make a get request for the configuration:
  * if the lastchange field is less than the local one-->send a post,
  * otherwise modify the settings.json file
 */
 setInterval( () => {
-		console.log("---TIMER EXPIRED---");
-  AWSclient.authenticate(AWSclient._getConfig);
+  console.log("---TIMER EXPIRED---");
+  wifi.getState().then((connected) => {
+    if (connected) {
+        console.log('Connected to network.');
+        AWSclient.authenticate(AWSclient._getConfig);
+    } else {
+        console.log('Not connected to network.');
+    }
+  })
+  .catch((error) => {
+      console.log(error);
+  }); 
 }, 10000);
 
 /*NOTA: DA REMOTO OCCORRE CONTROLLARE IL TIMESTAMP PASSIVO PER AGGIORNARE IL VALORE DELLA
@@ -419,4 +453,14 @@ function publish(topic,msg,options){
   console.log("Relay control: PUBLISHING " + msg);
   if (relay_mqtt_client.connected == true)
     relay_mqtt_client.publish(topic,msg,options);
+}
+
+function makeid(length) {
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 }

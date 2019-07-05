@@ -1,6 +1,5 @@
 var express = require('express');
-var piWifi = require('pi-wifi');
-var settings = require('../settings.json');
+//var piWifi = require('pi-wifi');
 var router = express.Router();
 var Wifi = require('rpi-wifi-connection');
 var wifi = new Wifi();
