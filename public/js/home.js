@@ -1,4 +1,4 @@
-const wsc = new WebSocket('ws://localhost:8080');
+const wsc = new WebSocket('ws://192.168.1.13:8080');
 //flag to change temperature shown during manual setting
 var flag = 0;
 //timer used when the temperature is increased or decreased
