@@ -99,7 +99,7 @@ wifi.getState().then((connected) => {
 /** Generate a token at bootstrap */
 const s = syncfiles.getSettings(filename);
 let s_bis = s;
-new_token = makeid(8);
+let new_token = makeid(8);
 while(new_token == s_bis.token) {
   new_token = makeid(8);
 }

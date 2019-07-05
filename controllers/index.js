@@ -16,6 +16,7 @@ router.use('/prog', require('./prog'));
 router.use('/weekend', require('./weekend'));
 router.use('/wifi', require('./wifi'));
 router.use('/peering', require('./peering'));
+router.use('/remote', require('./remote'));
 
 router.get('/demo', (req, res) => {res.render('demo')})
 
