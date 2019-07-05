@@ -227,12 +227,18 @@ router.put('/prog/:day', (req, res) => {
 //post request when the user inserts the token
 router.post('/token', (req, res) => {
     const settings = syncfiles.getSettings(filename);
-    const token = req.body;
+    console.log("settings T: "+ settings.token);
+    const token = req.body.token;
+    console.log("Rem T: " + token);
     if(settings.token == token)
-        res.redirect('../?login=true');
+        res.redirect('../../?login=true');
     else {
         let returnMsg = 'Invalid token. Please, retry.';
-        res.status(404).json(returnMsg);
+        //res.status(404).json(returnMsg);
+        res.render('error', {
+            layout: "login",
+            message: returnMsg
+        });
     }
 });
 
