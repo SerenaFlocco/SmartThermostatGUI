@@ -111,6 +111,3 @@
 display: none;
 }
 
-$('#password').on('focus', function() {
-    document.body.scrollTop = $(this).offset().top;
-});
