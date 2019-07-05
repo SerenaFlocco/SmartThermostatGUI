@@ -218,6 +218,8 @@ router.get('/token', (req, res) => {
         token = makeid(8);
     }
     settings_bis.token = token;
+    settings_bis.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
+    settings_bis.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
     syncfiles.updateSettings(filename, settings_bis);
     res.status(200).json(token);
 });
