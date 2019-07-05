@@ -230,9 +230,10 @@ router.post('/token', (req, res) => {
     console.log("settings T: "+ settings.token);
     const token = req.body.token;
     console.log("Rem T: " + token);
-    if(settings.token == token)
-        res.redirect('../../?login=true');
-    else {
+    if(settings.token == token){
+        req.session.token = token;
+        res.redirect('../../');
+    }else {
         let returnMsg = 'Invalid token. Please, retry.';
         //res.status(404).json(returnMsg);
         res.render('error', {

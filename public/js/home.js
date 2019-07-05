@@ -1,4 +1,5 @@
-const wsc = new WebSocket('ws://192.168.1.13:8080');
+const address = '192.168.1.9'
+const wsc = new WebSocket('ws://' + address+ ':8080');
 //flag to change temperature shown during manual setting
 var flag = 0;
 //timer used when the temperature is increased or decreased
@@ -13,7 +14,7 @@ var heating = 0;
 var cooling = 0;
 
 //get the current temperature
-$.get({url: 'http://localhost:3000/api/settings/currenttemp', async: false}, () => {
+$.get({url: 'http://'+ address +':3000/api/settings/currenttemp', async: false}, () => {
     console.log('success');
 })
 .done((data) => {
@@ -22,7 +23,7 @@ $.get({url: 'http://localhost:3000/api/settings/currenttemp', async: false}, () 
     console.log(mode);
 })
 .fail(() => {
-    console.log('error');
+    console.log('error');   
 })
 .always(() => {
     console.log('finished');
@@ -31,7 +32,7 @@ if(current_temperature != 0)
     $('#temperature').text(current_temperature.toFixed(1) + "°C");
 
 //check if the heating system is on
-$.get({url: 'http://localhost:3000/api/settings/heating', async: false}, () => {
+$.get({url: 'http://' + address + ':3000/api/settings/heating', async: false}, () => {
         console.log('success');
     })
     .done((data) => {
@@ -49,7 +50,7 @@ if(heating == 1)
     $('#on').text('whatshot');
 
 //check if the cooling system is on
-$.get({url: 'http://localhost:3000/api/settings/cooling', async: false}, () => {
+$.get({url: 'http://' + address + ':3000/api/settings/cooling', async: false}, () => {
     console.log('success');
 })
 .done((data) => {
@@ -102,7 +103,7 @@ wsc.onmessage = (msg) => {
 
 //When mode is 'man', check the temperature periodically to switch on/off the heating system
 $('#man').on('click', () => {
-    const url = 'http://localhost:3000/api/settings/mode';
+    const url = 'http://' + address + ':3000/api/settings/mode';
     const data = '{"mode":"man"}';
     $.ajax({
         url: url,
@@ -118,7 +119,7 @@ $('#man').on('click', () => {
 $('#increase').on('click', () => {
     if(flag == 0) {
         //get the current mode
-        $.get({url: 'http://localhost:3000/api/settings/mode', async: false}, () => {
+        $.get({url: 'http://' + address + ':3000/api/settings/mode', async: false}, () => {
             console.log('success');
         })
         .done((data) => {
@@ -133,7 +134,7 @@ $('#increase').on('click', () => {
           console.log('finished');
         });
         //get the last manual temperature
-        $.get({url:'http://localhost:3000/api/settings/manualtemp', async:false}, () => {
+        $.get({url:'http://' + address + ':3000/api/settings/manualtemp', async:false}, () => {
             console.log('success');
         })
         .done((data) => {
@@ -165,7 +166,7 @@ $('#increase').on('click', () => {
             //reset flag
             flag = 0;
             //put on manual temp
-            const url = 'http://localhost:3000/api/settings/manualtemp';
+            const url = 'http://' + address+ ':3000/api/settings/manualtemp';
             const data = '{"last_man_temperature":' + temp.toFixed(1) + '}';
             $.ajax({
                 url: url,
@@ -184,7 +185,7 @@ $('#increase').on('click', () => {
 $('#decrease').on('click', () => {
     if(flag == 0) {
         //get the current mode
-        $.get({url: 'http://localhost:3000/api/settings/mode', async: false}, () => {
+        $.get({url: 'http://' + address + ':3000/api/settings/mode', async: false}, () => {
             console.log('success');
         })
         .done((data) => {
@@ -199,7 +200,7 @@ $('#decrease').on('click', () => {
           console.log('finished');
         });
         //get the last manual temperature
-        $.get({url:'http://localhost:3000/api/settings/manualtemp', async:false}, () => {
+        $.get({url:'http://' + address + ':3000/api/settings/manualtemp', async:false}, () => {
             console.log('success');
         })
         .done((data) => {
@@ -231,7 +232,7 @@ $('#decrease').on('click', () => {
             //reset flag
             flag = 0;
             //put on manual temp
-            const url = 'http://localhost:3000/api/settings/manualtemp';
+            const url = 'http://' + address +':3000/api/settings/manualtemp';
             const data = '{"last_man_temperature":' + temp.toFixed(1) + '}';
             $.ajax({
                 url: url,
@@ -250,7 +251,7 @@ $('#off').on('click', () => {
     $('#on').empty();
     console.log('Sending settings to backend...');
     //put on mode
-    const url = 'http://localhost:3000/api/settings/mode';
+    const url = 'http://'+ address +':3000/api/settings/mode';
     const data = '{"mode":"off"}';
     $.ajax({
         url: url,
@@ -266,7 +267,7 @@ $('#winter').on('click', () => {
     $('#on').empty();
     console.log('Sending settings to backend...');
     //put on season
-    const url = 'http://localhost:3000/api/settings/season';
+    const url = 'http://' + address + ':3000/api/settings/season';
     const data = '{"season":"winter"}';
     $.ajax({
         url: url,
@@ -282,7 +283,7 @@ $('#summer').on('click', () => {
     $('#on').empty();
     console.log('Sending settings to backend...');
     //put on season
-    const url = 'http://localhost:3000/api/settings/season';
+    const url = 'http://' + address + ':3000/api/settings/season';
     const data = '{"season":"summer"}';
     $.ajax({
         url: url,
@@ -295,7 +296,7 @@ $('#summer').on('click', () => {
 
 $('#prog').on('click', () => {
     //put on mode
-    const url = 'http://localhost:3000/api/settings/mode';
+    const url = 'http://' + address + ':3000/api/settings/mode';
     const data = '{"mode":"prog"}';
     $.ajax({
         url: url,

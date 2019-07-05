@@ -13,6 +13,8 @@ var server        = new wss({port: 8080});
 const syncfiles    = require('./syncfiles.js');
 const filename = 'settings.json';
 const AWSclient = require('./AWSclient/RESTclient.js');
+var session = require('express-session');
+const uuidv1 = require('uuid/v1');
 
 // handlebars middleware
 app.engine('handlebars', exphbs({
@@ -20,6 +22,16 @@ app.engine('handlebars', exphbs({
   layoutsDir: __dirname + '/views/layouts/'
 }));
 app.set('view engine', 'handlebars');
+
+app.use(session({
+  genid: function(req) {
+    return uuidv1(); // use UUIDs for session IDs
+  },
+  secret: '2C44-4D44-WppQ38S',
+  resave: true,
+  saveUninitialized: true,
+  expires: new Date(Date.now() + (1 * 1000))
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -30,6 +42,7 @@ app.use(express.urlencoded({ extended: false }));
  */
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname,'views')));
+
 
 // setup controllers
 app.use(require('./controllers'))

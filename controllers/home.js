@@ -6,9 +6,19 @@ var router = express.Router();
 //if flag = 0 => redirect to token page, otherwise get the index page
 var flag = 0;
 
-router.get('/', function(req, res) {
-   if(req.query.login === 'true')
-      flag = 1;
+// Authentication and Authorization Middleware
+var auth = function(req, res, next) {
+   const set = syncfiles.getSettings(filename);
+   console.log(req.session)
+   if (req.session && req.session.token === set.token)
+     return next();
+   else
+     return res.redirect('/token');
+ };
+
+router.get('/',auth, function(req, res) {
+   /*if(req.query.login === 'true')
+      flag = 1;*/
 
    const settings = syncfiles.getSettings(filename);
 
@@ -21,15 +31,15 @@ router.get('/', function(req, res) {
    if(settings.current_temperature != 0)
       temperature = settings.current_temperature.toFixed(1) + "°C";
    
-   if(flag == 1) {
+   //if(flag == 1) {
       res.render('index', {
          temperature: temperature,
          program: mode,
          season: settings.season,
       });
-   } else {
+   /*} else {
       res.redirect('/token');
-   }
+   }*/
    
 });
 

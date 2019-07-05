@@ -1,10 +1,18 @@
 var express = require('express')
 var router = express.Router()
+const syncfiles = require('../syncfiles.js');
+const filename = 'settings.json';
 
-// db
-//router.use('/comments', require('./comments'))
-//router.use('/users', require('./users'))
+// Authentication and Authorization Middleware
+var auth = function(req, res, next) {
+    const set = syncfiles.getSettings(filename);
+    console.log(req.session)
+    if (req.session && req.session.token === set.token)
+      return next();
+    else
+      return res.redirect('/token');
+  };
 
-router.get('/', function(req, res) {res.render('prog')})
+router.get('/',auth, function(req, res) {res.render('prog')})
 
 module.exports = router
