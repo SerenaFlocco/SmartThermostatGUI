@@ -30,7 +30,7 @@ router.get('/ok', function(req, res) {
 
 router.get('/poweroff', (req,res) => {
     console.log("poweroff");
-    exec('shutdown now',(error,stdout,stderr) =>{ callback(stdout)});
+    exec('poweroff',(error,stdout,stderr) =>{ callback(stdout)});
 })
 
 
