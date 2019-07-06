@@ -6,9 +6,10 @@ var timer;
 var mode = '';
 //antifreeze temperature
 var antifreeze;
+var address = '192.168.1.4';
 
 //get for the antifreeze settings
-$.get({url: 'http://localhost:3000/api/settings/antifreeze', async: false}, () => {
+$.get({url: 'http://' + address + ':3000/api/settings/antifreeze', async: false}, () => {
     console.log('success');
 })
 .done((data) => {
@@ -27,10 +28,8 @@ $('#temperature_af').text(antifreeze.temp.toFixed(1));
 antifreeze.enabled = Number.parseInt(antifreeze.enabled);
 
 if(antifreeze.enabled == 0)
-    $('#optionsRadios6').prop('checked', 'checked');
-else $('#optionsRadios5').prop('checked', 'checked');
-    /*$('#optionsRadios6').prop('checked', true);
-else $('#optionsRadios5').prop('checked', true);*/
+    $('#optionsRadios6').prop('checked', true);
+else $('#optionsRadios5').prop('checked', true);
 
 $('#increase_af').on('click', () => {
     clearTimeout(timer);
@@ -72,7 +71,7 @@ $('#conf_antifreeze').on('click', () => {
         antifreeze.enabled = 1;
     else antifreeze.enabled = 0;
     //put for the antifreeze
-    url = 'http://localhost:3000/api/settings/antifreeze';
+    url = 'http://' + address + ':3000/api/settings/antifreeze';
     const data = '{"temp":' + antifreeze.temp.toFixed(1) + ', "enabled":' + antifreeze.enabled.toString() + '}';
     $.ajax({
         url: url,
