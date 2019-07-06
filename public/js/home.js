@@ -1,4 +1,4 @@
-const address = '192.168.1.9'
+const address = '192.168.1.4'
 const wsc = new WebSocket('ws://' + address+ ':8080');
 //flag to change temperature shown during manual setting
 var flag = 0;

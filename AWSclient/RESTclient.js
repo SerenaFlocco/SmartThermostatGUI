@@ -42,6 +42,7 @@ function postConfig(data,response) {
 }
 
 function _postConfig(data, response){
+    console.log(data)
     console.log("POST CONFIG ended correctly")
 }
 
@@ -97,10 +98,17 @@ function _getConfigBiss(data, response){
             eventemitter.emit('newtemp');
         }
         // post the new configuration
+        console.log("Remote lastchange: " + lastChange);
+        console.log("AWS lastchange: " + rasp_lastChange);
+        console.log("Config: ");
+        console.log(config);
+        console.log("Configuration: ");
+        console.log(configuration);
+
         authenticate(postConfig);
     }else{
         // theconfiguration is NOT more recent then the one stored on AWS
-        
+
         // write file
         syncfiles.updateSettings(filename, config);
 
