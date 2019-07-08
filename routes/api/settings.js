@@ -40,6 +40,7 @@ router.put('/mode', (req, res) => {
     settings.lastchange = timestamp('DD/MM/YYYY:HH:mm:ss');
     syncfiles.updateSettings(filename, settings);
 
+    console.log(settings.lastchange);
     //send post request to configuration
     //AWSclient.authenticate(AWSclient.postConfig);
 

@@ -83,6 +83,9 @@ function _getConfigBiss(data, response){
     let rasp_timeStamp = parseTimestamp(config.timestamp);
     let timeStamp = parseTimestamp(configuration.timestamp);
 
+	//console.log(rasp_lastChange);
+	//console.log(lastChange);
+
     if(lastChange > rasp_lastChange){
         // the configuration is more recent than one stored on AWS
         if(timeStamp < rasp_timeStamp){
@@ -109,6 +112,7 @@ function _getConfigBiss(data, response){
     }else{
         // theconfiguration is NOT more recent then the one stored on AWS
 
+	console.log("SONO QUI ------------------------");
         // write file
         syncfiles.updateSettings(filename, config);
 

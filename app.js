@@ -69,6 +69,17 @@ app.put('/api/settings/mode', function (req, res, next) {
 // Members API Routes
 app.use('/api/settings', require('./routes/api/settings'));
 
+var fs = require('fs');
+var https = require('https');
+var privateKey  = fs.readFileSync('certs/server.key', 'utf8');
+var certificate = fs.readFileSync('certs/server.crt', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+//var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+
+//httpServer.listen(8080);
+httpsServer.listen(8443);
+
 app.listen(3000, function() {
   console.log('Listening on port 3000...')
 });
