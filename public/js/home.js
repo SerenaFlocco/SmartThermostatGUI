@@ -1,4 +1,4 @@
-const address = '192.168.1.4'
+const address = 'ec2-52-47-113-242.eu-west-3.compute.amazonaws.com'
 const wsc = new WebSocket('ws://' + address+ ':8080');
 //flag to change temperature shown during manual setting
 var flag = 0;

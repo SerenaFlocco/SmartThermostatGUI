@@ -6,7 +6,7 @@ var timer;
 var mode = '';
 //antifreeze temperature
 var antifreeze;
-var address = '192.168.1.4';
+var address = 'ec2-52-47-113-242.eu-west-3.compute.amazonaws.com';
 
 //get for the antifreeze settings
 $.get({url: 'http://' + address + ':3000/api/settings/antifreeze', async: false}, () => {
