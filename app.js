@@ -23,8 +23,15 @@ var server        = new wss({port: 8080});
 var received_temperature = '';
 const filename    = 'settings.json';
 const syncfiles = require('./syncfiles.js');
+var connected = false;
+var lock = false;
+
+
+// ! CHECK THE CONNECTION BEFORE USE THOSE COMPONENTS ! //
 const AWSclient = require('./AWSclient/RESTclient.js');
-const MQTTSClient = require('./AWSclient/MQTTSClient.js');
+var MQTTSClient;// = require('./AWSclient/MQTTSClient.js');
+
+
 /*flag used when weekend mode is active: it is 0 during the time interval in which mode=off,
 while it is 1 if it is expired and mode has to be set prog */
 var flag = 0;
@@ -32,6 +39,41 @@ var flag = 0;
 var counter = 0;
 /*flag used to send mqtts events to AWS*/
 var ischanged = 0;
+
+//CHECK CONNECTION
+setInterval(()=>{
+  require('dns').resolve('www.google.com', function(err) {
+    if (err) {
+       console.log("No connection");
+       connected = false;
+       //MQTTSClient = null;
+    } else {
+       console.log("Connected");
+       // wait other two seconds in order to be sure to have a stable connection
+       setTimeout(() => {
+        MQTTSClient = require('./AWSclient/MQTTSClient.js');
+								connected = true || (!lock);
+       }, 2 * 1000);
+    }
+  });
+},15 * 1000)
+
+//LOCK ONLINE OPERATION WHILE SETTING THE WIFI
+app.use('/wifi', function (req, res, next) {
+  console.log("---- LOCK -----")
+  lock = true;
+  next();
+});
+app.use('/wifi/:id', function (req, res, next) {
+  console.log("---- LOCK -----")
+  lock = true;
+  next();
+});
+app.use(function (req, res, next){
+  console.log("---- UNLOCK -----")
+  lock = false;
+  next();
+})
 
 // handlebars middleware
 app.engine('handlebars', exphbs({
@@ -80,13 +122,13 @@ app.listen(3000, function() {
 });
 
 //Check if Internet connection is available
-wifi.getState().then((connected) => {
+/*wifi.getState().then((connected) => {
   if (connected) {    
       console.log('Connected to network.');
       /** Get request for the configuration: if the lastchange field is equal to the local one-->ok,
         * otherwise modify the settings.json file
         */
-      AWSclient.authenticate(AWSclient._getConfig); //request for the token
+      /*AWSclient.authenticate(AWSclient._getConfig); //request for the token
   }
   else {
       console.log('Not connected to network.');
@@ -94,17 +136,18 @@ wifi.getState().then((connected) => {
 })
 .catch((error) => {
   console.log(error);
-});
+});*/
+
 
 /** Generate a token at bootstrap */
-const s = syncfiles.getSettings(filename);
+/*const s = syncfiles.getSettings(filename);
 let s_bis = s;
 let new_token = makeid(8);
 while(new_token == s_bis.token) {
   new_token = makeid(8);
 }
 s_bis.token = new_token;
-syncfiles.updateSettings(filename, s_bis);
+syncfiles.updateSettings(filename, s_bis);*/
 
 /** Set interval to make a get request for the configuration:
  * if the lastchange field is less than the local one-->send a post,
@@ -112,21 +155,14 @@ syncfiles.updateSettings(filename, s_bis);
 */
 setInterval( () => {
   console.log("---TIMER EXPIRED---");
-  wifi.getState().then((connected) => {
-    if (connected) {
-        console.log('Connected to network.');
-        AWSclient.authenticate(AWSclient._getConfig);
-    } else {
-        console.log('Not connected to network.');
-    }
-  })
-  .catch((error) => {
-      console.log(error);
-  }); 
+  if (connected) {
+    // the variable is defined
+    AWSclient.authenticate(AWSclient._getConfig);
+  }else{
+    console.log('Not connected to network.');
+  }
 }, 10000);
 
-/*NOTA: DA REMOTO OCCORRE CONTROLLARE IL TIMESTAMP PASSIVO PER AGGIORNARE IL VALORE DELLA
-TEMPERATURA RILEVATA E LO STATO DEL SISTEMA DI RISCALDAMENTO/RAFFREDDAMENTO!!!*/
 
 mac.getMac((err, macAddress) => {
   if (err)  throw err;
@@ -136,6 +172,7 @@ mac.getMac((err, macAddress) => {
   syncfiles.updateSettings(filename, conf);
 });
 
+//it works also in offline mode
 server.on('connection', (ws) => {
   console.log("NEW CONNECTION" + ws );
 
@@ -205,7 +242,8 @@ setInterval(() => {
           AWSclient.eventemitter.emit('heatingon');
           if(ischanged == 1) {
             //send mqtt EVENT only if the heating was 0
-            MQTTSClient.sendEvent(2, settings.mac, 'heating on');
+												if(connected)
+            	MQTTSClient.sendEvent(2, settings.mac, 'heating on');
             //post request for configuration only if the heating was 0-->SET THE PASSIVE TIMESTAMP
             settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
             //reset the flag
@@ -223,12 +261,10 @@ setInterval(() => {
             AWSclient.eventemitter.emit('heatingoff');
             if(ischanged == 1) {
             //send mqtt EVENT only if the heating was 1
-            MQTTSClient.sendEvent(3, settings.mac, 'heating off');
+            if(connected)
+              MQTTSClient.sendEvent(3, settings.mac, 'heating off');
             //post request for configuration only if the heating was 1-->SET THE PASSIVE TIMESTAMP
             settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-            // post new configuration
-            //AWSclient.authenticate(AWSclient.postConfig);
-            //reset the flag
             ischanged = 0;
             }
             //update configuration
@@ -246,11 +282,10 @@ setInterval(() => {
           AWSclient.eventemitter.emit('coolingon');
           if(ischanged == 1) {
             //send mqtt EVENT only if the cooling was 0
-            MQTTSClient.sendEvent(4, settings.mac, 'cooling on');
+            if(connected)
+              MQTTSClient.sendEvent(4, settings.mac, 'cooling on');
             //post request for configuration only if the cooling was 0-->SET THE PASSIVE TIMESTAMP
             settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
-            // post new configuration
-            //AWSclient.authenticate(AWSclient.postConfig);
             //reset the flag
             ischanged = 0;
           }
@@ -266,7 +301,8 @@ setInterval(() => {
             AWSclient.eventemitter.emit('coolingoff');
             if(ischanged == 1) {
               //send mqtt EVENT only if the cooling was 1
-              MQTTSClient.sendEvent(5, settings.mac, 'cooling off');
+              if(connected)
+                MQTTSClient.sendEvent(5, settings.mac, 'cooling off');
               //post request for configuration only if the cooling was 1-->SET THE PASSIVE TIMESTAMP
               settings.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
               // post new configuration
@@ -337,8 +373,6 @@ setInterval(() => {
       settings3.temp_to_reach = settings3.antifreeze.temp;
       settings3.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
       syncfiles.updateSettings(filename, settings3);
-      //send post request to configuration only if the temp_to_reach has changed-->SET THE PASSIVE TIMESTAMP
-      //AWSclient.authenticate(AWSclient.postConfig);
     }
   }
 }, 5000);
@@ -383,24 +417,12 @@ temperature_mqtt_client.on('message', (topic, msg) => {
     config.current_temperature = Number.parseFloat(msg.toString());
     console.log(config.current_temperature);
     //send mqtt EVENT
-    MQTTSClient.sendEvent(6, config.mac, 'received temperature');
+    if(connected)
+      MQTTSClient.sendEvent(6, config.mac, 'received temperature');
     //SET THE PASSIVE TIMESTAMP
     config.timestamp = timestamp('DD/MM/YYYY:HH:mm:ss');
     syncfiles.updateSettings(filename, config);
-    // post new configuration
-    //AWSclient.authenticate(AWSclient.postConfig);
 });
-
-/*process.on('uncaughtException', (err) => {
-  console.log(err);
-  server.close();
-});
-
-process.on('SIGTERM', (e) => {
-  server.close();
-  //console.log("error!!!!!!!!!!")
-  //console.log(e.data);
-});*/
 
   
 function getDay(number, settings) {

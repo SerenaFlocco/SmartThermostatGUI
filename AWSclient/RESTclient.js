@@ -38,14 +38,14 @@ function postConfig(data,response) {
     };
     
     //console.log(" ### Post Arguments ###")
-    //console.log(args);
+    console.log(args);
     client.post(myuri, args,_postConfig);
 }
 
 function _postConfig(data, response){
 			
-    //console.log(" ### POST CONFIG ###")
-				//console.log(data)
+    console.log(" ### POST CONFIG ###")
+				console.log(data)
     //console.log("######################");
 }
 
@@ -63,7 +63,7 @@ function authenticate(_function) {
 }
 
 function _getConfig(data, response){
-    console.log(response);
+    //console.log(response);
     console.log("new token:" + data.access_token)
     getConfig(data.access_token, _getConfigBiss)
 }
@@ -85,22 +85,30 @@ function _getConfigBiss(data, response){
 
     //from remote
     let configTime = parseTimestamp(config.lastchange);
+    let remote_timestamp = parseTimestamp(config.timestamp);
     //local
-    let settingsTime = parseTimestamp(settings.lastchange);
+    let settingsTime = parseTimestamp(settings.lastchange); 
+    let local_timestamp = parseTimestamp(settings.timestamp);
+
+	
 
     //if remote settings > local settings
     if(configTime.getTime() === settingsTime.getTime()) {
         //do nothing
-        console.log("Configuration already up to date\n");
+        //console.log("Configuration already up to date\n");
+	if(local_timestamp > remote_timestamp){
+		console.log("timestamp more recent");
+		authenticate(postConfig);
+	}
     }
     else {
         if(configTime > settingsTime) {
-            //console.log('local settings are older-->update them');
+            console.log('local settings are older-->update them');
             syncfiles.updateSettings(filename, config);
             eventemitter.emit('mode');
             eventemitter.emit('season');
         }else{
-            //console.log('local settings are more recent-->send a post');
+            console.log('local settings are more recent-->send a post');
             authenticate(postConfig);
         }
     }

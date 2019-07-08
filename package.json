@@ -23,8 +23,12 @@
     "nodemon": "^1.19.0",
     "path": "^0.12.7",
     "pi-wifi": "^1.2.0",
+    "power-off": "^1.1.2",
     "requirejs": "^2.3.6",
     "rpi-wifi-connection": "^1.0.14",
     "time-stamp": "^2.2.0"
+  },
+  "devDependencies": {
+    "ws": "3.3.2"
   }
 }
