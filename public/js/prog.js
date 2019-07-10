@@ -1,5 +1,5 @@
 var program;
-var address = 'ec2-52-47-113-242.eu-west-3.compute.amazonaws.com';
+var address = 'ec2-52-47-113-242.eu-west-3.compute.amazonaws.com:8443';
 function getDailyProg(day) {
     switch(day) {
         case 'Monday': return program.monday;
@@ -14,7 +14,7 @@ function getDailyProg(day) {
 
 //get on program
 //get for the antifreeze settings
-$.get({url: 'http://' + address + ':3000/api/settings/prog', async: false}, () => {
+$.get({url: 'https://' + address + '/api/settings/prog', async: false}, () => {
     console.log('success');
 })
 .done((data) => {
@@ -63,7 +63,7 @@ $('#save').on('click', () => {
         mydayarray[i-1] = Number.parseFloat($(`#formControlRange${i}`).val());
     }
     //put on program
-    const url =  `http://' + address + ':3000/api/settings/prog/${day.toLowerCase()}`;
+    const url =  'https://' + address + `/api/settings/prog/${day.toLowerCase()}`;
     const data = `{"${day.toLowerCase()}":` + JSON.stringify(mydayarray) + '}';
     $.ajax({
         url: url,

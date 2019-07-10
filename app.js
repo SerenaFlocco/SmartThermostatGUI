@@ -9,7 +9,6 @@ const path      = require('path');
 const WebSocket = require('ws');
 const wss       = require('ws').Server;
 const exphbs    = require('express-handlebars');
-var server        = new wss({port: 8080});
 const syncfiles    = require('./syncfiles.js');
 const filename = 'settings.json';
 const AWSclient = require('./AWSclient/RESTclient.js');
@@ -79,10 +78,12 @@ var httpsServer = https.createServer(credentials, app);
 
 //httpServer.listen(8080);
 httpsServer.listen(8443);
+var server        = new wss({server: httpsServer});
 
-app.listen(3000, function() {
+
+/*app.listen(3000, function() {
   console.log('Listening on port 3000...')
-});
+});*/
 
 /** Get request for the configuration: if the lastchange field is equal to the local one-->ok,
  * otherwise modify the settings.json file

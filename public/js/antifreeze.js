@@ -6,10 +6,10 @@ var timer;
 var mode = '';
 //antifreeze temperature
 var antifreeze;
-var address = 'ec2-52-47-113-242.eu-west-3.compute.amazonaws.com';
+var address = 'ec2-52-47-113-242.eu-west-3.compute.amazonaws.com:8443';
 
 //get for the antifreeze settings
-$.get({url: 'http://' + address + ':3000/api/settings/antifreeze', async: false}, () => {
+$.get({url: 'https://' + address + '/api/settings/antifreeze', async: false}, () => {
     console.log('success');
 })
 .done((data) => {
@@ -71,7 +71,7 @@ $('#conf_antifreeze').on('click', () => {
         antifreeze.enabled = 1;
     else antifreeze.enabled = 0;
     //put for the antifreeze
-    url = 'http://' + address + ':3000/api/settings/antifreeze';
+    url = 'https://' + address + '/api/settings/antifreeze';
     const data = '{"temp":' + antifreeze.temp.toFixed(1) + ', "enabled":' + antifreeze.enabled.toString() + '}';
     $.ajax({
         url: url,

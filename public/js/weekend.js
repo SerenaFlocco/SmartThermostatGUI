@@ -1,5 +1,5 @@
 var weekend;
-var address = 'ec2-52-47-113-242.eu-west-3.compute.amazonaws.com';
+var address = 'ec2-52-47-113-242.eu-west-3.compute.amazonaws.com:8443';
 
 function parseDay(day) {
     switch(day) {
@@ -14,7 +14,7 @@ function parseDay(day) {
 }
 
 //get for settings.weekend
-$.get({url: 'http://' + address + ':3000/api/settings/weekend', async: false}, () => {
+$.get({url: 'https://' + address + '/api/settings/weekend', async: false}, () => {
     console.log('success');
 })
 .done((data) => {
@@ -68,7 +68,7 @@ $('#conf_weekend').on('click', () => {
         weekend.enabled = 1;
     else weekend.enabled = 0;
     //put request
-    url = 'http://' + address + ':3000/api/settings/weekend';
+    url = 'https://' + address + '/api/settings/weekend';
     const data = '{"from":["' + weekend.from[0] + '","' + weekend.from[1] + '","' + weekend.from[2] + '"],"to":["' + weekend.to[0] + '","' + weekend.to[1] + '","' + weekend.to[2] + '"],"enabled":' + weekend.enabled.toString() + '}';
     $.ajax({
         url: url,
