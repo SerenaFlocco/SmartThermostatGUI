@@ -1,10 +1,11 @@
 var express = require('express');
 //var piWifi = require('pi-wifi');
-var settings = require('../settings.json');
+var syncfiles = require('../syncfiles.js');
 var router = express.Router();
 var Wifi = require('rpi-wifi-connection');
 var wifi = new Wifi();
 const mac = require('getmac');
+const filename = 'settings.json';
 
 // db
 //router.use('/comments', require('./comments'))
@@ -13,6 +14,8 @@ const mac = require('getmac');
 router.get('/', function(req, res) {
    var mode;
    var temperature;
+
+   const settings = syncfiles.getSettings(filename);
 
    if(settings.mode == 'man') 
 	   mode = "manual";

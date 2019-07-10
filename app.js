@@ -233,6 +233,7 @@ setInterval(() => {
   if(settings.mode != 'off') {
     switch(settings.season) {
       case 'winter':
+	AWSclient.eventemitter.emit('coolingoff');
         if(settings.temp_to_reach > settings.current_temperature) {
           if(settings.heating == 0)
             ischanged = 1;
@@ -273,6 +274,7 @@ setInterval(() => {
         };
         break;
       case 'summer':
+	AWSclient.eventemitter.emit('heatingoff');
         if(settings.temp_to_reach < settings.current_temperature) {
           if(settings.cooling == 0)
             ischanged = 1;

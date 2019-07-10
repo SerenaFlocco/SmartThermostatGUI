@@ -1,19 +1,11 @@
-const wsc = new WebSocket('ws://localhost:8080');
-//flag to change temperature shown during manual setting
-var flag = 0;
-//timer used when the temperature is increased or decreased
-var timer;
-//var which stores the current temperature
-var current_temperature = 0.0;
-//var which stores the last manual temperature
-var temp = 18.0;
-//var which stores the mode
-var mode = '';
-var heating = 0;
-var cooling = 0;
+const wsc = new WebSocket('ws://localhost:8080'); //flag to change temperature shown during 
+manual setting var flag = 0; //timer used when the temperature is increased or decreased var 
+timer; //var which stores the current temperature var current_temperature = 0.0; //var which 
+stores the last manual temperature var temp = 18.0; //var which stores the mode var mode = 
+''; var heating = 0; var cooling = 0;
 
-//get the current temperature
-$.get({url: 'http://localhost:3000/api/settings/currenttemp', async: false}, () => {
+/1/get the current temperature $.get({url: 'http://localhost:3000/api/settings/currenttemp', 
+async: false}, () => {
     console.log('success');
 })
 .done((data) => {
@@ -92,13 +84,7 @@ wsc.onmessage = (msg) => {
                                 $('#on').text('toys'); //switch on
                             else $('#on').empty();
                             break;
-            case 'mode' : if(splittedmsg[1] == 'man')
-			 	 $('#active_mode').text('manual');
-			  else {
-				if(splittedmsg[1] == 'prog')
-					$('#active_mode').text('program');
-				else $('#active_mode').text(splittedmsg[1]);
-			  }
+            case 'mode' : $('#active_mode').text(splittedmsg[1]);
                           break;
             case 'season' : $('#active_season').text(splittedmsg[1]);
                             break;
