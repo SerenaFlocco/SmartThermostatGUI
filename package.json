@@ -14,7 +14,7 @@
     "bootstrap-slider": "^10.6.1",
     "express": "^4.17.1",
     "getmac": "^1.4.6",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jsdom": "^15.0.0",
     "log-timestamp": "^0.3.0",
     "moment": "^2.24.0",
